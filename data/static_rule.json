@@ -1,0 +1,598 @@
+[
+  {
+    "rule_id": "R_SENSOR001",
+    "target_device_id": "SENSOR001",
+    "auto_extracted_features": [
+      "霍尼韦尔",
+      "CO传感器",
+      "HSCM-R100U",
+      "0-100ppm",
+      "4-20ma",
+      "0-10v",
+      "2-10v信号",
+      "无显示",
+      "无继电器输出"
+    ],
+    "feature_weights": {
+      "霍尼韦尔": 3.0,
+      "CO传感器": 2.5,
+      "HSCM-R100U": 3.0,
+      "0-100ppm": 1.0,
+      "4-20ma": 1.0,
+      "0-10v": 1.0,
+      "2-10v信号": 1.0,
+      "无显示": 1.0,
+      "无继电器输出": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 霍尼韦尔 CO传感器"
+  },
+  {
+    "rule_id": "R_SENSOR002",
+    "target_device_id": "SENSOR002",
+    "auto_extracted_features": [
+      "西门子",
+      "温度传感器",
+      "QAA2061",
+      "0-50摄氏度",
+      "4-20ma输出",
+      "壁挂式"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "温度传感器": 2.5,
+      "QAA2061": 3.0,
+      "0-50摄氏度": 1.0,
+      "4-20ma输出": 1.0,
+      "壁挂式": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 温度传感器"
+  },
+  {
+    "rule_id": "R_SENSOR003",
+    "target_device_id": "SENSOR003",
+    "auto_extracted_features": [
+      "霍尼韦尔",
+      "湿度传感器",
+      "HIH-4000",
+      "0-100%rh",
+      "0-5v输出",
+      "管道式安装"
+    ],
+    "feature_weights": {
+      "霍尼韦尔": 3.0,
+      "湿度传感器": 2.5,
+      "HIH-4000": 3.0,
+      "0-100%rh": 1.0,
+      "0-5v输出": 1.0,
+      "管道式安装": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 霍尼韦尔 湿度传感器"
+  },
+  {
+    "rule_id": "R_SENSOR004",
+    "target_device_id": "SENSOR004",
+    "auto_extracted_features": [
+      "西门子",
+      "压差传感器",
+      "QBM2030-1",
+      "0-500pa",
+      "4-20ma输出",
+      "带lcd显示"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "压差传感器": 2.5,
+      "QBM2030-1": 3.0,
+      "0-500pa": 1.0,
+      "4-20ma输出": 1.0,
+      "带lcd显示": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 压差传感器"
+  },
+  {
+    "rule_id": "R_SENSOR005",
+    "target_device_id": "SENSOR005",
+    "auto_extracted_features": [
+      "江森自控",
+      "CO2传感器",
+      "CDL-A10",
+      "0-2000ppm",
+      "4-20ma输出",
+      "壁挂式",
+      "带显示"
+    ],
+    "feature_weights": {
+      "江森自控": 3.0,
+      "CO2传感器": 2.5,
+      "CDL-A10": 3.0,
+      "0-2000ppm": 1.0,
+      "4-20ma输出": 1.0,
+      "壁挂式": 1.0,
+      "带显示": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 江森自控 CO2传感器"
+  },
+  {
+    "rule_id": "R_SENSOR006",
+    "target_device_id": "SENSOR006",
+    "auto_extracted_features": [
+      "霍尼韦尔",
+      "温湿度传感器",
+      "H7080B2102",
+      "温度0-50摄氏度",
+      "湿度0-100%rh",
+      "4-20ma输出"
+    ],
+    "feature_weights": {
+      "霍尼韦尔": 3.0,
+      "温湿度传感器": 2.5,
+      "H7080B2102": 3.0,
+      "温度0-50摄氏度": 1.0,
+      "湿度0-100%rh": 1.0,
+      "4-20ma输出": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 霍尼韦尔 温湿度传感器"
+  },
+  {
+    "rule_id": "R_SENSOR007",
+    "target_device_id": "SENSOR007",
+    "auto_extracted_features": [
+      "西门子",
+      "水管温度传感器",
+      "QAE2120.010",
+      "0-120摄氏度",
+      "pt1000",
+      "插入式安装"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "水管温度传感器": 2.5,
+      "QAE2120.010": 3.0,
+      "0-120摄氏度": 1.0,
+      "pt1000": 1.0,
+      "插入式安装": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 水管温度传感器"
+  },
+  {
+    "rule_id": "R_SENSOR008",
+    "target_device_id": "SENSOR008",
+    "auto_extracted_features": [
+      "江森自控",
+      "风速传感器",
+      "AVS-01",
+      "0-20m",
+      "s",
+      "4-20ma输出",
+      "管道式"
+    ],
+    "feature_weights": {
+      "江森自控": 3.0,
+      "风速传感器": 2.5,
+      "AVS-01": 3.0,
+      "0-20m": 1.0,
+      "s": 1.0,
+      "4-20ma输出": 1.0,
+      "管道式": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 江森自控 风速传感器"
+  },
+  {
+    "rule_id": "R_CONTROLLER001",
+    "target_device_id": "CONTROLLER001",
+    "auto_extracted_features": [
+      "江森自控",
+      "DDC控制器",
+      "FX-PCV3624E",
+      "24点位",
+      "以太网通讯",
+      "支持bacnet协议"
+    ],
+    "feature_weights": {
+      "江森自控": 3.0,
+      "DDC控制器": 2.5,
+      "FX-PCV3624E": 3.0,
+      "24点位": 1.0,
+      "以太网通讯": 1.0,
+      "支持bacnet协议": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 江森自控 DDC控制器"
+  },
+  {
+    "rule_id": "R_CONTROLLER002",
+    "target_device_id": "CONTROLLER002",
+    "auto_extracted_features": [
+      "西门子",
+      "DDC控制器",
+      "PXC36-E.D",
+      "36点位",
+      "以太网通讯",
+      "支持bacnet",
+      "modbus"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "DDC控制器": 2.5,
+      "PXC36-E.D": 3.0,
+      "36点位": 1.0,
+      "以太网通讯": 1.0,
+      "支持bacnet": 1.0,
+      "modbus": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 DDC控制器"
+  },
+  {
+    "rule_id": "R_CONTROLLER003",
+    "target_device_id": "CONTROLLER003",
+    "auto_extracted_features": [
+      "霍尼韦尔",
+      "DDC控制器",
+      "WEBs-AX-ZCN",
+      "16点位",
+      "以太网通讯",
+      "支持bacnet协议",
+      "带web界面"
+    ],
+    "feature_weights": {
+      "霍尼韦尔": 3.0,
+      "DDC控制器": 2.5,
+      "WEBs-AX-ZCN": 3.0,
+      "16点位": 1.0,
+      "以太网通讯": 1.0,
+      "支持bacnet协议": 1.0,
+      "带web界面": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 霍尼韦尔 DDC控制器"
+  },
+  {
+    "rule_id": "R_CONTROLLER004",
+    "target_device_id": "CONTROLLER004",
+    "auto_extracted_features": [
+      "江森自控",
+      "DDC控制器",
+      "FX-PCV1611E",
+      "16点位",
+      "以太网通讯",
+      "支持bacnet协议"
+    ],
+    "feature_weights": {
+      "江森自控": 3.0,
+      "DDC控制器": 2.5,
+      "FX-PCV1611E": 3.0,
+      "16点位": 1.0,
+      "以太网通讯": 1.0,
+      "支持bacnet协议": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 江森自控 DDC控制器"
+  },
+  {
+    "rule_id": "R_CONTROLLER005",
+    "target_device_id": "CONTROLLER005",
+    "auto_extracted_features": [
+      "西门子",
+      "DDC控制器",
+      "PXC22-E.D",
+      "22点位",
+      "以太网通讯",
+      "支持bacnet协议"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "DDC控制器": 2.5,
+      "PXC22-E.D": 3.0,
+      "22点位": 1.0,
+      "以太网通讯": 1.0,
+      "支持bacnet协议": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 DDC控制器"
+  },
+  {
+    "rule_id": "R_VALVE001",
+    "target_device_id": "VALVE001",
+    "auto_extracted_features": [
+      "西门子",
+      "电动调节阀",
+      "VVF53.80-63",
+      "dn80",
+      "pn16",
+      "法兰连接",
+      "配skd62电动执行器"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "电动调节阀": 2.5,
+      "VVF53.80-63": 3.0,
+      "dn80": 1.0,
+      "pn16": 1.0,
+      "法兰连接": 1.0,
+      "配skd62电动执行器": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 电动调节阀"
+  },
+  {
+    "rule_id": "R_VALVE002",
+    "target_device_id": "VALVE002",
+    "auto_extracted_features": [
+      "霍尼韦尔",
+      "电动二通阀",
+      "V5011N1040",
+      "dn50",
+      "pn16",
+      "螺纹连接",
+      "配ml6420a3018执行器"
+    ],
+    "feature_weights": {
+      "霍尼韦尔": 3.0,
+      "电动二通阀": 2.5,
+      "V5011N1040": 3.0,
+      "dn50": 1.0,
+      "pn16": 1.0,
+      "螺纹连接": 1.0,
+      "配ml6420a3018执行器": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 霍尼韦尔 电动二通阀"
+  },
+  {
+    "rule_id": "R_VALVE003",
+    "target_device_id": "VALVE003",
+    "auto_extracted_features": [
+      "江森自控",
+      "电动三通阀",
+      "VG1205CP",
+      "dn25",
+      "pn16",
+      "内螺纹",
+      "配m9206-aga-2执行器"
+    ],
+    "feature_weights": {
+      "江森自控": 3.0,
+      "电动三通阀": 2.5,
+      "VG1205CP": 3.0,
+      "dn25": 1.0,
+      "pn16": 1.0,
+      "内螺纹": 1.0,
+      "配m9206-aga-2执行器": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 江森自控 电动三通阀"
+  },
+  {
+    "rule_id": "R_ACTUATOR001",
+    "target_device_id": "ACTUATOR001",
+    "auto_extracted_features": [
+      "西门子",
+      "风阀执行器",
+      "GMA126.1E",
+      "24vac",
+      "10nm",
+      "0-10v控制",
+      "90秒行程"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "风阀执行器": 2.5,
+      "GMA126.1E": 3.0,
+      "24vac": 1.0,
+      "10nm": 1.0,
+      "0-10v控制": 1.0,
+      "90秒行程": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 风阀执行器"
+  },
+  {
+    "rule_id": "R_ACTUATOR002",
+    "target_device_id": "ACTUATOR002",
+    "auto_extracted_features": [
+      "霍尼韦尔",
+      "风阀执行器",
+      "ML6161B2024",
+      "24vac",
+      "20nm",
+      "浮点控制",
+      "150秒行程"
+    ],
+    "feature_weights": {
+      "霍尼韦尔": 3.0,
+      "风阀执行器": 2.5,
+      "ML6161B2024": 3.0,
+      "24vac": 1.0,
+      "20nm": 1.0,
+      "浮点控制": 1.0,
+      "150秒行程": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 霍尼韦尔 风阀执行器"
+  },
+  {
+    "rule_id": "R_ACTUATOR003",
+    "target_device_id": "ACTUATOR003",
+    "auto_extracted_features": [
+      "江森自控",
+      "风阀执行器",
+      "M9206-AGA-2",
+      "24vac",
+      "8nm",
+      "0-10v控制",
+      "60秒行程"
+    ],
+    "feature_weights": {
+      "江森自控": 3.0,
+      "风阀执行器": 2.5,
+      "M9206-AGA-2": 3.0,
+      "24vac": 1.0,
+      "8nm": 1.0,
+      "0-10v控制": 1.0,
+      "60秒行程": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 江森自控 风阀执行器"
+  },
+  {
+    "rule_id": "R_CABINET001",
+    "target_device_id": "CABINET001",
+    "auto_extracted_features": [
+      "施耐德",
+      "DDC控制柜",
+      "KX-800-600-300",
+      "800x600x300mm",
+      "ip54防护等级",
+      "含空开",
+      "继电器",
+      "端子排"
+    ],
+    "feature_weights": {
+      "施耐德": 3.0,
+      "DDC控制柜": 2.5,
+      "KX-800-600-300": 3.0,
+      "800x600x300mm": 1.0,
+      "ip54防护等级": 1.0,
+      "含空开": 1.0,
+      "继电器": 1.0,
+      "端子排": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 施耐德 DDC控制柜"
+  },
+  {
+    "rule_id": "R_CABINET002",
+    "target_device_id": "CABINET002",
+    "auto_extracted_features": [
+      "施耐德",
+      "DDC控制柜",
+      "KX-1000-800-400",
+      "1000x800x400mm",
+      "ip54防护等级",
+      "含空开",
+      "继电器",
+      "端子排",
+      "风扇"
+    ],
+    "feature_weights": {
+      "施耐德": 3.0,
+      "DDC控制柜": 2.5,
+      "KX-1000-800-400": 3.0,
+      "1000x800x400mm": 1.0,
+      "ip54防护等级": 1.0,
+      "含空开": 1.0,
+      "继电器": 1.0,
+      "端子排": 1.0,
+      "风扇": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 施耐德 DDC控制柜"
+  },
+  {
+    "rule_id": "R_POWER001",
+    "target_device_id": "POWER001",
+    "auto_extracted_features": [
+      "明纬",
+      "开关电源",
+      "DR-120-24",
+      "ac220v输入",
+      "dc24v",
+      "5a输出",
+      "导轨式安装"
+    ],
+    "feature_weights": {
+      "明纬": 3.0,
+      "开关电源": 2.5,
+      "DR-120-24": 3.0,
+      "ac220v输入": 1.0,
+      "dc24v": 1.0,
+      "5a输出": 1.0,
+      "导轨式安装": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 明纬 开关电源"
+  },
+  {
+    "rule_id": "R_POWER002",
+    "target_device_id": "POWER002",
+    "auto_extracted_features": [
+      "明纬",
+      "开关电源",
+      "DR-240-24",
+      "ac220v输入",
+      "dc24v",
+      "10a输出",
+      "导轨式安装"
+    ],
+    "feature_weights": {
+      "明纬": 3.0,
+      "开关电源": 2.5,
+      "DR-240-24": 3.0,
+      "ac220v输入": 1.0,
+      "dc24v": 1.0,
+      "10a输出": 1.0,
+      "导轨式安装": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 明纬 开关电源"
+  },
+  {
+    "rule_id": "R_RELAY001",
+    "target_device_id": "RELAY001",
+    "auto_extracted_features": [
+      "欧姆龙",
+      "中间继电器",
+      "MY4N-J",
+      "dc24v线圈",
+      "4组转换触点",
+      "5a",
+      "250vac",
+      "带底座"
+    ],
+    "feature_weights": {
+      "欧姆龙": 3.0,
+      "中间继电器": 2.5,
+      "MY4N-J": 3.0,
+      "dc24v线圈": 1.0,
+      "4组转换触点": 1.0,
+      "5a": 1.0,
+      "250vac": 1.0,
+      "带底座": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 欧姆龙 中间继电器"
+  },
+  {
+    "rule_id": "R_GATEWAY001",
+    "target_device_id": "GATEWAY001",
+    "auto_extracted_features": [
+      "西门子",
+      "BACnet网关",
+      "OZW672.04",
+      "bacnet",
+      "ip转modbus",
+      "rtu",
+      "支持64个设备"
+    ],
+    "feature_weights": {
+      "西门子": 3.0,
+      "BACnet网关": 2.5,
+      "OZW672.04": 3.0,
+      "bacnet": 1.0,
+      "ip转modbus": 1.0,
+      "rtu": 1.0,
+      "支持64个设备": 1.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 西门子 BACnet网关"
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "device_id": "SENSOR001",
+    "brand": "霍尼韦尔",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R100U",
+    "detailed_params": "0-100PPM,4-20mA/0-10V/2-10V信号,无显示,无继电器输出",
+    "unit_price": 766.14
+  },
+  {
+    "device_id": "SENSOR002",
+    "brand": "西门子",
+    "device_name": "温度传感器",
+    "spec_model": "QAA2061",
+    "detailed_params": "0-50摄氏度,4-20mA输出,壁挂式",
+    "unit_price": 320.50
+  },
+  {
+    "device_id": "SENSOR003",
+    "brand": "霍尼韦尔",
+    "device_name": "湿度传感器",
+    "spec_model": "HIH-4000",
+    "detailed_params": "0-100%RH,0-5V输出,管道式安装",
+    "unit_price": 450.00
+  },
+  {
+    "device_id": "SENSOR004",
+    "brand": "西门子",
+    "device_name": "压差传感器",
+    "spec_model": "QBM2030-1",
+    "detailed_params": "0-500Pa,4-20mA输出,带LCD显示",
+    "unit_price": 890.00
+  },
+  {
+    "device_id": "SENSOR005",
+    "brand": "江森自控",
+    "device_name": "CO2传感器",
+    "spec_model": "CDL-A10",
+    "detailed_params": "0-2000ppm,4-20mA输出,壁挂式,带显示",
+    "unit_price": 1200.00
+  },
+  {
+    "device_id": "SENSOR006",
+    "brand": "霍尼韦尔",
+    "device_name": "温湿度传感器",
+    "spec_model": "H7080B2102",
+    "detailed_params": "温度0-50摄氏度,湿度0-100%RH,4-20mA输出",
+    "unit_price": 680.00
+  },
+  {
+    "device_id": "SENSOR007",
+    "brand": "西门子",
+    "device_name": "水管温度传感器",
+    "spec_model": "QAE2120.010",
+    "detailed_params": "0-120摄氏度,Pt1000,插入式安装",
+    "unit_price": 280.00
+  },
+  {
+    "device_id": "SENSOR008",
+    "brand": "江森自控",
+    "device_name": "风速传感器",
+    "spec_model": "AVS-01",
+    "detailed_params": "0-20m/s,4-20mA输出,管道式",
+    "unit_price": 1500.00
+  },
+  {
+    "device_id": "CONTROLLER001",
+    "brand": "江森自控",
+    "device_name": "DDC控制器",
+    "spec_model": "FX-PCV3624E",
+    "detailed_params": "24点位,以太网通讯,支持BACnet协议",
+    "unit_price": 4500.00
+  },
+  {
+    "device_id": "CONTROLLER002",
+    "brand": "西门子",
+    "device_name": "DDC控制器",
+    "spec_model": "PXC36-E.D",
+    "detailed_params": "36点位,以太网通讯,支持BACnet/Modbus",
+    "unit_price": 5200.00
+  },
+  {
+    "device_id": "CONTROLLER003",
+    "brand": "霍尼韦尔",
+    "device_name": "DDC控制器",
+    "spec_model": "WEBs-AX-ZCN",
+    "detailed_params": "16点位,以太网通讯,支持BACnet协议,带Web界面",
+    "unit_price": 3800.00
+  },
+  {
+    "device_id": "CONTROLLER004",
+    "brand": "江森自控",
+    "device_name": "DDC控制器",
+    "spec_model": "FX-PCV1611E",
+    "detailed_params": "16点位,以太网通讯,支持BACnet协议",
+    "unit_price": 3200.00
+  },
+  {
+    "device_id": "CONTROLLER005",
+    "brand": "西门子",
+    "device_name": "DDC控制器",
+    "spec_model": "PXC22-E.D",
+    "detailed_params": "22点位,以太网通讯,支持BACnet协议",
+    "unit_price": 4000.00
+  },
+  {
+    "device_id": "VALVE001",
+    "brand": "西门子",
+    "device_name": "电动调节阀",
+    "spec_model": "VVF53.80-63",
+    "detailed_params": "DN80,PN16,法兰连接,配SKD62电动执行器",
+    "unit_price": 3500.00
+  },
+  {
+    "device_id": "VALVE002",
+    "brand": "霍尼韦尔",
+    "device_name": "电动二通阀",
+    "spec_model": "V5011N1040",
+    "detailed_params": "DN50,PN16,螺纹连接,配ML6420A3018执行器",
+    "unit_price": 2800.00
+  },
+  {
+    "device_id": "VALVE003",
+    "brand": "江森自控",
+    "device_name": "电动三通阀",
+    "spec_model": "VG1205CP",
+    "detailed_params": "DN25,PN16,内螺纹,配M9206-AGA-2执行器",
+    "unit_price": 1800.00
+  },
+  {
+    "device_id": "ACTUATOR001",
+    "brand": "西门子",
+    "device_name": "风阀执行器",
+    "spec_model": "GMA126.1E",
+    "detailed_params": "24VAC,10Nm,0-10V控制,90秒行程",
+    "unit_price": 850.00
+  },
+  {
+    "device_id": "ACTUATOR002",
+    "brand": "霍尼韦尔",
+    "device_name": "风阀执行器",
+    "spec_model": "ML6161B2024",
+    "detailed_params": "24VAC,20Nm,浮点控制,150秒行程",
+    "unit_price": 920.00
+  },
+  {
+    "device_id": "ACTUATOR003",
+    "brand": "江森自控",
+    "device_name": "风阀执行器",
+    "spec_model": "M9206-AGA-2",
+    "detailed_params": "24VAC,8Nm,0-10V控制,60秒行程",
+    "unit_price": 780.00
+  },
+  {
+    "device_id": "CABINET001",
+    "brand": "施耐德",
+    "device_name": "DDC控制柜",
+    "spec_model": "KX-800-600-300",
+    "detailed_params": "800x600x300mm,IP54防护等级,含空开,继电器,端子排",
+    "unit_price": 2500.00
+  },
+  {
+    "device_id": "CABINET002",
+    "brand": "施耐德",
+    "device_name": "DDC控制柜",
+    "spec_model": "KX-1000-800-400",
+    "detailed_params": "1000x800x400mm,IP54防护等级,含空开,继电器,端子排,风扇",
+    "unit_price": 3200.00
+  },
+  {
+    "device_id": "POWER001",
+    "brand": "明纬",
+    "device_name": "开关电源",
+    "spec_model": "DR-120-24",
+    "detailed_params": "AC220V输入,DC24V/5A输出,导轨式安装",
+    "unit_price": 180.00
+  },
+  {
+    "device_id": "POWER002",
+    "brand": "明纬",
+    "device_name": "开关电源",
+    "spec_model": "DR-240-24",
+    "detailed_params": "AC220V输入,DC24V/10A输出,导轨式安装",
+    "unit_price": 320.00
+  },
+  {
+    "device_id": "RELAY001",
+    "brand": "欧姆龙",
+    "device_name": "中间继电器",
+    "spec_model": "MY4N-J",
+    "detailed_params": "DC24V线圈,4组转换触点,5A/250VAC,带底座",
+    "unit_price": 45.00
+  },
+  {
+    "device_id": "GATEWAY001",
+    "brand": "西门子",
+    "device_name": "BACnet网关",
+    "spec_model": "OZW672.04",
+    "detailed_params": "BACnet/IP转Modbus RTU,支持64个设备",
+    "unit_price": 4800.00
+  }
+]
