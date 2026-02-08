@@ -594,5 +594,633 @@
     },
     "match_threshold": 2,
     "remark": "自动生成的规则 - 西门子 BACnet网关"
+  },
+  {
+    "rule_id": "R_ENERGY026",
+    "target_device_id": "ENERGY001",
+    "auto_extracted_features": [
+      "能耗",
+      "能源",
+      "能源管理",
+      "能耗数据采集器",
+      "采集器",
+      "数据采集"
+    ],
+    "feature_weights": {
+      "能耗": 3.0,
+      "能源": 3.0,
+      "能源管理": 3.0,
+      "能耗数据采集器": 3.0,
+      "采集器": 3.0,
+      "数据采集": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 能耗数据采集器"
+  },
+  {
+    "rule_id": "R_ENERGY027",
+    "target_device_id": "ENERGY002",
+    "auto_extracted_features": [
+      "空调",
+      "采集器",
+      "数据采集",
+      "多联机",
+      "多联机采集器"
+    ],
+    "feature_weights": {
+      "空调": 3.0,
+      "采集器": 3.0,
+      "数据采集": 3.0,
+      "多联机": 3.0,
+      "多联机采集器": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 多联机采集器"
+  },
+  {
+    "rule_id": "R_ENERGY028",
+    "target_device_id": "ENERGY003",
+    "auto_extracted_features": [
+      "箱",
+      "控制箱",
+      "Control Panel",
+      "采集器",
+      "数据采集",
+      "采集器箱"
+    ],
+    "feature_weights": {
+      "箱": 3.0,
+      "控制箱": 3.0,
+      "Control Panel": 3.0,
+      "采集器": 3.0,
+      "数据采集": 3.0,
+      "采集器箱": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 采集器箱"
+  },
+  {
+    "rule_id": "R_ENERGY029",
+    "target_device_id": "ENERGY004",
+    "auto_extracted_features": [
+      "能耗",
+      "能源",
+      "能源管理",
+      "能源管理服务器",
+      "服务器"
+    ],
+    "feature_weights": {
+      "能耗": 3.0,
+      "能源": 3.0,
+      "能源管理": 3.0,
+      "能源管理服务器": 3.0,
+      "服务器": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 能源管理服务器"
+  },
+  {
+    "rule_id": "R_ENERGY030",
+    "target_device_id": "ENERGY005",
+    "auto_extracted_features": [
+      "能耗",
+      "能源",
+      "能源管理",
+      "能源管理操作电脑",
+      "计算机",
+      "电脑"
+    ],
+    "feature_weights": {
+      "能耗": 3.0,
+      "能源": 3.0,
+      "能源管理": 3.0,
+      "能源管理操作电脑": 3.0,
+      "计算机": 3.0,
+      "电脑": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 能源管理操作电脑"
+  },
+  {
+    "rule_id": "R_ENERGY031",
+    "target_device_id": "ENERGY006",
+    "auto_extracted_features": [
+      "能耗",
+      "能源",
+      "能源管理",
+      "系统",
+      "软件",
+      "能源管理系统软件"
+    ],
+    "feature_weights": {
+      "能耗": 3.0,
+      "能源": 3.0,
+      "能源管理": 3.0,
+      "系统": 3.0,
+      "软件": 3.0,
+      "能源管理系统软件": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 能源管理系统软件"
+  },
+  {
+    "rule_id": "R_ENERGY032",
+    "target_device_id": "ENERGY007",
+    "auto_extracted_features": [
+      "能耗",
+      "能源管理系统调试及试运行",
+      "能源",
+      "能源管理",
+      "试运行",
+      "系统",
+      "软件",
+      "调试"
+    ],
+    "feature_weights": {
+      "能耗": 3.0,
+      "能源管理系统调试及试运行": 3.0,
+      "能源": 3.0,
+      "能源管理": 3.0,
+      "试运行": 3.0,
+      "系统": 3.0,
+      "软件": 3.0,
+      "调试": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 能源管理系统调试及试运行"
+  },
+  {
+    "rule_id": "R_ENERGY033",
+    "target_device_id": "ENERGY008",
+    "auto_extracted_features": [
+      "配线",
+      "线缆"
+    ],
+    "feature_weights": {
+      "配线": 3.0,
+      "线缆": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 配线"
+  },
+  {
+    "rule_id": "R_ENERGY034",
+    "target_device_id": "ENERGY009",
+    "auto_extracted_features": [
+      "CAT6",
+      "六类网线",
+      "网线"
+    ],
+    "feature_weights": {
+      "CAT6": 3.0,
+      "六类网线": 3.0,
+      "网线": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 六类网线"
+  },
+  {
+    "rule_id": "R_ENERGY035",
+    "target_device_id": "ENERGY010",
+    "auto_extracted_features": [
+      "配管",
+      "JDG"
+    ],
+    "feature_weights": {
+      "配管": 3.0,
+      "JDG": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 配管"
+  },
+  {
+    "rule_id": "R_ENERGY036",
+    "target_device_id": "ENERGY011",
+    "auto_extracted_features": [
+      "接线盒"
+    ],
+    "feature_weights": {
+      "接线盒": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 接线盒"
+  },
+  {
+    "rule_id": "R_ENERGY037",
+    "target_device_id": "ENERGY012",
+    "auto_extracted_features": [
+      "计算机",
+      "管理电脑",
+      "电脑"
+    ],
+    "feature_weights": {
+      "计算机": 3.0,
+      "管理电脑": 3.0,
+      "电脑": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 管理电脑"
+  },
+  {
+    "rule_id": "R_ENERGY038",
+    "target_device_id": "ENERGY013",
+    "auto_extracted_features": [
+      "服务器"
+    ],
+    "feature_weights": {
+      "服务器": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 服务器"
+  },
+  {
+    "rule_id": "R_ENERGY039",
+    "target_device_id": "ENERGY014",
+    "auto_extracted_features": [
+      "建筑设备监控",
+      "中央监控软件包",
+      "系统",
+      "软件",
+      "监控"
+    ],
+    "feature_weights": {
+      "建筑设备监控": 3.0,
+      "中央监控软件包": 3.0,
+      "系统": 3.0,
+      "软件": 3.0,
+      "监控": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 中央监控软件包"
+  },
+  {
+    "rule_id": "R_ENERGY040",
+    "target_device_id": "ENERGY015",
+    "auto_extracted_features": [
+      "控制器",
+      "网络控制器"
+    ],
+    "feature_weights": {
+      "控制器": 3.0,
+      "网络控制器": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 网络控制器"
+  },
+  {
+    "rule_id": "R_ENERGY041",
+    "target_device_id": "ENERGY016",
+    "auto_extracted_features": [
+      "RS485",
+      "RS485通信卡",
+      "通信"
+    ],
+    "feature_weights": {
+      "RS485": 3.0,
+      "RS485通信卡": 3.0,
+      "通信": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - RS485通信卡"
+  },
+  {
+    "rule_id": "R_ENERGY042",
+    "target_device_id": "ENERGY017",
+    "auto_extracted_features": [
+      "接口",
+      "软件",
+      "系统",
+      "交配电系统接口"
+    ],
+    "feature_weights": {
+      "接口": 3.0,
+      "软件": 3.0,
+      "系统": 3.0,
+      "交配电系统接口": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 交配电系统接口"
+  },
+  {
+    "rule_id": "R_ENERGY043",
+    "target_device_id": "ENERGY018",
+    "auto_extracted_features": [
+      "智能照明控制系统接口",
+      "软件",
+      "接口",
+      "系统"
+    ],
+    "feature_weights": {
+      "智能照明控制系统接口": 3.0,
+      "软件": 3.0,
+      "接口": 3.0,
+      "系统": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 智能照明控制系统接口"
+  },
+  {
+    "rule_id": "R_ENERGY044",
+    "target_device_id": "ENERGY019",
+    "auto_extracted_features": [
+      "接口",
+      "软件",
+      "电梯控制系统接口",
+      "系统"
+    ],
+    "feature_weights": {
+      "接口": 3.0,
+      "软件": 3.0,
+      "电梯控制系统接口": 3.0,
+      "系统": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 电梯控制系统接口"
+  },
+  {
+    "rule_id": "R_ENERGY045",
+    "target_device_id": "ENERGY020",
+    "auto_extracted_features": [
+      "接口",
+      "柴油发电机接口"
+    ],
+    "feature_weights": {
+      "接口": 3.0,
+      "柴油发电机接口": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 柴油发电机接口"
+  },
+  {
+    "rule_id": "R_ENERGY046",
+    "target_device_id": "ENERGY021",
+    "auto_extracted_features": [
+      "PM/CO2硬件网关",
+      "一氧化碳",
+      "网关",
+      "颗粒物",
+      "二氧化碳",
+      "CO",
+      "PM",
+      "CO2"
+    ],
+    "feature_weights": {
+      "PM/CO2硬件网关": 3.0,
+      "一氧化碳": 3.0,
+      "网关": 3.0,
+      "颗粒物": 3.0,
+      "二氧化碳": 3.0,
+      "CO": 3.0,
+      "PM": 3.0,
+      "CO2": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - PM/CO2硬件网关"
+  },
+  {
+    "rule_id": "R_ENERGY047",
+    "target_device_id": "ENERGY022",
+    "auto_extracted_features": [
+      "多联机接口网关",
+      "空调",
+      "网关",
+      "接口",
+      "多联机"
+    ],
+    "feature_weights": {
+      "多联机接口网关": 3.0,
+      "空调": 3.0,
+      "网关": 3.0,
+      "接口": 3.0,
+      "多联机": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 多联机接口网关"
+  },
+  {
+    "rule_id": "R_ENERGY048",
+    "target_device_id": "ENERGY023",
+    "auto_extracted_features": [
+      "箱",
+      "控制箱",
+      "控制箱（Control Panel）",
+      "Control Panel"
+    ],
+    "feature_weights": {
+      "箱": 3.0,
+      "控制箱": 3.0,
+      "控制箱（Control Panel）": 3.0,
+      "Control Panel": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 控制箱（Control Panel）"
+  },
+  {
+    "rule_id": "R_ENERGY049",
+    "target_device_id": "ENERGY024",
+    "auto_extracted_features": [
+      "箱",
+      "控制箱（Control Panel-3XL）",
+      "控制箱",
+      "Control Panel"
+    ],
+    "feature_weights": {
+      "箱": 3.0,
+      "控制箱（Control Panel-3XL）": 3.0,
+      "控制箱": 3.0,
+      "Control Panel": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 控制箱（Control Panel-3XL）"
+  },
+  {
+    "rule_id": "R_ENERGY050",
+    "target_device_id": "ENERGY025",
+    "auto_extracted_features": [
+      "箱",
+      "控制箱",
+      "Control Panel",
+      "控制箱（Control Panel-2XL）"
+    ],
+    "feature_weights": {
+      "箱": 3.0,
+      "控制箱": 3.0,
+      "Control Panel": 3.0,
+      "控制箱（Control Panel-2XL）": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 控制箱（Control Panel-2XL）"
+  },
+  {
+    "rule_id": "R_ENERGY051",
+    "target_device_id": "ENERGY026",
+    "auto_extracted_features": [
+      "箱",
+      "控制箱（Control Panel-XL）",
+      "控制箱",
+      "Control Panel"
+    ],
+    "feature_weights": {
+      "箱": 3.0,
+      "控制箱（Control Panel-XL）": 3.0,
+      "控制箱": 3.0,
+      "Control Panel": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 控制箱（Control Panel-XL）"
+  },
+  {
+    "rule_id": "R_ENERGY052",
+    "target_device_id": "ENERGY027",
+    "auto_extracted_features": [
+      "控制箱（Control Panel-L）",
+      "控制箱",
+      "Control Panel",
+      "箱"
+    ],
+    "feature_weights": {
+      "控制箱（Control Panel-L）": 3.0,
+      "控制箱": 3.0,
+      "Control Panel": 3.0,
+      "箱": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 控制箱（Control Panel-L）"
+  },
+  {
+    "rule_id": "R_ENERGY053",
+    "target_device_id": "ENERGY028",
+    "auto_extracted_features": [
+      "箱",
+      "控制箱",
+      "Control Panel",
+      "控制箱（Control Panel-M）"
+    ],
+    "feature_weights": {
+      "箱": 3.0,
+      "控制箱": 3.0,
+      "Control Panel": 3.0,
+      "控制箱（Control Panel-M）": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 控制箱（Control Panel-M）"
+  },
+  {
+    "rule_id": "R_ENERGY054",
+    "target_device_id": "ENERGY029",
+    "auto_extracted_features": [
+      "传感器",
+      "一氧化碳",
+      "室内CO浓度探测器",
+      "CO",
+      "探测器"
+    ],
+    "feature_weights": {
+      "传感器": 3.0,
+      "一氧化碳": 3.0,
+      "室内CO浓度探测器": 3.0,
+      "CO": 3.0,
+      "探测器": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 室内CO浓度探测器"
+  },
+  {
+    "rule_id": "R_ENERGY055",
+    "target_device_id": "ENERGY030",
+    "auto_extracted_features": [
+      "室内CO2传感器",
+      "传感器",
+      "一氧化碳",
+      "二氧化碳",
+      "CO",
+      "探测器",
+      "CO2"
+    ],
+    "feature_weights": {
+      "室内CO2传感器": 3.0,
+      "传感器": 3.0,
+      "一氧化碳": 3.0,
+      "二氧化碳": 3.0,
+      "CO": 3.0,
+      "探测器": 3.0,
+      "CO2": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 室内CO2传感器"
+  },
+  {
+    "rule_id": "R_ENERGY056",
+    "target_device_id": "ENERGY031",
+    "auto_extracted_features": [
+      "传感器",
+      "室内PM传感器",
+      "颗粒物",
+      "探测器",
+      "PM"
+    ],
+    "feature_weights": {
+      "传感器": 3.0,
+      "室内PM传感器": 3.0,
+      "颗粒物": 3.0,
+      "探测器": 3.0,
+      "PM": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 室内PM传感器"
+  },
+  {
+    "rule_id": "R_ENERGY057",
+    "target_device_id": "ENERGY032",
+    "auto_extracted_features": [
+      "液位开关",
+      "开关",
+      "液位"
+    ],
+    "feature_weights": {
+      "液位开关": 3.0,
+      "开关": 3.0,
+      "液位": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 液位开关"
+  },
+  {
+    "rule_id": "R_ENERGY058",
+    "target_device_id": "ENERGY033",
+    "auto_extracted_features": [
+      "建筑设备监控",
+      "试运行",
+      "系统",
+      "软件",
+      "监控",
+      "调试",
+      "建筑设备监控系统调试及试运行"
+    ],
+    "feature_weights": {
+      "建筑设备监控": 3.0,
+      "试运行": 3.0,
+      "系统": 3.0,
+      "软件": 3.0,
+      "监控": 3.0,
+      "调试": 3.0,
+      "建筑设备监控系统调试及试运行": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 建筑设备监控系统调试及试运行"
+  },
+  {
+    "rule_id": "R_ENERGY059",
+    "target_device_id": "ENERGY034",
+    "auto_extracted_features": [
+      "光纤",
+      "光缆"
+    ],
+    "feature_weights": {
+      "光纤": 3.0,
+      "光缆": 3.0
+    },
+    "match_threshold": 2,
+    "remark": "自动生成的规则 - 光缆"
   }
 ]

@@ -75,5 +75,43 @@
     "parse_timeout_seconds": 5,
     "match_timeout_seconds": 10,
     "max_rows_per_file": 10000
+  },
+  "device_row_recognition": {
+    "scoring_weights": {
+      "data_type": 0.30,
+      "structure": 0.35,
+      "industry": 0.35
+    },
+    "probability_thresholds": {
+      "high": 50.0,
+      "medium": 30.0
+    },
+    "industry_keywords": {
+      "device_types": [
+        "传感器", "控制器", "DDC", "阀门", "执行器", "控制柜",
+        "电源", "继电器", "网关", "模块", "探测器", "开关",
+        "变送器", "温控器", "风阀", "水阀", "电动阀", "调节阀",
+        "压力传感器", "温度传感器", "湿度传感器", "CO2传感器",
+        "流量计", "压差开关", "液位开关", "风机", "水泵"
+      ],
+      "parameters": [
+        "PPM", "ppm", "℃", "摄氏度", "Pa", "pa", "%RH", "%rh", "m/s", "MPa", "mA",
+        "4-20mA", "0-10V", "2-10V", "AC220V", "DC24V", "DN", "dn",
+        "AI", "AO", "DI", "DO", "点位", "通道", "路", "个",
+        "V", "A", "W", "Hz", "kW", "kg", "mm", "cm", "m"
+      ],
+      "brands": [
+        "霍尼韦尔", "西门子", "江森自控", "施耐德", "明纬",
+        "欧姆龙", "ABB", "丹佛斯", "贝尔莫", "Honeywell",
+        "Siemens", "Johnson", "Schneider", "OMRON", "Danfoss",
+        "Belimo", "Delta", "台达", "正泰", "德力西"
+      ],
+      "model_patterns": [
+        "[A-Z]{2,}-[A-Z0-9]+",
+        "[A-Z]+\\d{3,}",
+        "\\d{4}[A-Z]+",
+        "[A-Z]+-\\d+"
+      ]
+    }
   }
 }

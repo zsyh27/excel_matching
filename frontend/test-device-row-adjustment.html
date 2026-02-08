@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeviceRowAdjustment 组件测试</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    .test-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #303133;
+      border-bottom: 2px solid #409EFF;
+      padding-bottom: 10px;
+    }
+    .test-info {
+      background: #ecf5ff;
+      border: 1px solid #b3d8ff;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+    .test-info h3 {
+      margin-top: 0;
+      color: #409EFF;
+    }
+    .test-data {
+      background: #f5f7fa;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>DeviceRowAdjustment 组件测试页面</h1>
+    
+    <div class="test-info">
+      <h3>测试说明</h3>
+      <p>本页面用于测试 DeviceRowAdjustment 组件的功能。</p>
+      <p><strong>测试步骤：</strong></p>
+      <ol>
+        <li>启动后端服务: <code>cd backend && python app.py</code></li>
+        <li>启动前端开发服务器: <code>cd frontend && npm run dev</code></li>
+        <li>上传一个Excel文件并获取分析结果</li>
+        <li>将分析结果传递给 DeviceRowAdjustment 组件</li>
+        <li>测试以下功能：
+          <ul>
+            <li>概率等级视觉展示（不同颜色背景）</li>
+            <li>单行手动调整（下拉选择框）</li>
+            <li>批量调整（选择多行后批量操作）</li>
+            <li>筛选功能（按行号、内容、概率等级）</li>
+            <li>确认并进入匹配流程</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <div class="test-info">
+      <h3>组件 Props 示例</h3>
+      <div class="test-data">
+<pre>{
+  excelId: "550e8400-e29b-41d4-a716-446655440000",
+  filename: "设备清单.xlsx",
+  analysisResults: [
+    {
+      row_number: 6,
+      probability_level: "high",
+      total_score: 85.5,
+      dimension_scores: {
+        data_type: 90.0,
+        structure: 82.0,
+        industry: 84.5
+      },
+      reasoning: "综合得分85.5分，数据类型分布合理、结构关联性强、包含行业关键词，判定为high概率设备行",
+      row_content: ["1", "CO传感器", "霍尼韦尔", "HSCM-R100U", "2", "1500.00"]
+    },
+    {
+      row_number: 7,
+      probability_level: "medium",
+      total_score: 55.2,
+      dimension_scores: {
+        data_type: 60.0,
+        structure: 50.0,
+        industry: 55.5
+      },
+      reasoning: "综合得分55.2分，数据类型分布一般、结构关联性中等，判定为medium概率设备行",
+      row_content: ["2", "温度传感器", "", "PT100", "5", ""]
+    },
+    {
+      row_number: 8,
+      probability_level: "low",
+      total_score: 25.0,
+      dimension_scores: {
+        data_type: 30.0,
+        structure: 20.0,
+        industry: 25.0
+      },
+      reasoning: "综合得分25.0分，数据类型分布异常、结构关联性弱、缺少行业特征，判定为low概率设备行",
+      row_content: ["备注", "以上价格含税", "", "", "", ""]
+    }
+  ],
+  initialStatistics: {
+    high_probability: 35,
+    medium_probability: 5,
+    low_probability: 26
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="test-info">
+      <h3>预期行为</h3>
+      <ul>
+        <li><strong>高概率行（row 6）</strong>: 应显示浅蓝色背景</li>
+        <li><strong>中概率行（row 7）</strong>: 应显示浅黄色背景</li>
+        <li><strong>低概率行（row 8）</strong>: 应显示浅灰色背景</li>
+        <li><strong>手动标记为设备行</strong>: 应显示深绿色背景，标签显示"手动-设备行"</li>
+        <li><strong>手动取消设备行</strong>: 应显示深红色背景，标签显示"手动-非设备"</li>
+        <li><strong>搜索功能</strong>: 输入"传感器"应筛选出包含该关键词的行</li>
+        <li><strong>概率筛选</strong>: 选择"高概率"应只显示高概率行</li>
+        <li><strong>批量操作</strong>: 选中多行后，批量按钮应启用并显示选中数量</li>
+      </ul>
+    </div>
+
+    <div class="test-info">
+      <h3>API 调用验证</h3>
+      <p>组件会调用以下API：</p>
+      <ul>
+        <li><code>POST /api/excel/manual-adjust</code> - 保存手动调整</li>
+        <li><code>GET /api/excel/final-device-rows</code> - 获取最终设备行</li>
+      </ul>
+      <p>可以在浏览器开发者工具的 Network 标签中查看API调用情况。</p>
+    </div>
+
+    <div class="test-info">
+      <h3>集成到主应用</h3>
+      <p>要在主应用中使用此组件，需要：</p>
+      <ol>
+        <li>在 App.vue 中导入组件</li>
+        <li>在上传成功后调用分析接口获取 analysisResults</li>
+        <li>将分析结果传递给 DeviceRowAdjustment 组件</li>
+        <li>监听 proceed-to-matching 事件，处理进入匹配流程的逻辑</li>
+      </ol>
+      <div class="test-data">
+<pre>&lt;template&gt;
+  &lt;DeviceRowAdjustment
+    v-if="showAdjustment"
+    :excel-id="excelId"
+    :filename="filename"
+    :analysis-results="analysisResults"
+    :initial-statistics="statistics"
+    @proceed-to-matching="handleProceedToMatching"
+  /&gt;
+&lt;/template&gt;
+
+&lt;script setup&gt;
+import DeviceRowAdjustment from './components/DeviceRowAdjustment.vue'
+
+const handleProceedToMatching = (data) => {
+  // 使用 data.deviceRows 进行设备匹配
+  console.log('最终设备行:', data.deviceRows)
+  // 调用现有的匹配流程...
+}
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
