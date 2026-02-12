@@ -48,11 +48,13 @@ DDC 设备清单匹配报价系统是一个轻量化的 Web 应用，专为 DDC 
 - Vite (构建工具)
 
 **数据存储:**
-- JSON 文件 (设备库、规则库、配置)
+- 支持双模式存储：数据库模式（推荐）和 JSON 文件模式（向后兼容）
+- 数据库支持：SQLite（默认）和 MySQL
 - 支持两大类设备：
   - 楼宇自控设备（25个）：传感器、控制器、执行器等
   - 能源管理系统设备（34个）：数据采集器、服务器、软件系统等
-- 静态 JSON 文件（无数据库依赖）
+- 真实设备数据：约720条真实设备价格数据
+- 自动回退机制：数据库不可用时自动切换到 JSON 模式
 
 ## 项目结构
 
@@ -60,15 +62,23 @@ DDC 设备清单匹配报价系统是一个轻量化的 Web 应用，专为 DDC 
 .
 ├── backend/                    # 后端代码
 │   ├── app.py                 # Flask 应用入口（包含设备行识别 API）
-│   ├── config.py              # 配置管理
+│   ├── config.py              # 配置管理（包含数据库配置）
 │   ├── requirements.txt       # Python 依赖
 │   ├── modules/               # 业务模块
-│   │   ├── device_row_classifier.py  # 设备行分类器（新增）
+│   │   ├── device_row_classifier.py  # 设备行分类器
 │   │   ├── excel_parser.py   # Excel 解析模块
 │   │   ├── text_preprocessor.py  # 文本预处理模块
 │   │   ├── match_engine.py   # 匹配引擎模块
 │   │   ├── excel_exporter.py # Excel 导出模块
-│   │   └── data_loader.py    # 数据加载模块
+│   │   ├── data_loader.py    # 统一数据加载模块（支持数据库和JSON）
+│   │   ├── database.py       # 数据库管理器（新增）
+│   │   ├── database_loader.py # 数据库加载器（新增）
+│   │   └── models.py         # ORM 数据模型（新增）
+│   ├── init_database.py      # 数据库初始化脚本（新增）
+│   ├── migrate_json_to_db.py # JSON到数据库迁移脚本（新增）
+│   ├── import_devices_from_excel.py  # Excel设备导入脚本（新增）
+│   ├── generate_rules_for_devices.py # 规则自动生成脚本（新增）
+│   ├── sql_templates/         # SQL模板目录（新增）
 │   ├── tests/                 # 测试文件（76 个测试全部通过）
 │   └── temp/                  # 临时文件目录
 ├── frontend/                   # 前端代码
@@ -87,19 +97,23 @@ DDC 设备清单匹配报价系统是一个轻量化的 Web 应用，专为 DDC 
 │   ├── package.json          # npm 依赖
 │   └── vite.config.js        # Vite 配置
 ├── data/                       # 静态数据文件
-│   ├── static_device.json    # 设备表（25个示例设备）
-│   ├── static_rule.json      # 规则表（自动生成）
+│   ├── devices.db            # SQLite 数据库文件（数据库模式）
+│   ├── static_device.json    # 设备表（JSON模式，25个示例设备）
+│   ├── static_rule.json      # 规则表（JSON模式，自动生成）
 │   ├── static_config.json    # 配置文件（包含设备行识别配置）
+│   ├── 真实设备价格例子.xlsx  # 真实设备数据（约720条）
 │   └── 示例设备清单.xlsx      # 示例 Excel 文件
 ├── .kiro/                      # Kiro 规格文档
 │   ├── specs/
 │   │   ├── ddc-device-matching/  # 设备匹配功能规格
-│   │   └── device-row-intelligent-recognition/  # 设备行识别功能规格
+│   │   ├── device-row-intelligent-recognition/  # 设备行识别功能规格
+│   │   └── database-migration/   # 数据库迁移功能规格（新增）
 │   └── PROJECT.md             # 项目概述
 ├── README.md                   # 项目说明（本文件）
 ├── SETUP.md                    # 详细安装指南
 ├── QUICK_START_GUIDE.md        # 快速启动指南
-├── MAINTENANCE.md              # 数据维护指南
+├── MAINTENANCE.md              # 数据维护指南（包含数据库维护）
+├── DATABASE_SETUP.md           # 数据库设置指南（新增）
 ├── DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md  # 设备行识别功能总结
 └── TASK_9_FINAL_CHECKPOINT_REPORT.md  # 最终检查点报告
 ```
@@ -129,7 +143,38 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-4. **运行后端服务**:
+4. **配置数据存储模式**:
+
+编辑 `backend/config.py` 选择存储模式：
+
+**选项 A: 使用数据库模式（推荐）**
+```python
+STORAGE_MODE = 'database'  # 使用数据库
+DATABASE_TYPE = 'sqlite'   # 或 'mysql'
+DATABASE_URL = 'sqlite:///data/devices.db'
+```
+
+**选项 B: 使用 JSON 模式（向后兼容）**
+```python
+STORAGE_MODE = 'json'  # 使用 JSON 文件
+```
+
+5. **初始化数据库**（仅数据库模式需要）:
+
+```bash
+# 创建数据库表结构
+python init_database.py
+
+# 导入真实设备数据（约720条）
+python import_devices_from_excel.py
+
+# 自动生成匹配规则
+python generate_rules_for_devices.py
+```
+
+详细的数据库设置说明请参考 [DATABASE_SETUP.md](backend/DATABASE_SETUP.md)
+
+6. **运行后端服务**:
 ```bash
 python app.py
 ```
@@ -227,11 +272,18 @@ pytest tests/ -v -k "property"
 
 系统提供了完整的示例数据，包括：
 
+**JSON 模式（示例数据）**:
 - **25 个设备**: 涵盖 DDC 控制器、传感器、阀门、执行器、控制柜等
 - **25 条匹配规则**: 与设备一一对应，自动生成
 - **示例 Excel 文件**: 
   - `data/示例设备清单.xlsx` - 标准格式示例
   - `data/(原始表格)建筑设备监控及能源管理报价清单(2).xlsx` - 真实场景测试文件
+
+**数据库模式（真实数据）**:
+- **约720条真实设备**: 从 `data/真实设备价格例子.xlsx` 导入
+- **自动生成的匹配规则**: 为每个设备自动生成匹配规则
+- **完整的设备信息**: 包含品牌、型号、参数、价格等
+- **支持 CRUD 操作**: 可以添加、修改、删除设备
 
 #### 真实测试文件说明
 
@@ -304,8 +356,37 @@ pytest tests/ -v -k "property"
 
 ## 数据维护
 
-### 添加新设备
+### 数据库模式（推荐）
 
+**添加新设备**:
+```bash
+# 方式1: 通过 Excel 批量导入
+python import_devices_from_excel.py --file your_devices.xlsx
+
+# 方式2: 通过 SQL 模板手动导入
+# 编辑 sql_templates/insert_devices.sql 后执行
+```
+
+**自动生成规则**:
+```bash
+python generate_rules_for_devices.py
+```
+
+**数据库管理**:
+```bash
+# 初始化数据库
+python init_database.py
+
+# 从 JSON 迁移到数据库
+python migrate_json_to_db.py
+
+# 查看数据库内容
+sqlite3 data/devices.db "SELECT * FROM devices LIMIT 10;"
+```
+
+### JSON 模式（向后兼容）
+
+**添加新设备**:
 1. 编辑 `data/static_device.json`，添加新设备信息
 2. 运行自动规则生成脚本：
 ```bash
@@ -313,15 +394,13 @@ python generate_rules.py
 ```
 3. 系统会自动为新设备生成匹配规则
 
-### 调整匹配规则
-
+**调整匹配规则**:
 编辑 `data/static_rule.json`，可以调整：
 - 特征权重（feature_weights）
 - 匹配阈值（match_threshold）
 - 特征列表（auto_extracted_features）
 
-### 更新配置
-
+**更新配置**:
 编辑 `data/static_config.json`，可以添加：
 - 新的归一化映射
 - 新的过滤关键词
@@ -395,6 +474,21 @@ pytest tests/ --cov=modules --cov-report=html
 5. 开启 Pull Request
 
 ## 版本历史
+
+### v2.0.0 (2026-02-12)
+- 🎉 **数据库支持**: 新增数据库存储模式
+  - 支持 SQLite 和 MySQL 数据库
+  - 使用 SQLAlchemy ORM 框架
+  - 支持约720条真实设备数据
+  - 自动回退到 JSON 模式（向后兼容）
+- 🔧 **数据管理工具**: 
+  - 数据库初始化脚本
+  - JSON 到数据库迁移脚本
+  - Excel 设备批量导入脚本
+  - 规则自动生成脚本
+  - SQL 模板支持
+- 📊 **性能优化**: 数据库模式下查询性能提升
+- 📄 详细说明: [DATABASE_SETUP.md](backend/DATABASE_SETUP.md)
 
 ### v1.2.2 (2026-02-08)
 - 🔧 **故障排查**: 手动调整功能400错误排查

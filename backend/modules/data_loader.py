@@ -180,12 +180,12 @@ class ConfigManager:
                 base[key] = value
 
 
-class DataLoader:
+class JSONLoader:
     """
-    数据加载器
+    JSON文件数据加载器
     
     职责：
-    - 加载设备表、规则表、配置文件
+    - 从JSON文件加载设备表、规则表、配置文件
     - 验证数据完整性
     - 自动生成特征
     - 同步规则表与设备表
@@ -197,7 +197,7 @@ class DataLoader:
                  config_file: str,
                  preprocessor=None):
         """
-        初始化数据加载器
+        初始化JSON数据加载器
         
         Args:
             device_file: 设备表文件路径
@@ -527,3 +527,270 @@ class DataLoader:
         if self._rules is None:
             self.load_rules()
         return self._rules
+
+
+class DataLoader:
+    """
+    统一数据加载器 - 支持数据库和JSON两种存储模式
+    
+    职责：
+    - 根据配置选择合适的存储模式（数据库或JSON）
+    - 提供统一的数据访问接口
+    - 实现存储模式自动回退机制
+    
+    验证需求: 4.1, 4.2, 5.1, 5.2, 5.3, 5.4
+    """
+    
+    def __init__(self, 
+                 device_file: str = None,
+                 rule_file: str = None,
+                 config_file: str = None,
+                 preprocessor=None,
+                 config=None):
+        """
+        初始化统一数据加载器
+        
+        支持两种初始化方式：
+        1. 传统方式：DataLoader(device_file, rule_file, config_file, preprocessor)
+        2. 新方式：DataLoader(config=config_obj, preprocessor=preprocessor)
+        
+        Args:
+            device_file: 设备表文件路径（传统方式）
+            rule_file: 规则表文件路径（传统方式）
+            config_file: 配置文件路径（传统方式）
+            preprocessor: TextPreprocessor 实例（可选）
+            config: 配置对象（新方式，包含STORAGE_MODE、DATABASE_URL等配置）
+        """
+        self.preprocessor = preprocessor
+        
+        # 判断使用哪种初始化方式
+        if config is not None:
+            # 新方式：使用配置对象
+            self.config = config
+            self.storage_mode = getattr(config, 'STORAGE_MODE', 'json')
+            
+            # 根据配置初始化对应的加载器
+            if self.storage_mode == 'database':
+                try:
+                    from .database import DatabaseManager
+                    from .database_loader import DatabaseLoader
+                    
+                    db_manager = DatabaseManager(config.DATABASE_URL)
+                    self.loader = DatabaseLoader(db_manager, preprocessor)
+                    logger.info(f"使用数据库存储模式: {getattr(config, 'DATABASE_TYPE', 'unknown')}")
+                except Exception as e:
+                    if getattr(config, 'FALLBACK_TO_JSON', True):
+                        logger.warning(f"数据库连接失败，回退到JSON模式: {e}")
+                        self.loader = JSONLoader(
+                            config.DEVICE_FILE,
+                            config.RULE_FILE,
+                            config.CONFIG_FILE,
+                            preprocessor
+                        )
+                        self.storage_mode = 'json'
+                    else:
+                        logger.error(f"数据库连接失败且不允许回退: {e}")
+                        raise
+            else:
+                self.loader = JSONLoader(
+                    config.DEVICE_FILE,
+                    config.RULE_FILE,
+                    config.CONFIG_FILE,
+                    preprocessor
+                )
+                logger.info("使用JSON文件存储模式")
+        else:
+            # 传统方式：直接使用文件路径（向后兼容）
+            if device_file is None or rule_file is None or config_file is None:
+                raise ValueError("必须提供 device_file, rule_file, config_file 或 config 参数")
+            
+            self.loader = JSONLoader(
+                device_file,
+                rule_file,
+                config_file,
+                preprocessor
+            )
+            self.storage_mode = 'json'
+            logger.info("使用JSON文件存储模式（传统方式）")
+    
+    def load_devices(self) -> Dict[str, Device]:
+        """
+        加载设备 - 委托给具体加载器
+        
+        验证需求: 4.1, 5.4
+        
+        Returns:
+            设备字典，key 为 device_id
+        """
+        return self.loader.load_devices()
+    
+    def load_rules(self) -> List[Rule]:
+        """
+        加载规则 - 委托给具体加载器
+        
+        验证需求: 4.2, 5.4
+        
+        Returns:
+            规则列表
+        """
+        return self.loader.load_rules()
+    
+    def get_device_by_id(self, device_id: str) -> Optional[Device]:
+        """
+        根据 device_id 获取设备 - 委托给具体加载器
+        
+        验证需求: 4.3, 5.4
+        
+        Args:
+            device_id: 设备ID
+            
+        Returns:
+            设备实例，如果不存在返回 None
+        """
+        return self.loader.get_device_by_id(device_id)
+    
+    def get_all_devices(self) -> Dict[str, Device]:
+        """
+        获取所有设备 - 委托给具体加载器
+        
+        验证需求: 5.4
+        
+        Returns:
+            设备字典
+        """
+        if hasattr(self.loader, 'get_all_devices'):
+            return self.loader.get_all_devices()
+        else:
+            # DatabaseLoader 没有 get_all_devices 方法，使用 load_devices
+            return self.loader.load_devices()
+    
+    def get_all_rules(self) -> List[Rule]:
+        """
+        获取所有规则 - 委托给具体加载器
+        
+        验证需求: 5.4
+        
+        Returns:
+            规则列表
+        """
+        if hasattr(self.loader, 'get_all_rules'):
+            return self.loader.get_all_rules()
+        else:
+            # DatabaseLoader 没有 get_all_rules 方法，使用 load_rules
+            return self.loader.load_rules()
+    
+    def load_config(self) -> Dict:
+        """
+        加载配置文件 - 委托给具体加载器
+        
+        验证需求: 5.4
+        
+        Returns:
+            配置字典
+        """
+        if hasattr(self.loader, 'load_config'):
+            return self.loader.load_config()
+        else:
+            # DatabaseLoader 可能没有 load_config 方法
+            # 从 JSON 配置文件加载
+            if hasattr(self, 'config') and hasattr(self.config, 'CONFIG_FILE'):
+                config_manager = ConfigManager(self.config.CONFIG_FILE)
+                return config_manager.get_config()
+            else:
+                logger.warning("无法加载配置：未提供配置文件路径")
+                return {}
+    
+    @property
+    def config_manager(self):
+        """
+        获取配置管理器
+        
+        用于支持配置更新等操作
+        
+        Returns:
+            ConfigManager 实例
+        """
+        if hasattr(self.loader, 'config_manager'):
+            return self.loader.config_manager
+        else:
+            # DatabaseLoader 可能没有 config_manager
+            # 创建一个临时的配置管理器
+            if hasattr(self, 'config') and hasattr(self.config, 'CONFIG_FILE'):
+                if not hasattr(self, '_config_manager'):
+                    self._config_manager = ConfigManager(self.config.CONFIG_FILE)
+                return self._config_manager
+            else:
+                raise AttributeError("当前加载器不支持配置管理器")
+    
+    def validate_data_integrity(self) -> bool:
+        """
+        验证数据完整性 - 委托给具体加载器
+        
+        验证需求: 5.4
+        
+        Returns:
+            验证是否通过
+        """
+        if hasattr(self.loader, 'validate_data_integrity'):
+            return self.loader.validate_data_integrity()
+        else:
+            # DatabaseLoader 可能没有此方法，跳过验证
+            logger.warning("当前加载器不支持数据完整性验证")
+            return True
+    
+    def auto_generate_features(self, device: Device) -> List[str]:
+        """
+        自动生成设备的匹配特征 - 委托给具体加载器
+        
+        验证需求: 5.4
+        
+        Args:
+            device: 设备实例
+            
+        Returns:
+            特征列表
+        """
+        if hasattr(self.loader, 'auto_generate_features'):
+            return self.loader.auto_generate_features(device)
+        else:
+            # DatabaseLoader 可能没有此方法，使用默认实现
+            if self.preprocessor is None:
+                raise ValueError("需要提供 TextPreprocessor 实例才能自动生成特征")
+            
+            features = []
+            if device.brand:
+                features.append(device.brand)
+            if device.device_name:
+                features.append(device.device_name)
+            if device.spec_model:
+                features.append(device.spec_model)
+            if device.detailed_params:
+                params_result = self.preprocessor.preprocess(device.detailed_params)
+                features.extend(params_result.features)
+            
+            return features
+    
+    def auto_sync_rules_with_devices(self) -> bool:
+        """
+        自动同步规则表与设备表 - 委托给具体加载器
+        
+        验证需求: 5.4
+        
+        Returns:
+            是否有新规则生成
+        """
+        if hasattr(self.loader, 'auto_sync_rules_with_devices'):
+            return self.loader.auto_sync_rules_with_devices()
+        else:
+            # DatabaseLoader 可能没有此方法
+            logger.warning("当前加载器不支持自动同步规则")
+            return False
+    
+    def get_storage_mode(self) -> str:
+        """
+        获取当前使用的存储模式
+        
+        Returns:
+            存储模式：'database' 或 'json'
+        """
+        return self.storage_mode

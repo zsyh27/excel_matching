@@ -51,42 +51,45 @@ excel_analysis_cache = {}
 logger.info("初始化系统组件...")
 
 try:
-    # 1. 加载数据
-    data_loader = DataLoader(
-        device_file=Config.DEVICE_FILE,
-        rule_file=Config.RULE_FILE,
-        config_file=Config.CONFIG_FILE
-    )
-    
-    # 2. 加载配置
-    config = data_loader.load_config()
-    
-    # 3. 初始化文本预处理器
+    # 1. 初始化文本预处理器（需要先加载配置）
+    # 临时加载配置用于初始化预处理器
+    from modules.data_loader import ConfigManager
+    temp_config_manager = ConfigManager(Config.CONFIG_FILE)
+    config = temp_config_manager.get_config()
     preprocessor = TextPreprocessor(config)
     
-    # 4. 设置数据加载器的预处理器（用于自动特征生成）
-    data_loader.preprocessor = preprocessor
+    # 2. 使用新方式初始化数据加载器（支持数据库和JSON两种模式）
+    data_loader = DataLoader(
+        config=Config,
+        preprocessor=preprocessor
+    )
     
-    # 5. 加载设备和规则
+    logger.info(f"当前存储模式: {data_loader.get_storage_mode()}")
+    
+    # 3. 重新加载配置（通过数据加载器）
+    config = data_loader.load_config()
+    
+    # 4. 加载设备和规则
     devices = data_loader.load_devices()
     rules = data_loader.load_rules()
     
-    # 6. 验证数据完整性
+    # 5. 验证数据完整性
     data_loader.validate_data_integrity()
     
-    # 7. 初始化 Excel 解析器
+    # 6. 初始化 Excel 解析器
     excel_parser = ExcelParser(preprocessor=preprocessor)
     
-    # 8. 初始化匹配引擎
+    # 7. 初始化匹配引擎
     match_engine = MatchEngine(rules=rules, devices=devices, config=config)
     
-    # 9. 初始化 Excel 导出器
+    # 8. 初始化 Excel 导出器
     excel_exporter = ExcelExporter()
     
-    # 10. 初始化设备行分类器
+    # 9. 初始化设备行分类器
     device_row_classifier = DeviceRowClassifier(config)
     
     logger.info("系统组件初始化完成")
+    logger.info(f"已加载 {len(devices)} 个设备，{len(rules)} 条规则")
     
 except Exception as e:
     logger.error(f"系统初始化失败: {e}")

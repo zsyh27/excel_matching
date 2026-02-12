@@ -11,7 +11,8 @@
 3. **智能匹配**: 基于权重的特征匹配算法，匹配准确率≥85%
 4. **格式保留**: 导出时精准保留原 Excel 的合并单元格、行列顺序
 5. **人工兜底**: 支持手动调整设备行识别结果和匹配失败时手动选择设备
-6. **轻量化架构**: 基于静态 JSON 文件，无数据库依赖，不使用大模型
+6. **灵活存储**: 支持数据库模式（推荐）和 JSON 文件模式（向后兼容）
+7. **大规模数据**: 支持约720条真实设备数据的管理和匹配
 
 ## 技术栈
 
@@ -26,7 +27,10 @@
 - Axios
 
 **数据存储:**
-- 静态 JSON 文件（static_device.json、static_rule.json、static_config.json）
+- 支持双模式：数据库模式（推荐）和 JSON 文件模式（向后兼容）
+- 数据库：SQLite（默认）或 MySQL，使用 SQLAlchemy ORM
+- 真实设备数据：约720条设备，从 Excel 批量导入
+- 自动回退机制：数据库不可用时自动切换到 JSON 模式
 
 ## 四大标准化原则
 
@@ -47,8 +51,10 @@
 - ✅ 静态规则匹配
 - ✅ 表格展示与人工调整
 - ✅ Excel 格式还原导出
+- ✅ 数据库存储支持（SQLite/MySQL）
+- ✅ 真实设备数据导入（约720条）
 
-**已实现的两大核心功能模块：**
+**已实现的三大核心功能模块：**
 
 1. **设备行智能识别与手动调整** ✅
    - 自动识别准确率: 98.04%
@@ -62,6 +68,12 @@
    - Excel格式完美保留
    - 性能表现优秀
 
+3. **数据库存储与管理** ✅
+   - 支持 SQLite 和 MySQL
+   - 约720条真实设备数据
+   - 自动化导入和迁移工具
+   - 向后兼容 JSON 模式
+
 ## 项目结构
 
 ```
@@ -72,20 +84,32 @@ ddc-device-matching/
 │   │   │   ├── requirements.md    # 需求文档（9个需求，52个验收标准）
 │   │   │   ├── design.md          # 设计文档（架构、接口、数据模型、20个正确性属性）
 │   │   │   └── tasks.md           # 任务清单（13个主要任务）
-│   │   └── device-row-intelligent-recognition/
-│   │       ├── requirements.md    # 设备行识别需求文档（15个需求）
-│   │       ├── design.md          # 设备行识别设计文档（三维度评分模型）
-│   │       └── tasks.md           # 设备行识别任务清单（9个任务，已完成）
+│   │   ├── device-row-intelligent-recognition/
+│   │   │   ├── requirements.md    # 设备行识别需求文档（15个需求）
+│   │   │   ├── design.md          # 设备行识别设计文档（三维度评分模型）
+│   │   │   └── tasks.md           # 设备行识别任务清单（9个任务，已完成）
+│   │   └── database-migration/    # 数据库迁移功能规格（新增）
+│   │       ├── requirements.md    # 数据库迁移需求文档（12个需求）
+│   │       ├── design.md          # 数据库迁移设计文档（ORM模型、10个正确性属性）
+│   │       └── tasks.md           # 数据库迁移任务清单（14个任务，已完成）
 │   └── PROJECT.md                 # 本文件
 ├── backend/                       # 后端代码（已实现）
 │   ├── app.py                     # Flask应用，包含设备行识别API
 │   ├── modules/
 │   │   ├── text_preprocessor.py  # 文本预处理
-│   │   ├── data_loader.py        # 数据加载
+│   │   ├── data_loader.py        # 统一数据加载（支持数据库和JSON）
+│   │   ├── database.py           # 数据库管理器（新增）
+│   │   ├── database_loader.py    # 数据库加载器（新增）
+│   │   ├── models.py             # ORM数据模型（新增）
 │   │   ├── excel_parser.py       # Excel解析
 │   │   ├── match_engine.py       # 匹配引擎
 │   │   ├── excel_exporter.py     # Excel导出
 │   │   └── device_row_classifier.py  # 设备行分类器（新增）
+│   ├── init_database.py          # 数据库初始化脚本（新增）
+│   ├── migrate_json_to_db.py     # JSON到数据库迁移脚本（新增）
+│   ├── import_devices_from_excel.py  # Excel设备导入脚本（新增）
+│   ├── generate_rules_for_devices.py # 规则自动生成脚本（新增）
+│   ├── sql_templates/             # SQL模板目录（新增）
 │   ├── tests/                    # 单元测试
 │   └── temp/                     # 临时文件目录
 ├── frontend/                      # 前端代码（已实现）
@@ -100,15 +124,17 @@ ddc-device-matching/
 │           ├── DeviceRowAdjustmentView.vue  # 设备行调整页面（新增）
 │           └── MatchingView.vue
 ├── data/                          # 数据文件
-│   ├── static_device.json        # 设备数据
-│   ├── static_rule.json          # 匹配规则
-│   └── static_config.json        # 配置文件（包含设备行识别配置）
+│   ├── devices.db                # SQLite数据库文件（数据库模式）
+│   ├── static_device.json        # 设备数据（JSON模式）
+│   ├── static_rule.json          # 匹配规则（JSON模式）
+│   ├── static_config.json        # 配置文件（包含设备行识别配置）
+│   └── 真实设备价格例子.xlsx      # 真实设备数据（约720条）
 └── README.md                      # 项目说明
 ```
 
 ## 核心工作流程
 
-### 完整流程（包含设备行智能识别）
+### 完整流程（包含设备行智能识别和数据库支持）
 
 1. **上传**: 用户上传 xls/xlsm/xlsx 格式的设备清单
 2. **智能识别**: 系统自动识别设备行（三维度评分，准确率98%+）
@@ -121,13 +147,23 @@ ddc-device-matching/
    - 实时视觉反馈
 4. **解析**: 系统解析最终确认的设备行
 5. **预处理**: 对设备描述进行归一化和特征提取
-6. **匹配**: 基于权重的特征匹配，计算得分并选择最佳匹配
+6. **匹配**: 基于权重的特征匹配，从数据库或JSON加载设备数据
 7. **展示**: 前端表格展示匹配结果，支持人工调整
 8. **导出**: 保留原格式，新增"匹配设备"和"单价"列，生成报价清单
 
 ## 关键特性
 
-### 设备行智能识别（新增功能）
+### 数据库存储（新增功能）
+- **双模式支持**: 数据库模式（推荐）和 JSON 模式（向后兼容）
+- **数据库类型**: 支持 SQLite（默认）和 MySQL
+- **ORM 框架**: 使用 SQLAlchemy 简化数据库操作
+- **大规模数据**: 支持约720条真实设备数据
+- **自动回退**: 数据库不可用时自动切换到 JSON 模式
+- **批量导入**: 从 Excel 批量导入设备数据
+- **自动迁移**: 提供 JSON 到数据库的迁移工具
+- **CRUD 操作**: 完整的设备增删改查功能
+
+### 设备行智能识别
 - **三维度评分**: 数据类型、结构关联、行业特征综合评估
 - **高准确率**: 自动识别准确率98.04%，手动调整后100%
 - **视觉直观**: 5种颜色编码概率等级（高/中/低/手动标记/手动取消）
@@ -153,6 +189,10 @@ ddc-device-matching/
 ## 下一步行动
 
 ### 查看和执行任务
+
+**数据库迁移功能（已完成）:**
+- 查看 `.kiro/specs/database-migration/tasks.md` 了解数据库迁移相关任务
+- 查看 `backend/DATABASE_SETUP.md` 了解数据库设置详情
 
 **设备匹配功能（主要功能）:**
 - 查看 `.kiro/specs/ddc-device-matching/tasks.md` 了解设备匹配相关任务
@@ -186,6 +226,11 @@ npm run dev
 
 ### 规格文档
 
+**数据库迁移功能:**
+- **需求文档**: `.kiro/specs/database-migration/requirements.md`
+- **设计文档**: `.kiro/specs/database-migration/design.md`
+- **任务清单**: `.kiro/specs/database-migration/tasks.md`
+
 **设备匹配功能:**
 - **需求文档**: `.kiro/specs/ddc-device-matching/requirements.md`
 - **设计文档**: `.kiro/specs/ddc-device-matching/design.md`
@@ -199,8 +244,9 @@ npm run dev
 ### 项目文档
 - **项目说明**: `.kiro/PROJECT.md` (本文件)
 - **README**: `README.md`
-- **维护指南**: `MAINTENANCE.md`
+- **维护指南**: `MAINTENANCE.md` (包含数据库维护)
 - **快速开始**: `QUICK_START_GUIDE.md`
+- **数据库设置**: `backend/DATABASE_SETUP.md` (新增)
 
 ### 故障排查文档（新增）
 - **完整故障排查指南**: `MANUAL_ADJUST_TROUBLESHOOTING_V2.md`
@@ -209,6 +255,12 @@ npm run dev
 - **测试脚本**: `backend/test_manual_adjust_debug.py`
 
 ### 实现总结文档
+
+**数据库迁移:**
+- `backend/DATABASE_SETUP.md` - 数据库设置完整指南
+- `backend/MIGRATION_GUIDE.md` - 数据迁移指南
+- `backend/IMPORT_DEVICES_GUIDE.md` - 设备导入指南
+- `backend/RULE_GENERATION_GUIDE.md` - 规则生成指南
 
 **设备行识别:**
 - `DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md` - 功能完整总结
@@ -245,6 +297,15 @@ npm run dev
 3. 系统启动时会自动校验规则表与设备表的关联完整性
 4. 配置文件修改后会自动热加载，无需重启服务
 5. 测试任务标记为可选（*），可以先实现核心功能，后续补充测试
+
+### 数据库模式（新增）
+1. 默认使用 SQLite 数据库，位于 `data/devices.db`
+2. 支持通过配置切换到 MySQL 数据库
+3. 数据库连接失败时自动回退到 JSON 模式（如果配置允许）
+4. 使用 SQLAlchemy ORM 进行数据库操作
+5. 提供完整的数据导入、迁移和管理工具
+6. 数据库模式下支持约720条真实设备数据
+7. 规则与设备通过外键关联，删除设备时自动级联删除规则
 
 ### 设备行识别功能
 1. 评分权重和阈值可在 `data/static_config.json` 中配置

@@ -5,8 +5,8 @@
 ## 目录
 
 - [数据文件概述](#数据文件概述)
-- [设备表维护](#设备表维护)
-- [规则表维护](#规则表维护)
+- [数据库模式维护](#数据库模式维护)
+- [JSON模式维护](#json模式维护)
 - [配置文件管理](#配置文件管理)
 - [自动化工具](#自动化工具)
 - [故障排查](#故障排查)
@@ -14,11 +14,61 @@
 
 ## 数据文件概述
 
-系统使用三个 JSON 文件存储数据，它们之间的关系如下：
+系统支持两种数据存储模式：**数据库模式**（推荐）和 **JSON 文件模式**（向后兼容）。
+
+### 数据库模式（推荐）
+
+使用关系型数据库存储设备和规则数据，支持大规模数据管理。
 
 ```
 ┌─────────────────────┐
-│ static_device.json  │  设备基础信息（25个设备）
+│   devices 表        │  设备基础信息（约720条真实数据）
+│ - device_id (PK)    │  设备唯一标识
+│ - brand             │  品牌
+│ - device_name       │  设备名称
+│ - spec_model        │  规格型号
+│ - detailed_params   │  详细参数
+│ - unit_price        │  不含税单价
+└─────────────────────┘
+          ↓ 外键关联
+┌─────────────────────┐
+│   rules 表          │  匹配规则
+│ - rule_id (PK)      │  规则唯一标识
+│ - target_device_id  │  关联的设备ID (FK)
+│   (FK)              │
+│ - auto_extracted_   │  自动提取的特征 (JSON)
+│   features          │
+│ - feature_weights   │  特征权重映射 (JSON)
+│ - match_threshold   │  匹配阈值
+│ - remark            │  备注说明
+└─────────────────────┘
+          ↓ 使用
+┌─────────────────────┐
+│   configs 表        │  系统配置
+│ - config_key (PK)   │  配置键
+│ - config_value      │  配置值 (JSON)
+│ - description       │  配置说明
+└─────────────────────┘
+```
+
+**数据库文件位置**:
+- SQLite: `data/devices.db`
+- MySQL: 根据配置连接远程数据库
+
+**优势**:
+- 支持大规模数据（约720条真实设备）
+- 高效的查询和索引
+- 完整的 CRUD 操作
+- 事务支持，保证数据一致性
+- 支持并发访问
+
+### JSON 文件模式（向后兼容）
+
+使用静态 JSON 文件存储数据，适合小规模数据和快速原型。
+
+```
+┌─────────────────────┐
+│ static_device.json  │  设备基础信息（25个示例设备）
 │ - device_id         │  设备唯一标识
 │ - brand             │  品牌
 │ - device_name       │  设备名称
@@ -48,13 +98,33 @@
 └─────────────────────┘
 ```
 
-### 文件位置
-
+**文件位置**:
 所有数据文件位于 `data/` 目录下：
 - `data/static_device.json` - 设备表
 - `data/static_rule.json` - 规则表
 - `data/static_config.json` - 配置文件
 - `data/示例设备清单.xlsx` - 示例 Excel 文件
+
+**优势**:
+- 无需数据库配置
+- 易于版本控制
+- 快速部署
+- 适合小规模数据
+
+### 存储模式切换
+
+在 `backend/config.py` 中配置存储模式：
+
+```python
+# 数据库模式
+STORAGE_MODE = 'database'
+DATABASE_TYPE = 'sqlite'  # 或 'mysql'
+DATABASE_URL = 'sqlite:///data/devices.db'
+FALLBACK_TO_JSON = True  # 数据库失败时自动回退
+
+# JSON 模式
+STORAGE_MODE = 'json'
+```
 
 ### 数据完整性
 
@@ -62,8 +132,236 @@
 1. 所有规则的 `target_device_id` 必须存在于设备表中
 2. 规则的必需字段不能为空
 3. 设备和规则的 ID 必须唯一
+4. 数据库模式下，外键约束自动保证关联完整性
 
-## 设备表维护
+## 数据库模式维护
+
+### 数据库初始化
+
+**首次设置数据库**:
+
+```bash
+cd backend
+
+# 1. 创建数据库表结构
+python init_database.py
+
+# 2. 导入真实设备数据（约720条）
+python import_devices_from_excel.py
+
+# 3. 自动生成匹配规则
+python generate_rules_for_devices.py
+```
+
+详细说明请参考 [DATABASE_SETUP.md](backend/DATABASE_SETUP.md)
+
+### 添加新设备
+
+**方式 1: 通过 Excel 批量导入**
+
+```bash
+# 准备 Excel 文件，包含以下列：
+# - 品牌
+# - 设备名称
+# - 规格型号
+# - 详细参数
+# - 不含税单价
+
+python import_devices_from_excel.py --file your_devices.xlsx
+```
+
+**方式 2: 通过 SQL 模板手动导入**
+
+编辑 `backend/sql_templates/insert_devices.sql`:
+
+```sql
+INSERT INTO devices (device_id, brand, device_name, spec_model, detailed_params, unit_price)
+VALUES
+('SENSOR010', '西门子', '流量传感器', 'QVE2001', '0-10m/s,4-20mA输出', 1850.00),
+('SENSOR011', '霍尼韦尔', '压力传感器', 'P7640B', '0-10bar,4-20mA输出', 1200.00);
+```
+
+然后执行：
+
+```bash
+sqlite3 data/devices.db < backend/sql_templates/insert_devices.sql
+```
+
+**方式 3: 通过 Python 代码**
+
+```python
+from modules.database import DatabaseManager
+from modules.models import Device as DeviceModel
+
+db_manager = DatabaseManager('sqlite:///data/devices.db')
+
+with db_manager.session_scope() as session:
+    new_device = DeviceModel(
+        device_id='SENSOR010',
+        brand='西门子',
+        device_name='流量传感器',
+        spec_model='QVE2001',
+        detailed_params='0-10m/s,4-20mA输出,管道式安装',
+        unit_price=1850.00
+    )
+    session.add(new_device)
+```
+
+### 修改设备信息
+
+**通过 SQL**:
+
+```bash
+# 修改价格
+sqlite3 data/devices.db "UPDATE devices SET unit_price = 800.00 WHERE device_id = 'SENSOR001';"
+
+# 修改参数
+sqlite3 data/devices.db "UPDATE devices SET detailed_params = '0-100PPM,4-20mA,带显示' WHERE device_id = 'SENSOR001';"
+```
+
+**通过 Python**:
+
+```python
+from modules.database_loader import DatabaseLoader
+
+loader = DatabaseLoader(db_manager)
+
+# 获取设备
+device = loader.get_device_by_id('SENSOR001')
+
+# 修改属性
+device.unit_price = 800.00
+
+# 更新到数据库
+loader.update_device(device)
+```
+
+⚠️ **注意**: 修改 `detailed_params` 后需要重新生成规则！
+
+### 删除设备
+
+```bash
+# 通过 SQL（会自动级联删除关联的规则）
+sqlite3 data/devices.db "DELETE FROM devices WHERE device_id = 'SENSOR001';"
+```
+
+```python
+# 通过 Python
+loader.delete_device('SENSOR001')
+```
+
+⚠️ **警告**: 删除设备前请确保没有历史报价单依赖该设备。
+
+### 查询设备
+
+```bash
+# 查看所有设备
+sqlite3 data/devices.db "SELECT * FROM devices;"
+
+# 按品牌查询
+sqlite3 data/devices.db "SELECT * FROM devices WHERE brand = '霍尼韦尔';"
+
+# 按价格范围查询
+sqlite3 data/devices.db "SELECT * FROM devices WHERE unit_price BETWEEN 500 AND 1000;"
+
+# 统计设备数量
+sqlite3 data/devices.db "SELECT COUNT(*) FROM devices;"
+```
+
+### 规则管理
+
+**自动生成规则**:
+
+```bash
+# 为所有没有规则的设备生成规则
+python generate_rules_for_devices.py
+
+# 为特定设备生成规则
+python generate_rules_for_devices.py --device-id SENSOR010
+```
+
+**手动调整规则**:
+
+```bash
+# 查看规则
+sqlite3 data/devices.db "SELECT * FROM rules WHERE target_device_id = 'SENSOR001';"
+
+# 修改匹配阈值
+sqlite3 data/devices.db "UPDATE rules SET match_threshold = 3.0 WHERE rule_id = 'R_SENSOR001';"
+```
+
+### 数据迁移
+
+**从 JSON 迁移到数据库**:
+
+```bash
+python migrate_json_to_db.py
+```
+
+脚本会：
+1. 读取所有 JSON 文件
+2. 保持设备 ID 和规则 ID 不变
+3. 使用事务确保数据一致性
+4. 输出迁移统计信息
+
+**从数据库导出到 JSON**:
+
+```python
+# 创建导出脚本 export_db_to_json.py
+from modules.database_loader import DatabaseLoader
+import json
+
+loader = DatabaseLoader(db_manager)
+
+# 导出设备
+devices = loader.load_devices()
+with open('data/exported_devices.json', 'w', encoding='utf-8') as f:
+    json.dump([d.__dict__ for d in devices.values()], f, ensure_ascii=False, indent=2)
+
+# 导出规则
+rules = loader.load_rules()
+with open('data/exported_rules.json', 'w', encoding='utf-8') as f:
+    json.dump([r.__dict__ for r in rules], f, ensure_ascii=False, indent=2)
+```
+
+### 数据库备份
+
+**SQLite 备份**:
+
+```bash
+# 备份数据库文件
+cp data/devices.db data/backup/devices_$(date +%Y%m%d).db
+
+# 或使用 SQLite 命令
+sqlite3 data/devices.db ".backup data/backup/devices_$(date +%Y%m%d).db"
+```
+
+**MySQL 备份**:
+
+```bash
+mysqldump -u username -p database_name > backup_$(date +%Y%m%d).sql
+```
+
+### 数据库性能优化
+
+**创建索引**:
+
+```sql
+-- 为常用查询字段创建索引
+CREATE INDEX idx_device_brand ON devices(brand);
+CREATE INDEX idx_device_name ON devices(device_name);
+CREATE INDEX idx_rule_device ON rules(target_device_id);
+```
+
+**查看查询计划**:
+
+```bash
+sqlite3 data/devices.db "EXPLAIN QUERY PLAN SELECT * FROM devices WHERE brand = '霍尼韦尔';"
+```
+
+## JSON模式维护
+
+### 设备表维护
 
 ### 设备表结构
 
@@ -398,7 +696,51 @@ python app.py
 
 ### 常见问题
 
-#### 1. 匹配准确率低
+#### 1. 数据库连接失败
+
+**症状**: 系统启动时报数据库连接错误
+
+**可能原因**:
+- 数据库文件不存在
+- 数据库文件权限不足
+- MySQL 连接配置错误
+- 数据库文件损坏
+
+**解决方案**:
+
+**方案 1: 检查数据库文件**
+```bash
+# 检查 SQLite 文件是否存在
+ls -l data/devices.db
+
+# 检查文件权限
+chmod 644 data/devices.db
+```
+
+**方案 2: 重新初始化数据库**
+```bash
+# 备份现有数据库
+cp data/devices.db data/devices.db.backup
+
+# 重新初始化
+python init_database.py
+```
+
+**方案 3: 使用自动回退**
+```python
+# 在 config.py 中启用自动回退
+FALLBACK_TO_JSON = True
+```
+
+系统会自动切换到 JSON 模式并记录日志。
+
+**方案 4: 检查 MySQL 连接**
+```bash
+# 测试 MySQL 连接
+mysql -h hostname -u username -p database_name
+```
+
+#### 2. 匹配准确率低
 
 **症状**: 很多设备匹配失败或匹配错误
 
@@ -706,4 +1048,166 @@ python validate_data.py
 
 **文档版本**: v1.0.0  
 **最后更新**: 2024-02  
+**维护者**: DDC 系统开发团队
+
+
+---
+
+## 数据库维护补充说明
+
+### 数据库健康检查
+
+**检查数据库完整性**:
+
+```bash
+# SQLite 完整性检查
+sqlite3 data/devices.db "PRAGMA integrity_check;"
+
+# 检查表结构
+sqlite3 data/devices.db ".schema"
+
+# 检查数据统计
+sqlite3 data/devices.db "
+SELECT 
+  (SELECT COUNT(*) FROM devices) as device_count,
+  (SELECT COUNT(*) FROM rules) as rule_count,
+  (SELECT COUNT(*) FROM configs) as config_count;
+"
+```
+
+### 数据库性能监控
+
+**查询性能分析**:
+
+```bash
+# 启用查询日志
+sqlite3 data/devices.db "PRAGMA query_only = ON;"
+
+# 分析慢查询
+sqlite3 data/devices.db "EXPLAIN QUERY PLAN SELECT * FROM devices WHERE brand = '霍尼韦尔';"
+```
+
+**优化建议**:
+1. 为常用查询字段创建索引
+2. 定期执行 VACUUM 清理碎片
+3. 使用事务批量操作
+4. 避免在循环中执行查询
+
+### 数据库故障恢复
+
+**SQLite 数据库损坏**:
+
+```bash
+# 尝试恢复
+sqlite3 data/devices.db ".recover" | sqlite3 data/devices_recovered.db
+
+# 如果无法恢复，从备份还原
+cp data/backup/devices_20260212.db data/devices.db
+```
+
+**数据丢失恢复**:
+
+1. 从最近的备份还原
+2. 如果有 JSON 备份，重新迁移
+3. 从 Excel 重新导入设备数据
+
+### 数据库升级和迁移
+
+**从 SQLite 迁移到 MySQL**:
+
+```bash
+# 1. 导出 SQLite 数据
+sqlite3 data/devices.db .dump > devices_dump.sql
+
+# 2. 转换 SQL 语法（SQLite -> MySQL）
+# 编辑 devices_dump.sql，调整语法差异
+
+# 3. 导入到 MySQL
+mysql -u username -p database_name < devices_dump.sql
+
+# 4. 更新配置
+# 在 config.py 中修改 DATABASE_TYPE 和 DATABASE_URL
+```
+
+### 数据库安全
+
+**权限管理**:
+
+```bash
+# 设置数据库文件权限
+chmod 640 data/devices.db
+chown app_user:app_group data/devices.db
+```
+
+**备份策略**:
+
+1. 每日自动备份
+2. 保留最近7天的备份
+3. 每周完整备份
+4. 异地备份重要数据
+
+**备份脚本示例**:
+
+```bash
+#!/bin/bash
+# backup_database.sh
+
+BACKUP_DIR="data/backup"
+DATE=$(date +%Y%m%d_%H%M%S)
+DB_FILE="data/devices.db"
+
+# 创建备份目录
+mkdir -p $BACKUP_DIR
+
+# 备份数据库
+sqlite3 $DB_FILE ".backup $BACKUP_DIR/devices_$DATE.db"
+
+# 压缩备份
+gzip $BACKUP_DIR/devices_$DATE.db
+
+# 删除7天前的备份
+find $BACKUP_DIR -name "devices_*.db.gz" -mtime +7 -delete
+
+echo "Backup completed: devices_$DATE.db.gz"
+```
+
+### 数据库监控指标
+
+定期检查以下指标：
+
+1. **数据量**: 设备数量、规则数量
+2. **查询性能**: 平均查询时间
+3. **数据库大小**: 文件大小增长趋势
+4. **连接数**: 并发连接数
+5. **错误率**: 查询失败率
+
+**监控脚本**:
+
+```python
+# monitor_database.py
+from modules.database import DatabaseManager
+from modules.models import Device, Rule
+import time
+
+db_manager = DatabaseManager('sqlite:///data/devices.db')
+
+with db_manager.session_scope() as session:
+    # 统计数据量
+    device_count = session.query(Device).count()
+    rule_count = session.query(Rule).count()
+    
+    # 测试查询性能
+    start = time.time()
+    devices = session.query(Device).limit(100).all()
+    query_time = time.time() - start
+    
+    print(f"设备数量: {device_count}")
+    print(f"规则数量: {rule_count}")
+    print(f"查询时间: {query_time:.3f}秒")
+```
+
+---
+
+**文档版本**: v2.0.0  
+**最后更新**: 2026-02-12  
 **维护者**: DDC 系统开发团队

@@ -418,7 +418,7 @@ class ExcelParser:
         分类行类型
         
         识别规则：
-        - header: 包含表头关键词（序号、名称、型号等）
+        - header: 包含表头关键词（序号、名称、型号等）且在前几行
         - summary: 包含合计关键词（合计、小计、总计等）
         - remark: 包含备注关键词（备注、说明、注等）
         - device: 其他有内容的行默认为设备行
@@ -443,8 +443,27 @@ class ExcelParser:
             return RowType.REMARK
         
         # 检查是否为表头行
+        # 表头行的特征：
+        # 1. 包含表头关键词
+        # 2. 通常在前10行
+        # 3. 包含多个表头关键词（至少3个）
+        # 4. 第一列通常是"序号"或"编号"等文本，而不是具体的数字
         if self._contains_keywords(row_text, self.HEADER_KEYWORDS):
-            return RowType.HEADER
+            # 统计表头关键词数量
+            header_keyword_count = sum(1 for kw in self.HEADER_KEYWORDS if kw in row_text)
+            
+            # 检查第一个非空单元格
+            first_cell = next((cell for cell in row.raw_data if cell and str(cell).strip()), None)
+            first_cell_is_number = first_cell and str(first_cell).strip().isdigit()
+            
+            # 判断是否为表头行：
+            # - 在前10行 且 包含3个以上表头关键词 且 第一列不是纯数字
+            # - 或者在前5行 且 包含2个以上表头关键词
+            if row.row_number <= 10 and header_keyword_count >= 3 and not first_cell_is_number:
+                return RowType.HEADER
+            elif row.row_number <= 5 and header_keyword_count >= 2:
+                return RowType.HEADER
+            # 否则，即使包含表头关键词，也可能是设备行（设备名称中包含这些词）
         
         # 默认为设备行
         return RowType.DEVICE
