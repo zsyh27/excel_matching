@@ -185,7 +185,10 @@ const renderWeightChart = (distribution) => {
     title: {
       text: '特征权重分布',
       left: 'center',
-      top: 10
+      top: 5,
+      textStyle: {
+        fontSize: 16
+      }
     },
     tooltip: {
       trigger: 'axis',
@@ -195,28 +198,38 @@ const renderWeightChart = (distribution) => {
       formatter: '{b}<br/>特征数量: {c}'
     },
     grid: {
-      left: '10%',
-      right: '10%',
-      top: '20%',
-      bottom: '15%',
-      containLabel: true
+      left: 60,
+      right: 40,
+      top: 50,
+      bottom: 60,
+      containLabel: false
     },
     xAxis: {
       type: 'category',
       data: data.map(d => d.name),
       name: '权重范围',
       nameLocation: 'middle',
-      nameGap: 30,
+      nameGap: 35,
+      nameTextStyle: {
+        fontSize: 13
+      },
       axisLabel: {
         interval: 0,
-        rotate: 0
+        rotate: 0,
+        fontSize: 12
       }
     },
     yAxis: {
       type: 'value',
       name: '特征数量',
       nameLocation: 'middle',
-      nameGap: 50
+      nameGap: 45,
+      nameTextStyle: {
+        fontSize: 13
+      },
+      axisLabel: {
+        fontSize: 12
+      }
     },
     series: [
       {
@@ -229,7 +242,8 @@ const renderWeightChart = (distribution) => {
         label: {
           show: true,
           position: 'top',
-          formatter: '{c}'
+          formatter: '{c}',
+          fontSize: 12
         }
       }
     ]
@@ -261,7 +275,10 @@ const renderThresholdChart = (distribution) => {
     title: {
       text: '匹配阈值分布',
       left: 'center',
-      top: 10
+      top: 5,
+      textStyle: {
+        fontSize: 16
+      }
     },
     tooltip: {
       trigger: 'item',
@@ -269,18 +286,18 @@ const renderThresholdChart = (distribution) => {
     },
     legend: {
       orient: 'vertical',
-      left: '5%',
-      top: 'middle',
+      left: 20,
+      top: 60,
       textStyle: {
-        fontSize: 14
+        fontSize: 13
       }
     },
     series: [
       {
         name: '规则数量',
         type: 'pie',
-        radius: ['40%', '70%'],
-        center: ['60%', '55%'],
+        radius: ['35%', '65%'],
+        center: ['60%', '52%'],
         data: data,
         emphasis: {
           itemStyle: {
@@ -291,7 +308,12 @@ const renderThresholdChart = (distribution) => {
         },
         label: {
           formatter: '{b}\n{c} ({d}%)',
-          fontSize: 12
+          fontSize: 12,
+          lineHeight: 18
+        },
+        labelLine: {
+          length: 15,
+          length2: 10
         }
       }
     ]
@@ -315,36 +337,49 @@ const renderTrendChart = (dailyStats) => {
     title: {
       text: '匹配成功率趋势',
       left: 'center',
-      top: 10
+      top: 5,
+      textStyle: {
+        fontSize: 16
+      }
     },
     tooltip: {
       trigger: 'axis',
       formatter: '{b}<br/>{a}: {c}%'
     },
     grid: {
-      left: '10%',
-      right: '10%',
-      top: '20%',
-      bottom: '15%',
-      containLabel: true
+      left: 60,
+      right: 40,
+      top: 50,
+      bottom: 80,
+      containLabel: false
     },
     xAxis: {
       type: 'category',
       data: dates,
       name: '日期',
       nameLocation: 'middle',
-      nameGap: 30,
+      nameGap: 55,
+      nameTextStyle: {
+        fontSize: 13
+      },
       axisLabel: {
-        rotate: 45
+        rotate: 45,
+        fontSize: 11
       }
     },
     yAxis: {
       type: 'value',
       name: '成功率 (%)',
       nameLocation: 'middle',
-      nameGap: 50,
+      nameGap: 45,
+      nameTextStyle: {
+        fontSize: 13
+      },
       min: 0,
-      max: 100
+      max: 100,
+      axisLabel: {
+        fontSize: 12
+      }
     },
     series: [
       {
@@ -361,7 +396,8 @@ const renderTrendChart = (dailyStats) => {
         label: {
           show: true,
           position: 'top',
-          formatter: '{c}%'
+          formatter: '{c}%',
+          fontSize: 11
         }
       }
     ]
