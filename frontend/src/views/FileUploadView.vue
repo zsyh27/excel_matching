@@ -1,5 +1,57 @@
 <template>
   <div class="file-upload-view">
+    <!-- 功能导航区域 -->
+    <div class="navigation-section">
+      <h2 class="section-title">系统功能</h2>
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <el-card class="nav-card active" shadow="hover" @click="navigateTo('/')">
+            <div class="nav-card-content">
+              <el-icon :size="40" color="#409EFF">
+                <upload-filled />
+              </el-icon>
+              <h3>上传设备清单</h3>
+              <p>上传Excel文件进行设备识别和匹配</p>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="nav-card" shadow="hover" @click="navigateTo('/database/devices')">
+            <div class="nav-card-content">
+              <el-icon :size="40" color="#67C23A">
+                <collection />
+              </el-icon>
+              <h3>设备库管理</h3>
+              <p>管理设备库中的所有设备信息</p>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="nav-card" shadow="hover" @click="navigateTo('/database/statistics')">
+            <div class="nav-card-content">
+              <el-icon :size="40" color="#E6A23C">
+                <data-analysis />
+              </el-icon>
+              <h3>统计仪表板</h3>
+              <p>查看设备库的统计数据和分析</p>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="nav-card" shadow="hover" @click="navigateTo('/rule-management')">
+            <div class="nav-card-content">
+              <el-icon :size="40" color="#F56C6C">
+                <setting />
+              </el-icon>
+              <h3>匹配规则管理</h3>
+              <p>管理和优化设备匹配规则</p>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+
+    <!-- 上传卡片 -->
     <el-card class="upload-card">
       <template #header>
         <div class="card-header">
@@ -67,9 +119,16 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElNotification } from 'element-plus'
-import { UploadFilled } from '@element-plus/icons-vue'
+import { UploadFilled, Collection, DataAnalysis, Setting } from '@element-plus/icons-vue'
 
 const router = useRouter()
+
+// 导航功能
+const navigateTo = (path) => {
+  if (path !== '/') {
+    router.push(path)
+  }
+}
 
 // 上传相关状态
 const uploadRef = ref(null)
@@ -232,10 +291,69 @@ const handleError = (title, error) => {
 <style scoped>
 .file-upload-view {
   width: 100%;
-  max-width: 800px;
-  margin: 40px auto;
+  max-width: 1200px;
+  margin: 20px auto;
 }
 
+/* 导航区域样式 */
+.navigation-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  border-left: 4px solid #409EFF;
+}
+
+.nav-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 180px;
+}
+
+.nav-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.nav-card.active {
+  border: 2px solid #409EFF;
+  background-color: #f0f9ff;
+}
+
+.nav-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 10px;
+}
+
+.nav-card-content .el-icon {
+  margin-bottom: 12px;
+}
+
+.nav-card-content h3 {
+  margin: 8px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #303133;
+}
+
+.nav-card-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #909399;
+  line-height: 1.5;
+}
+
+/* 上传卡片样式 */
 .upload-card {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
