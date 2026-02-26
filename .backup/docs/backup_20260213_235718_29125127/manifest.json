@@ -1,0 +1,16 @@
+{
+  "backup_id": "backup_20260213_235718_29125127",
+  "timestamp": "2026-02-13T23:57:18.123878",
+  "document_count": 1,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp_xe4lcjg",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp_xe4lcjg\\TEST_DOC.md",
+      "relative_path": "TEST_DOC.md",
+      "backup_path": ".backup/docs\\backup_20260213_235718_29125127\\TEST_DOC.md",
+      "file_name": "TEST_DOC.md",
+      "size": 26,
+      "modified_time": "2026-02-13T23:57:18.119408"
+    }
+  ]
+}

@@ -1353,3 +1353,1098 @@ export default {
 3. 优化特征匹配算法（如使用倒排索引）
 4. 实现增量匹配减少计算量
 5. 使用多进程并行处理提升性能
+
+## 匹配规则管理界面设计
+
+### 设计背景
+
+**当前匹配系统存在的问题:**
+
+1. **权重分配不合理**
+   - 通用参数（如"4-20mA"）权重为 3.0（最高），导致不同类型设备都能匹配
+   - 设备类型关键词权重不足，缺乏区分度
+   - 品牌和型号权重虽然是 3.0，但在实际匹配中作用有限
+
+2. **阈值过低**
+   - 默认阈值 2.0 太低，只需一个通用参数就能匹配成功
+   - 所有规则阈值都是 2.0，没有针对不同设备类型的差异化配置
+
+3. **缺少调试工具**
+   - 无法查看匹配过程的详细信息
+   - 无法快速定位匹配错误的原因
+   - 无法实时调整和测试规则
+
+**诊断案例:**
+```
+输入: "温度传感器，0-50℃，4-20mA"
+提取特征: ['温摄氏度传感器', '0-50摄氏摄氏度', '4-20ma']
+匹配结果: 霍尼韦尔 室内温湿度传感器 (错误)
+原因: 仅因 "4-20ma" 得到 3.0 分，超过阈值 2.0
+```
+
+### 界面架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   匹配规则管理系统                            │
+├─────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │ 规则列表 │  │ 规则编辑 │  │ 匹配测试 │  │ 日志查看 │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 核心功能模块
+
+#### 1. 规则列表视图
+
+**功能:** 展示所有设备的匹配规则概览
+
+**界面元素:**
+- 搜索框：支持按设备ID、品牌、名称、型号搜索
+- 筛选器：按品牌、设备类型、阈值范围筛选
+- 表格列：
+  - 设备ID
+  - 品牌
+  - 设备名称
+  - 规格型号
+  - 规则ID
+  - 匹配阈值
+  - 特征数量
+  - 操作按钮（查看/编辑/测试）
+
+**API 接口:**
+```
+GET /api/rules/management/list
+Query Parameters:
+  - page: 页码
+  - page_size: 每页数量
+  - search: 搜索关键词
+  - brand: 品牌筛选
+  - device_type: 设备类型筛选
+  - threshold_min: 最小阈值
+  - threshold_max: 最大阈值
+
+Response:
+{
+  "success": true,
+  "total": 719,
+  "rules": [
+    {
+      "rule_id": "R_SENSOR001",
+      "device_id": "SENSOR001",
+      "brand": "霍尼韦尔",
+      "device_name": "温度传感器",
+      "spec_model": "HST-RA",
+      "match_threshold": 2.0,
+      "feature_count": 8
+    }
+  ]
+}
+```
+
+#### 2. 规则详情与编辑视图
+
+**功能:** 查看和编辑单个设备的匹配规则
+
+**界面布局:**
+```
+┌─────────────────────────────────────────────────────────┐
+│ 设备信息                                                 │
+│ 品牌: 霍尼韦尔  名称: 温度传感器  型号: HST-RA          │
+│ 规则ID: R_SENSOR001  匹配阈值: [2.0] (可编辑)           │
+├─────────────────────────────────────────────────────────┤
+│ 特征与权重配置                                           │
+│ ┌─────────────────────────────────────────────────────┐ │
+│ │ 特征              │ 权重  │ 类型     │ 操作         │ │
+│ ├─────────────────────────────────────────────────────┤ │
+│ │ 霍尼韦尔          │ [3.0] │ 品牌     │ [编辑][删除] │ │
+│ │ 温度传感器        │ [2.5] │ 设备类型 │ [编辑][删除] │ │
+│ │ HST-RA            │ [3.0] │ 型号     │ [编辑][删除] │ │
+│ │ 4-20ma            │ [1.0] │ 参数     │ [编辑][删除] │ │
+│ │ 0-10v             │ [1.0] │ 参数     │ [编辑][删除] │ │
+│ └─────────────────────────────────────────────────────┘ │
+│ [添加新特征] [批量调整权重] [重置为默认]                 │
+├─────────────────────────────────────────────────────────┤
+│ 权重分布图表                                             │
+│ [柱状图显示各特征权重分布]                               │
+└─────────────────────────────────────────────────────────┘
+```
+
+**API 接口:**
+```
+GET /api/rules/management/{rule_id}
+Response:
+{
+  "success": true,
+  "rule": {
+    "rule_id": "R_SENSOR001",
+    "device_id": "SENSOR001",
+    "device_info": {
+      "brand": "霍尼韦尔",
+      "device_name": "温度传感器",
+      "spec_model": "HST-RA",
+      "detailed_params": "0-50℃,4-20mA,0-10V",
+      "unit_price": 213.0
+    },
+    "match_threshold": 2.0,
+    "features": [
+      {
+        "feature": "霍尼韦尔",
+        "weight": 3.0,
+        "type": "brand"
+      },
+      {
+        "feature": "温度传感器",
+        "weight": 2.5,
+        "type": "device_type"
+      }
+    ]
+  }
+}
+
+PUT /api/rules/management/{rule_id}
+Request:
+{
+  "match_threshold": 5.0,
+  "features": [
+    {"feature": "霍尼韦尔", "weight": 3.0},
+    {"feature": "温度传感器", "weight": 5.0},
+    {"feature": "4-20ma", "weight": 1.0}
+  ]
+}
+```
+
+#### 3. 匹配测试工具
+
+**功能:** 实时测试设备描述的匹配效果
+
+**界面布局:**
+```
+┌─────────────────────────────────────────────────────────┐
+│ 测试输入                                                 │
+│ ┌─────────────────────────────────────────────────────┐ │
+│ │ 温度传感器，0-50℃，4-20mA                            │ │
+│ └─────────────────────────────────────────────────────┘ │
+│ [开始测试] [清空] [使用示例]                             │
+├─────────────────────────────────────────────────────────┤
+│ 预处理结果                                               │
+│ 原始文本: 温度传感器，0-50℃，4-20mA                      │
+│ 归一化后: 温度传感器,0-50摄氏度,4-20ma                   │
+│ 提取特征: ['温度传感器', '0-50摄氏度', '4-20ma']         │
+├─────────────────────────────────────────────────────────┤
+│ 候选规则得分 (显示前10个)                                │
+│ ┌─────────────────────────────────────────────────────┐ │
+│ │ 排名 │ 设备名称        │ 得分  │ 阈值 │ 匹配特征    │ │
+│ ├─────────────────────────────────────────────────────┤ │
+│ │ 1 ✓  │ 温度传感器 HST-RA│ 8.5  │ 5.0  │ 温度传感器  │ │
+│ │      │                 │      │      │ (5.0)       │ │
+│ │      │                 │      │      │ 4-20ma(1.0) │ │
+│ │ 2    │ 湿度传感器      │ 4.0  │ 5.0  │ 4-20ma(1.0) │ │
+│ │ 3    │ 压力传感器      │ 4.0  │ 5.0  │ 4-20ma(1.0) │ │
+│ └─────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────┤
+│ 最终匹配结果                                             │
+│ ✓ 匹配成功                                               │
+│ 设备: 霍尼韦尔 温度传感器 HST-RA                          │
+│ 得分: 8.5 (超过阈值 5.0)                                 │
+│ 匹配原因: 温度传感器(5.0) + 霍尼韦尔(3.0) + 4-20ma(1.0) │
+└─────────────────────────────────────────────────────────┘
+```
+
+**API 接口:**
+```
+POST /api/rules/management/test
+Request:
+{
+  "description": "温度传感器，0-50℃，4-20mA"
+}
+
+Response:
+{
+  "success": true,
+  "preprocessing": {
+    "original": "温度传感器，0-50℃，4-20mA",
+    "normalized": "温度传感器,0-50摄氏度,4-20ma",
+    "features": ["温度传感器", "0-50摄氏度", "4-20ma"]
+  },
+  "candidates": [
+    {
+      "rank": 1,
+      "rule_id": "R_SENSOR001",
+      "device_id": "SENSOR001",
+      "device_name": "温度传感器 HST-RA",
+      "score": 8.5,
+      "threshold": 5.0,
+      "matched_features": [
+        {"feature": "温度传感器", "weight": 5.0},
+        {"feature": "霍尼韦尔", "weight": 3.0},
+        {"feature": "4-20ma", "weight": 1.0}
+      ],
+      "is_match": true
+    }
+  ],
+  "final_match": {
+    "device_id": "SENSOR001",
+    "device_text": "霍尼韦尔 温度传感器 HST-RA",
+    "score": 8.5,
+    "match_status": "success",
+    "match_reason": "温度传感器(5.0) + 霍尼韦尔(3.0) + 4-20ma(1.0)"
+  }
+}
+```
+
+#### 4. 匹配日志查看
+
+**功能:** 查看历史匹配记录，分析匹配问题
+
+**界面元素:**
+- 时间范围选择器
+- 状态筛选：全部/成功/失败
+- 设备类型筛选
+- 表格列：
+  - 时间戳
+  - 输入描述
+  - 匹配状态
+  - 匹配设备
+  - 得分
+  - 操作（查看详情/重新测试）
+
+**API 接口:**
+```
+GET /api/rules/management/logs
+Query Parameters:
+  - start_date: 开始日期
+  - end_date: 结束日期
+  - status: 匹配状态 (success/failed/all)
+  - device_type: 设备类型
+  - page: 页码
+  - page_size: 每页数量
+
+Response:
+{
+  "success": true,
+  "total": 1523,
+  "logs": [
+    {
+      "log_id": "LOG001",
+      "timestamp": "2026-02-14 10:30:15",
+      "input_description": "温度传感器，0-50℃，4-20mA",
+      "match_status": "success",
+      "matched_device": "霍尼韦尔 温度传感器 HST-RA",
+      "score": 8.5,
+      "threshold": 5.0
+    }
+  ]
+}
+```
+
+#### 5. 批量操作工具
+
+**功能:** 批量调整规则权重和阈值
+
+**操作类型:**
+1. **按特征类型批量调整权重**
+   - 选择特征类型（品牌/设备类型/型号/参数）
+   - 设置新权重值
+   - 应用到所有规则
+
+2. **按设备类型批量调整阈值**
+   - 选择设备类型（传感器/控制器/阀门等）
+   - 设置新阈值
+   - 应用到该类型的所有规则
+
+3. **批量重置规则**
+   - 选择要重置的规则
+   - 恢复到自动生成的初始状态
+
+**API 接口:**
+```
+POST /api/rules/management/batch-update
+Request:
+{
+  "operation": "update_weights_by_type",
+  "feature_type": "parameter",  // brand/device_type/model/parameter
+  "new_weight": 1.0,
+  "rule_ids": ["R_SENSOR001", "R_SENSOR002"]  // 空数组表示全部
+}
+
+POST /api/rules/management/batch-reset
+Request:
+{
+  "rule_ids": ["R_SENSOR001", "R_SENSOR002"]
+}
+```
+
+#### 6. 统计分析视图
+
+**功能:** 可视化展示权重和阈值分布
+
+**图表类型:**
+1. **权重分布直方图**
+   - X轴：权重值范围
+   - Y轴：特征数量
+   - 帮助识别权重配置是否合理
+
+2. **阈值分布饼图**
+   - 显示不同阈值的规则占比
+   - 帮助识别阈值配置是否过于集中
+
+3. **匹配成功率趋势图**
+   - X轴：时间
+   - Y轴：成功率
+   - 显示规则调整后的效果
+
+**API 接口:**
+```
+GET /api/rules/management/statistics
+Response:
+{
+  "success": true,
+  "weight_distribution": {
+    "0-1": 245,
+    "1-2": 189,
+    "2-3": 156,
+    "3-4": 129
+  },
+  "threshold_distribution": {
+    "2.0": 719,
+    "5.0": 0,
+    "10.0": 0
+  },
+  "match_success_rate": {
+    "2026-02-01": 0.65,
+    "2026-02-08": 0.72,
+    "2026-02-14": 0.85
+  }
+}
+```
+
+### 前端组件设计
+
+**Vue 组件结构:**
+```
+src/views/RuleManagement/
+├── RuleManagementView.vue       # 主视图
+├── components/
+│   ├── RuleList.vue             # 规则列表
+│   ├── RuleEditor.vue           # 规则编辑器
+│   ├── MatchTester.vue          # 匹配测试工具
+│   ├── MatchLogs.vue            # 匹配日志
+│   ├── BatchOperations.vue      # 批量操作
+│   └── Statistics.vue           # 统计分析
+```
+
+### 数据库扩展
+
+**新增表: match_logs**
+```sql
+CREATE TABLE match_logs (
+    log_id VARCHAR(50) PRIMARY KEY,
+    timestamp DATETIME NOT NULL,
+    input_description TEXT NOT NULL,
+    extracted_features TEXT,  -- JSON格式
+    match_status VARCHAR(20),  -- success/failed
+    matched_device_id VARCHAR(50),
+    match_score FLOAT,
+    match_threshold FLOAT,
+    match_reason TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_match_logs_timestamp ON match_logs(timestamp);
+CREATE INDEX idx_match_logs_status ON match_logs(match_status);
+```
+
+### 优化建议实施
+
+基于诊断结果，建议实施以下优化：
+
+1. **提高默认阈值**
+   ```json
+   {
+     "global_config": {
+       "default_match_threshold": 5.0  // 从 2.0 提高到 5.0
+     }
+   }
+   ```
+
+2. **调整权重分配策略**
+   ```python
+   # 在 rule_generator.py 中修改权重分配
+   def assign_weights(self, features: List[str]) -> Dict[str, float]:
+       weights = {}
+       for feature in features:
+           if any(brand in feature for brand in self.brand_keywords):
+               weights[feature] = 3.0  # 品牌保持 3.0
+           elif self._is_model_number(feature):
+               weights[feature] = 3.0  # 型号保持 3.0
+           elif any(keyword in feature for keyword in self.device_type_keywords):
+               weights[feature] = 5.0  # 设备类型提高到 5.0
+           elif self._is_parameter(feature):
+               weights[feature] = 1.0  # 通用参数降低到 1.0
+           else:
+               weights[feature] = 1.0
+       return weights
+   ```
+
+3. **修复归一化问题**
+   ```json
+   {
+     "normalization_map": {
+       "℃": "",  // 删除 "℃" 而不是替换为 "摄氏度"
+       "°C": "",
+       "度": ""
+     }
+   }
+   ```
+
+4. **添加必需特征检查**
+   ```python
+   # 在 match_engine.py 中添加必需特征验证
+   def validate_required_features(self, features: List[str], rule) -> bool:
+       """检查是否包含必需特征（如设备类型）"""
+       device_type_keywords = ['传感器', '控制器', '阀门', '执行器']
+       has_device_type = any(
+           any(keyword in feature for keyword in device_type_keywords)
+           for feature in features
+       )
+       return has_device_type
+   ```
+
+
+## 智能优化辅助系统设计
+
+### 设计目标
+
+智能优化辅助系统旨在通过数据分析自动识别匹配问题，提供可量化的优化建议，帮助用户系统性地提升匹配准确率。
+
+### 核心功能模块
+
+#### 1. 匹配日志分析器
+
+**职责:** 分析历史匹配日志，识别问题模式
+
+**核心类:**
+```python
+class MatchLogAnalyzer:
+    """匹配日志分析器"""
+    
+    def analyze_logs(self, logs: List[MatchLog]) -> AnalysisReport:
+        """分析匹配日志，生成分析报告"""
+        
+    def find_high_frequency_mismatches(self, logs: List[MatchLog]) -> List[Tuple[str, int]]:
+        """识别高频误匹配特征"""
+        
+    def find_low_discrimination_features(self, logs: List[MatchLog]) -> List[str]:
+        """识别低区分度特征"""
+        
+    def calculate_feature_impact(self, feature: str, logs: List[MatchLog]) -> FeatureImpact:
+        """计算特征对匹配准确率的影响"""
+```
+
+**分析算法:**
+
+1. **高频误匹配检测**
+```python
+def find_high_frequency_mismatches(self, logs: List[MatchLog]) -> List[Tuple[str, int]]:
+    """
+    识别导致误匹配的高频特征
+    
+    算法:
+    1. 筛选出所有匹配失败或匹配错误的日志
+    2. 统计每个特征在误匹配中出现的频率
+    3. 计算特征的误匹配率 = 误匹配次数 / 总出现次数
+    4. 返回误匹配率高且出现频率高的特征
+    """
+    feature_stats = {}
+    
+    for log in logs:
+        if log.match_status == 'failed' or log.is_wrong_match:
+            for feature in log.matched_features:
+                if feature not in feature_stats:
+                    feature_stats[feature] = {'mismatch': 0, 'total': 0}
+                feature_stats[feature]['mismatch'] += 1
+        
+        for feature in log.matched_features:
+            feature_stats[feature]['total'] += 1
+    
+    # 计算误匹配率
+    high_frequency_mismatches = []
+    for feature, stats in feature_stats.items():
+        mismatch_rate = stats['mismatch'] / stats['total']
+        if mismatch_rate > 0.3 and stats['mismatch'] > 10:  # 误匹配率>30% 且次数>10
+            high_frequency_mismatches.append((feature, stats['mismatch']))
+    
+    return sorted(high_frequency_mismatches, key=lambda x: x[1], reverse=True)
+```
+
+2. **低区分度特征检测**
+```python
+def find_low_discrimination_features(self, logs: List[MatchLog]) -> List[str]:
+    """
+    识别权重高但区分度低的特征
+    
+    算法:
+    1. 统计每个特征在多少个不同设备的规则中出现
+    2. 计算特征的普遍度 = 出现的设备数 / 总设备数
+    3. 如果特征权重高但普遍度也高，说明区分度低
+    """
+    feature_device_count = {}
+    feature_weights = {}
+    
+    for rule in self.rules:
+        for feature, weight in rule.feature_weights.items():
+            if feature not in feature_device_count:
+                feature_device_count[feature] = set()
+                feature_weights[feature] = []
+            feature_device_count[feature].add(rule.target_device_id)
+            feature_weights[feature].append(weight)
+    
+    total_devices = len(self.devices)
+    low_discrimination = []
+    
+    for feature, device_set in feature_device_count.items():
+        prevalence = len(device_set) / total_devices
+        avg_weight = sum(feature_weights[feature]) / len(feature_weights[feature])
+        
+        # 权重高(>2.0)但普遍度也高(>0.3)，说明区分度低
+        if avg_weight > 2.0 and prevalence > 0.3:
+            low_discrimination.append(feature)
+    
+    return low_discrimination
+```
+
+#### 2. 优化建议生成器
+
+**职责:** 基于分析结果生成可执行的优化建议
+
+**数据模型:**
+```python
+@dataclass
+class OptimizationSuggestion:
+    """优化建议"""
+    suggestion_id: str              # 建议ID
+    priority: str                   # 优先级: high/medium/low
+    type: str                       # 类型: weight_adjustment/threshold_adjustment/feature_removal
+    feature: str                    # 相关特征
+    current_value: float            # 当前值
+    suggested_value: float          # 建议值
+    impact_count: int               # 影响的设备数量
+    reason: str                     # 建议原因
+    evidence: List[str]             # 证据（误匹配案例ID）
+    status: str                     # 状态: pending/applied/ignored
+    created_at: datetime            # 创建时间
+```
+
+**生成逻辑:**
+```python
+class OptimizationSuggestionGenerator:
+    """优化建议生成器"""
+    
+    def generate_suggestions(self, analysis_report: AnalysisReport) -> List[OptimizationSuggestion]:
+        """生成优化建议"""
+        suggestions = []
+        
+        # 1. 针对高频误匹配特征生成建议
+        for feature, count in analysis_report.high_frequency_mismatches:
+            current_weight = self.get_average_weight(feature)
+            
+            # 如果是通用参数，建议降低权重
+            if self.is_common_parameter(feature):
+                suggestions.append(OptimizationSuggestion(
+                    suggestion_id=f"SUG_{uuid.uuid4().hex[:8]}",
+                    priority="high",
+                    type="weight_adjustment",
+                    feature=feature,
+                    current_value=current_weight,
+                    suggested_value=1.0,
+                    impact_count=count,
+                    reason=f"特征 '{feature}' 是通用参数，导致 {count} 次误匹配，建议降低权重",
+                    evidence=self.get_mismatch_case_ids(feature),
+                    status="pending",
+                    created_at=datetime.now()
+                ))
+        
+        # 2. 针对低区分度特征生成建议
+        for feature in analysis_report.low_discrimination_features:
+            current_weight = self.get_average_weight(feature)
+            suggestions.append(OptimizationSuggestion(
+                suggestion_id=f"SUG_{uuid.uuid4().hex[:8]}",
+                priority="medium",
+                type="weight_adjustment",
+                feature=feature,
+                current_value=current_weight,
+                suggested_value=max(1.0, current_weight - 1.0),
+                impact_count=self.count_affected_devices(feature),
+                reason=f"特征 '{feature}' 权重高但区分度低，建议降低权重",
+                evidence=[],
+                status="pending",
+                created_at=datetime.now()
+            ))
+        
+        # 3. 针对阈值过低的规则生成建议
+        low_threshold_rules = self.find_low_threshold_rules()
+        if len(low_threshold_rules) > 100:  # 超过100条规则阈值过低
+            suggestions.append(OptimizationSuggestion(
+                suggestion_id=f"SUG_{uuid.uuid4().hex[:8]}",
+                priority="high",
+                type="threshold_adjustment",
+                feature="global_threshold",
+                current_value=2.0,
+                suggested_value=5.0,
+                impact_count=len(low_threshold_rules),
+                reason=f"{len(low_threshold_rules)} 条规则的阈值过低，建议提高默认阈值",
+                evidence=[],
+                status="pending",
+                created_at=datetime.now()
+            ))
+        
+        return suggestions
+```
+
+#### 3. 批量测试引擎
+
+**职责:** 使用测试数据集验证规则配置
+
+**核心类:**
+```python
+class BatchTestEngine:
+    """批量测试引擎"""
+    
+    def run_batch_test(self, test_dataset: TestDataset, rules: List[Rule]) -> BatchTestReport:
+        """运行批量测试"""
+        
+    def compare_rule_versions(self, test_dataset: TestDataset, 
+                             rules_a: List[Rule], rules_b: List[Rule]) -> ComparisonReport:
+        """A/B 对比测试"""
+```
+
+**测试数据集格式:**
+```python
+@dataclass
+class TestCase:
+    """测试用例"""
+    case_id: str                    # 用例ID
+    input_description: str          # 输入设备描述
+    expected_device_id: str         # 期望匹配的设备ID
+    expected_device_name: str       # 期望设备名称（用于显示）
+    category: str                   # 设备类别
+    difficulty: str                 # 难度: easy/medium/hard
+
+@dataclass
+class TestDataset:
+    """测试数据集"""
+    dataset_id: str                 # 数据集ID
+    name: str                       # 数据集名称
+    description: str                # 描述
+    test_cases: List[TestCase]      # 测试用例列表
+    created_at: datetime            # 创建时间
+```
+
+**批量测试报告:**
+```python
+@dataclass
+class BatchTestReport:
+    """批量测试报告"""
+    report_id: str                  # 报告ID
+    dataset_id: str                 # 测试数据集ID
+    total_cases: int                # 总用例数
+    passed_cases: int               # 通过数
+    failed_cases: int               # 失败数
+    accuracy_rate: float            # 准确率
+    failed_case_details: List[FailedCase]  # 失败案例详情
+    execution_time: float           # 执行时间（秒）
+    created_at: datetime            # 创建时间
+
+@dataclass
+class FailedCase:
+    """失败案例"""
+    case_id: str                    # 用例ID
+    input_description: str          # 输入描述
+    expected_device_id: str         # 期望设备
+    expected_device_name: str       # 期望设备名称
+    actual_device_id: str           # 实际匹配设备
+    actual_device_name: str         # 实际设备名称
+    actual_score: float             # 实际得分
+    failure_reason: str             # 失败原因
+```
+
+**A/B 对比报告:**
+```python
+@dataclass
+class ComparisonReport:
+    """A/B 对比报告"""
+    report_id: str                  # 报告ID
+    version_a_name: str             # 方案A名称
+    version_b_name: str             # 方案B名称
+    dataset_id: str                 # 测试数据集ID
+    
+    # 方案A结果
+    accuracy_a: float               # 方案A准确率
+    passed_a: int                   # 方案A通过数
+    failed_a: int                   # 方案A失败数
+    
+    # 方案B结果
+    accuracy_b: float               # 方案B准确率
+    passed_b: int                   # 方案B通过数
+    failed_b: int                   # 方案B失败数
+    
+    # 差异分析
+    improved_cases: List[str]       # 改进的用例ID列表
+    degraded_cases: List[str]       # 退化的用例ID列表
+    unchanged_cases: List[str]      # 不变的用例ID列表
+    net_improvement: int            # 净改进数 = 改进数 - 退化数
+    
+    created_at: datetime            # 创建时间
+```
+
+#### 4. 规则版本管理器
+
+**职责:** 管理规则配置的版本历史
+
+**数据模型:**
+```python
+@dataclass
+class RuleVersion:
+    """规则版本"""
+    version_id: str                 # 版本ID
+    version_number: str             # 版本号 (v1.0, v1.1, etc.)
+    description: str                # 变更说明
+    accuracy_rate: float            # 准确率
+    rule_count: int                 # 规则数量
+    config_snapshot: Dict           # 配置快照（JSON格式）
+    created_by: str                 # 创建人
+    created_at: datetime            # 创建时间
+    is_active: bool                 # 是否为当前活跃版本
+```
+
+**版本管理逻辑:**
+```python
+class RuleVersionManager:
+    """规则版本管理器"""
+    
+    def create_version(self, description: str, accuracy_rate: float) -> RuleVersion:
+        """创建新版本"""
+        # 1. 获取当前所有规则配置
+        current_rules = self.db_loader.get_all_rules()
+        current_config = self.config_manager.get_config()
+        
+        # 2. 生成版本号
+        latest_version = self.get_latest_version()
+        new_version_number = self.increment_version(latest_version.version_number)
+        
+        # 3. 创建配置快照
+        config_snapshot = {
+            'rules': [rule.to_dict() for rule in current_rules],
+            'config': current_config,
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        # 4. 保存版本记录
+        version = RuleVersion(
+            version_id=f"VER_{uuid.uuid4().hex[:8]}",
+            version_number=new_version_number,
+            description=description,
+            accuracy_rate=accuracy_rate,
+            rule_count=len(current_rules),
+            config_snapshot=config_snapshot,
+            created_by="system",
+            created_at=datetime.now(),
+            is_active=True
+        )
+        
+        # 5. 将之前的活跃版本标记为非活跃
+        self.deactivate_previous_versions()
+        
+        # 6. 保存新版本
+        self.save_version(version)
+        
+        return version
+    
+    def rollback_to_version(self, version_id: str) -> bool:
+        """回滚到指定版本"""
+        # 1. 获取目标版本
+        target_version = self.get_version(version_id)
+        if not target_version:
+            return False
+        
+        # 2. 恢复配置快照
+        snapshot = target_version.config_snapshot
+        
+        # 3. 更新规则表
+        for rule_data in snapshot['rules']:
+            self.db_loader.update_rule(rule_data)
+        
+        # 4. 更新配置
+        self.config_manager.update_config(snapshot['config'])
+        
+        # 5. 创建回滚版本记录
+        self.create_version(
+            description=f"回滚到版本 {target_version.version_number}",
+            accuracy_rate=target_version.accuracy_rate
+        )
+        
+        return True
+```
+
+### API 接口设计
+
+#### 1. 优化建议接口
+
+```
+GET /api/optimization/suggestions
+Query Parameters:
+  - priority: 优先级筛选 (high/medium/low)
+  - status: 状态筛选 (pending/applied/ignored)
+  - page: 页码
+  - page_size: 每页数量
+
+Response:
+{
+  "success": true,
+  "total": 15,
+  "suggestions": [
+    {
+      "suggestion_id": "SUG_a1b2c3d4",
+      "priority": "high",
+      "type": "weight_adjustment",
+      "feature": "4-20ma",
+      "current_value": 3.0,
+      "suggested_value": 1.0,
+      "impact_count": 23,
+      "reason": "特征 '4-20ma' 是通用参数，导致 23 次误匹配",
+      "status": "pending",
+      "created_at": "2026-02-14T10:30:00"
+    }
+  ]
+}
+
+POST /api/optimization/suggestions/{suggestion_id}/apply
+Response:
+{
+  "success": true,
+  "message": "优化建议已应用",
+  "affected_rules": 45
+}
+
+POST /api/optimization/suggestions/{suggestion_id}/ignore
+Response:
+{
+  "success": true,
+  "message": "优化建议已忽略"
+}
+```
+
+#### 2. 批量测试接口
+
+```
+POST /api/optimization/batch-test
+Request:
+{
+  "dataset_id": "DATASET_001",  // 可选，使用已保存的数据集
+  "test_cases": [               // 或直接提供测试用例
+    {
+      "input_description": "温度传感器，0-50℃，4-20mA",
+      "expected_device_id": "SENSOR001"
+    }
+  ]
+}
+
+Response:
+{
+  "success": true,
+  "report": {
+    "report_id": "REPORT_001",
+    "total_cases": 100,
+    "passed_cases": 87,
+    "failed_cases": 13,
+    "accuracy_rate": 0.87,
+    "execution_time": 2.5,
+    "failed_case_details": [
+      {
+        "case_id": "CASE_001",
+        "input_description": "温度传感器，0-50℃，4-20mA",
+        "expected_device_name": "温度传感器 HST-RA",
+        "actual_device_name": "室内温湿度传感器 HSH-RM2A",
+        "failure_reason": "通用参数权重过高"
+      }
+    ]
+  }
+}
+
+GET /api/optimization/batch-test/{report_id}
+Response: 返回完整的测试报告
+
+GET /api/optimization/batch-test/reports
+Response: 返回所有测试报告列表
+```
+
+#### 3. A/B 对比测试接口
+
+```
+POST /api/optimization/ab-test
+Request:
+{
+  "dataset_id": "DATASET_001",
+  "version_a_id": "VER_current",  // 当前版本
+  "version_b_id": "VER_draft_001" // 草稿版本
+}
+
+Response:
+{
+  "success": true,
+  "comparison": {
+    "report_id": "COMP_001",
+    "version_a_name": "当前规则 v1.2",
+    "version_b_name": "优化方案 v1.3",
+    "accuracy_a": 0.72,
+    "accuracy_b": 0.87,
+    "passed_a": 72,
+    "passed_b": 87,
+    "improved_cases": 18,
+    "degraded_cases": 3,
+    "net_improvement": 15
+  }
+}
+
+GET /api/optimization/ab-test/{report_id}/details
+Response: 返回详细的差异分析
+```
+
+#### 4. 规则版本管理接口
+
+```
+GET /api/optimization/versions
+Response:
+{
+  "success": true,
+  "versions": [
+    {
+      "version_id": "VER_001",
+      "version_number": "v1.3",
+      "description": "优化设备类型权重",
+      "accuracy_rate": 0.87,
+      "rule_count": 719,
+      "created_at": "2026-02-14T15:30:00",
+      "is_active": true
+    }
+  ]
+}
+
+POST /api/optimization/versions
+Request:
+{
+  "description": "优化设备类型权重",
+  "accuracy_rate": 0.87
+}
+
+POST /api/optimization/versions/{version_id}/rollback
+Response:
+{
+  "success": true,
+  "message": "已回滚到版本 v1.2",
+  "new_version_id": "VER_004"
+}
+
+GET /api/optimization/versions/{version_id}/export
+Response: 返回 JSON 格式的配置文件
+
+POST /api/optimization/versions/import
+Request: multipart/form-data with JSON file
+Response:
+{
+  "success": true,
+  "version_id": "VER_005",
+  "message": "配置导入成功"
+}
+```
+
+### 前端组件设计
+
+```
+src/views/Optimization/
+├── OptimizationView.vue          # 主视图
+├── components/
+│   ├── SuggestionList.vue        # 优化建议列表
+│   ├── SuggestionDetail.vue      # 建议详情
+│   ├── BatchTest.vue             # 批量测试
+│   ├── ABTest.vue                # A/B 对比测试
+│   ├── VersionHistory.vue        # 版本历史
+│   └── TrendChart.vue            # 趋势图表
+```
+
+### 数据库扩展
+
+**新增表: optimization_suggestions**
+```sql
+CREATE TABLE optimization_suggestions (
+    suggestion_id VARCHAR(50) PRIMARY KEY,
+    priority VARCHAR(20) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    feature VARCHAR(200),
+    current_value FLOAT,
+    suggested_value FLOAT,
+    impact_count INT,
+    reason TEXT,
+    evidence TEXT,  -- JSON格式
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    applied_at DATETIME,
+    applied_by VARCHAR(100)
+);
+
+CREATE INDEX idx_suggestions_priority ON optimization_suggestions(priority);
+CREATE INDEX idx_suggestions_status ON optimization_suggestions(status);
+```
+
+**新增表: batch_test_reports**
+```sql
+CREATE TABLE batch_test_reports (
+    report_id VARCHAR(50) PRIMARY KEY,
+    dataset_id VARCHAR(50),
+    total_cases INT,
+    passed_cases INT,
+    failed_cases INT,
+    accuracy_rate FLOAT,
+    failed_case_details TEXT,  -- JSON格式
+    execution_time FLOAT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_reports_dataset ON batch_test_reports(dataset_id);
+CREATE INDEX idx_reports_created ON batch_test_reports(created_at);
+```
+
+**新增表: rule_versions**
+```sql
+CREATE TABLE rule_versions (
+    version_id VARCHAR(50) PRIMARY KEY,
+    version_number VARCHAR(20) NOT NULL,
+    description TEXT,
+    accuracy_rate FLOAT,
+    rule_count INT,
+    config_snapshot TEXT,  -- JSON格式
+    created_by VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX idx_versions_number ON rule_versions(version_number);
+CREATE INDEX idx_versions_active ON rule_versions(is_active);
+```
+
+### 实施优先级
+
+1. **第一阶段（高优先级）**
+   - 匹配日志分析器
+   - 优化建议生成器
+   - 批量测试引擎
+
+2. **第二阶段（中优先级）**
+   - A/B 对比测试
+   - 规则版本管理
+
+3. **第三阶段（低优先级）**
+   - 趋势分析图表
+   - 自动化优化建议

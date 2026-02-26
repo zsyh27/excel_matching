@@ -1,0 +1,1136 @@
+{
+  "backup_id": "backup_20260214_101851_1e0b4c5e",
+  "timestamp": "2026-02-14T10:18:51.838643",
+  "document_count": 141,
+  "project_root": "D:\\excel_matching\\excel_matching",
+  "documents": [
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\CHANGELOG.md",
+      "relative_path": "CHANGELOG.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\CHANGELOG.md",
+      "file_name": "CHANGELOG.md",
+      "size": 4238,
+      "modified_time": "2026-02-13T22:16:02.768597"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md",
+      "relative_path": "CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md",
+      "file_name": "CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md",
+      "size": 6141,
+      "modified_time": "2026-02-13T22:16:02.768597"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\DEVICE_LIBRARY_EXPANSION_REPORT.md",
+      "relative_path": "DEVICE_LIBRARY_EXPANSION_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\DEVICE_LIBRARY_EXPANSION_REPORT.md",
+      "file_name": "DEVICE_LIBRARY_EXPANSION_REPORT.md",
+      "size": 9486,
+      "modified_time": "2026-02-09T09:02:07.630526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\DEVICE_LIBRARY_EXPANSION_SUMMARY.md",
+      "relative_path": "DEVICE_LIBRARY_EXPANSION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\DEVICE_LIBRARY_EXPANSION_SUMMARY.md",
+      "file_name": "DEVICE_LIBRARY_EXPANSION_SUMMARY.md",
+      "size": 4258,
+      "modified_time": "2026-02-09T09:02:07.631526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\DEVICE_ROW_DETECTION_FIX_REPORT.md",
+      "relative_path": "DEVICE_ROW_DETECTION_FIX_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\DEVICE_ROW_DETECTION_FIX_REPORT.md",
+      "file_name": "DEVICE_ROW_DETECTION_FIX_REPORT.md",
+      "size": 5856,
+      "modified_time": "2026-02-13T22:16:02.769595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md",
+      "relative_path": "DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md",
+      "file_name": "DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md",
+      "size": 15930,
+      "modified_time": "2026-02-09T09:02:07.631526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\FINAL_ACCEPTANCE_REPORT.md",
+      "relative_path": "FINAL_ACCEPTANCE_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\FINAL_ACCEPTANCE_REPORT.md",
+      "file_name": "FINAL_ACCEPTANCE_REPORT.md",
+      "size": 12818,
+      "modified_time": "2026-02-09T09:02:07.632523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\INTEGRATION_TEST_REPORT.md",
+      "relative_path": "INTEGRATION_TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\INTEGRATION_TEST_REPORT.md",
+      "file_name": "INTEGRATION_TEST_REPORT.md",
+      "size": 9880,
+      "modified_time": "2026-02-09T09:02:07.632523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\MAINTENANCE.md",
+      "relative_path": "MAINTENANCE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\MAINTENANCE.md",
+      "file_name": "MAINTENANCE.md",
+      "size": 27936,
+      "modified_time": "2026-02-13T22:16:02.769595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\MANUAL_ADJUST_DEBUG_SUMMARY.md",
+      "relative_path": "MANUAL_ADJUST_DEBUG_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\MANUAL_ADJUST_DEBUG_SUMMARY.md",
+      "file_name": "MANUAL_ADJUST_DEBUG_SUMMARY.md",
+      "size": 5681,
+      "modified_time": "2026-02-09T09:02:07.633526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\MANUAL_ADJUST_TROUBLESHOOTING.md",
+      "relative_path": "MANUAL_ADJUST_TROUBLESHOOTING.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\MANUAL_ADJUST_TROUBLESHOOTING.md",
+      "file_name": "MANUAL_ADJUST_TROUBLESHOOTING.md",
+      "size": 7757,
+      "modified_time": "2026-02-09T09:02:07.633526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\MANUAL_ADJUST_TROUBLESHOOTING_V2.md",
+      "relative_path": "MANUAL_ADJUST_TROUBLESHOOTING_V2.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\MANUAL_ADJUST_TROUBLESHOOTING_V2.md",
+      "file_name": "MANUAL_ADJUST_TROUBLESHOOTING_V2.md",
+      "size": 10521,
+      "modified_time": "2026-02-09T09:02:07.634523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\MANUAL_ADJUST_USER_GUIDE.md",
+      "relative_path": "MANUAL_ADJUST_USER_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\MANUAL_ADJUST_USER_GUIDE.md",
+      "file_name": "MANUAL_ADJUST_USER_GUIDE.md",
+      "size": 3322,
+      "modified_time": "2026-02-09T09:02:07.634523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\MATCH_API_FIX_SUMMARY.md",
+      "relative_path": "MATCH_API_FIX_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\MATCH_API_FIX_SUMMARY.md",
+      "file_name": "MATCH_API_FIX_SUMMARY.md",
+      "size": 10004,
+      "modified_time": "2026-02-09T09:02:07.635526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\ORGANIZATION_GUIDE.md",
+      "relative_path": "ORGANIZATION_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\ORGANIZATION_GUIDE.md",
+      "file_name": "ORGANIZATION_GUIDE.md",
+      "size": 12587,
+      "modified_time": "2026-02-14T10:09:44.413222"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\PROJECT_OVERVIEW.md",
+      "relative_path": "PROJECT_OVERVIEW.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\PROJECT_OVERVIEW.md",
+      "file_name": "PROJECT_OVERVIEW.md",
+      "size": 17210,
+      "modified_time": "2026-02-09T09:02:07.635526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\PROJECT_STATUS.md",
+      "relative_path": "PROJECT_STATUS.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\PROJECT_STATUS.md",
+      "file_name": "PROJECT_STATUS.md",
+      "size": 15681,
+      "modified_time": "2026-02-13T22:16:02.770595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\QUICK_START_GUIDE.md",
+      "relative_path": "QUICK_START_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\QUICK_START_GUIDE.md",
+      "file_name": "QUICK_START_GUIDE.md",
+      "size": 6548,
+      "modified_time": "2026-02-09T09:02:07.635526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\README.md",
+      "relative_path": "README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\README.md",
+      "file_name": "README.md",
+      "size": 23140,
+      "modified_time": "2026-02-14T10:10:10.554568"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\SETUP.md",
+      "relative_path": "SETUP.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\SETUP.md",
+      "file_name": "SETUP.md",
+      "size": 8245,
+      "modified_time": "2026-02-09T09:02:07.636522"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\TASK_12_COMPLETION_SUMMARY.md",
+      "relative_path": "TASK_12_COMPLETION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\TASK_12_COMPLETION_SUMMARY.md",
+      "file_name": "TASK_12_COMPLETION_SUMMARY.md",
+      "size": 8062,
+      "modified_time": "2026-02-09T09:02:07.637522"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\TASK_7_FINAL_REPORT.md",
+      "relative_path": "TASK_7_FINAL_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\TASK_7_FINAL_REPORT.md",
+      "file_name": "TASK_7_FINAL_REPORT.md",
+      "size": 7759,
+      "modified_time": "2026-02-09T09:02:07.637522"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\TASK_9_FINAL_CHECKPOINT_REPORT.md",
+      "relative_path": "TASK_9_FINAL_CHECKPOINT_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\TASK_9_FINAL_CHECKPOINT_REPORT.md",
+      "file_name": "TASK_9_FINAL_CHECKPOINT_REPORT.md",
+      "size": 10695,
+      "modified_time": "2026-02-09T09:02:07.638525"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\TROUBLESHOOTING_QUICK_REFERENCE.md",
+      "relative_path": "TROUBLESHOOTING_QUICK_REFERENCE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\TROUBLESHOOTING_QUICK_REFERENCE.md",
+      "file_name": "TROUBLESHOOTING_QUICK_REFERENCE.md",
+      "size": 2508,
+      "modified_time": "2026-02-09T09:02:07.638525"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\UI_OPTIMIZATION_SUMMARY.md",
+      "relative_path": "UI_OPTIMIZATION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\UI_OPTIMIZATION_SUMMARY.md",
+      "file_name": "UI_OPTIMIZATION_SUMMARY.md",
+      "size": 7990,
+      "modified_time": "2026-02-09T09:02:07.639523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\UI_TOOLTIP_FIX_SUMMARY.md",
+      "relative_path": "UI_TOOLTIP_FIX_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\UI_TOOLTIP_FIX_SUMMARY.md",
+      "file_name": "UI_TOOLTIP_FIX_SUMMARY.md",
+      "size": 7144,
+      "modified_time": "2026-02-09T09:02:07.639523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234603_c4d383c2\\TEST_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234603_c4d383c2\\TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234603_c4d383c2\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-13T23:46:03.230610"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234603_c6936d5e\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234603_c6936d5e\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234603_c6936d5e\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 54,
+      "modified_time": "2026-02-13T23:46:03.108758"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234603_c6936d5e\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234603_c6936d5e\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234603_c6936d5e\\README.md",
+      "file_name": "README.md",
+      "size": 36,
+      "modified_time": "2026-02-13T23:46:03.108758"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234603_c6936d5e\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234603_c6936d5e\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234603_c6936d5e\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 47,
+      "modified_time": "2026-02-13T23:46:03.108758"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234603_d4cce387\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234603_d4cce387\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234603_d4cce387\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:46:03.451248"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234746_05da9d48\\TEST_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234746_05da9d48\\TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234746_05da9d48\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-13T23:47:46.388154"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234746_189c763e\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234746_189c763e\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234746_189c763e\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 54,
+      "modified_time": "2026-02-13T23:47:46.360749"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234746_189c763e\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234746_189c763e\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234746_189c763e\\README.md",
+      "file_name": "README.md",
+      "size": 36,
+      "modified_time": "2026-02-13T23:47:46.359524"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234746_189c763e\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234746_189c763e\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234746_189c763e\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 47,
+      "modified_time": "2026-02-13T23:47:46.360591"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_234746_cc775f6b\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_234746_cc775f6b\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_234746_cc775f6b\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:47:46.413176"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_185a0caf\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_185a0caf\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_185a0caf\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 38,
+      "modified_time": "2026-02-13T23:55:41.306115"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_185a0caf\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_185a0caf\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_185a0caf\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:55:41.305430"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_185a0caf\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_185a0caf\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_185a0caf\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 35,
+      "modified_time": "2026-02-13T23:55:41.305829"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_185a0caf\\TASK_2_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_185a0caf\\TASK_2_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_185a0caf\\TASK_2_REPORT.md",
+      "file_name": "TASK_2_REPORT.md",
+      "size": 34,
+      "modified_time": "2026-02-13T23:55:41.306115"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_48cdccac\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_48cdccac\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_48cdccac\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 54,
+      "modified_time": "2026-02-13T23:55:41.046106"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_48cdccac\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_48cdccac\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_48cdccac\\README.md",
+      "file_name": "README.md",
+      "size": 36,
+      "modified_time": "2026-02-13T23:55:41.045106"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_48cdccac\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_48cdccac\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_48cdccac\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 47,
+      "modified_time": "2026-02-13T23:55:41.046106"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_94ddcd78\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_94ddcd78\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_94ddcd78\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:55:41.340245"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_94ddcd78\\TASK_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_94ddcd78\\TASK_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_94ddcd78\\TASK_SUMMARY.md",
+      "file_name": "TASK_SUMMARY.md",
+      "size": 33,
+      "modified_time": "2026-02-13T23:55:41.341252"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_a2d519db\\TEST_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_a2d519db\\TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_a2d519db\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-13T23:55:41.085454"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_a827a220\\TEST_DOC.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_a827a220\\TEST_DOC.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_a827a220\\TEST_DOC.md",
+      "file_name": "TEST_DOC.md",
+      "size": 26,
+      "modified_time": "2026-02-13T23:55:41.363832"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_ae210e05\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_ae210e05\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_ae210e05\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:55:41.278894"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235541_b596f110\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235541_b596f110\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235541_b596f110\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:55:41.385279"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235701_3fb283f7\\TEST_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235701_3fb283f7\\TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235701_3fb283f7\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-13T23:57:01.608780"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_36791c4e\\TEST_DOC.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_36791c4e\\TEST_DOC.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_36791c4e\\TEST_DOC.md",
+      "file_name": "TEST_DOC.md",
+      "size": 26,
+      "modified_time": "2026-02-13T23:57:08.915866"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_464025b7\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_464025b7\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_464025b7\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 54,
+      "modified_time": "2026-02-13T23:57:08.772219"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_464025b7\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_464025b7\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_464025b7\\README.md",
+      "file_name": "README.md",
+      "size": 36,
+      "modified_time": "2026-02-13T23:57:08.771188"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_464025b7\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_464025b7\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_464025b7\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 47,
+      "modified_time": "2026-02-13T23:57:08.771188"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_567ee168\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_567ee168\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_567ee168\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:57:08.933816"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_5e1ce58f\\TEST_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_5e1ce58f\\TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_5e1ce58f\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-13T23:57:08.801659"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_75d10c82\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_75d10c82\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_75d10c82\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 38,
+      "modified_time": "2026-02-13T23:57:08.860405"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_75d10c82\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_75d10c82\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_75d10c82\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:57:08.859405"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_75d10c82\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_75d10c82\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_75d10c82\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 35,
+      "modified_time": "2026-02-13T23:57:08.859405"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_75d10c82\\TASK_2_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_75d10c82\\TASK_2_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_75d10c82\\TASK_2_REPORT.md",
+      "file_name": "TASK_2_REPORT.md",
+      "size": 34,
+      "modified_time": "2026-02-13T23:57:08.860405"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_a3dca764\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_a3dca764\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_a3dca764\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:57:08.891521"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_a3dca764\\TASK_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_a3dca764\\TASK_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_a3dca764\\TASK_SUMMARY.md",
+      "file_name": "TASK_SUMMARY.md",
+      "size": 33,
+      "modified_time": "2026-02-13T23:57:08.892524"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235708_bb3eebf3\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235708_bb3eebf3\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235708_bb3eebf3\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:57:08.835632"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235717_57044b87\\TEST_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235717_57044b87\\TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235717_57044b87\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-13T23:57:17.975451"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235717_9c5a4f47\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235717_9c5a4f47\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235717_9c5a4f47\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 54,
+      "modified_time": "2026-02-13T23:57:17.940098"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235717_9c5a4f47\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235717_9c5a4f47\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235717_9c5a4f47\\README.md",
+      "file_name": "README.md",
+      "size": 36,
+      "modified_time": "2026-02-13T23:57:17.939084"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235717_9c5a4f47\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235717_9c5a4f47\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235717_9c5a4f47\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 47,
+      "modified_time": "2026-02-13T23:57:17.940098"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_29125127\\TEST_DOC.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_29125127\\TEST_DOC.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_29125127\\TEST_DOC.md",
+      "file_name": "TEST_DOC.md",
+      "size": 26,
+      "modified_time": "2026-02-13T23:57:18.119408"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_416c693b\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_416c693b\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_416c693b\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 38,
+      "modified_time": "2026-02-13T23:57:18.037383"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_416c693b\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_416c693b\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_416c693b\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:57:18.037383"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_416c693b\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_416c693b\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_416c693b\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 35,
+      "modified_time": "2026-02-13T23:57:18.037383"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_416c693b\\TASK_2_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_416c693b\\TASK_2_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_416c693b\\TASK_2_REPORT.md",
+      "file_name": "TASK_2_REPORT.md",
+      "size": 34,
+      "modified_time": "2026-02-13T23:57:18.037383"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_47481726\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_47481726\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_47481726\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:57:18.011698"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_609c1a70\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_609c1a70\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_609c1a70\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:57:18.075165"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_609c1a70\\TASK_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_609c1a70\\TASK_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_609c1a70\\TASK_SUMMARY.md",
+      "file_name": "TASK_SUMMARY.md",
+      "size": 33,
+      "modified_time": "2026-02-13T23:57:18.075165"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260213_235718_c404e28d\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260213_235718_c404e28d\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260213_235718_c404e28d\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:57:18.138742"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101024_1818fde6\\TEST_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101024_1818fde6\\TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101024_1818fde6\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-14T10:10:24.976718"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101024_5cf76ef6\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101024_5cf76ef6\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101024_5cf76ef6\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 54,
+      "modified_time": "2026-02-14T10:10:24.949236"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101024_5cf76ef6\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101024_5cf76ef6\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101024_5cf76ef6\\README.md",
+      "file_name": "README.md",
+      "size": 36,
+      "modified_time": "2026-02-14T10:10:24.949236"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101024_5cf76ef6\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101024_5cf76ef6\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101024_5cf76ef6\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 47,
+      "modified_time": "2026-02-14T10:10:24.949236"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_57419a26\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_57419a26\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_57419a26\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-14T10:10:25.000635"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_6a4e7120\\SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_6a4e7120\\SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_6a4e7120\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-14T10:10:25.090208"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_76deb116\\DEVELOPMENT_GUIDE.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_76deb116\\DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_76deb116\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 38,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_76deb116\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_76deb116\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_76deb116\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_76deb116\\TASK_1_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_76deb116\\TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_76deb116\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 35,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_76deb116\\TASK_2_REPORT.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_76deb116\\TASK_2_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_76deb116\\TASK_2_REPORT.md",
+      "file_name": "TASK_2_REPORT.md",
+      "size": 34,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_7f9754ac\\README.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_7f9754ac\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_7f9754ac\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-14T10:10:25.049983"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_7f9754ac\\TASK_SUMMARY.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_7f9754ac\\TASK_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_7f9754ac\\TASK_SUMMARY.md",
+      "file_name": "TASK_SUMMARY.md",
+      "size": 33,
+      "modified_time": "2026-02-14T10:10:25.049983"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.backup\\docs\\backup_20260214_101025_d3d70acb\\TEST_DOC.md",
+      "relative_path": ".backup\\docs\\backup_20260214_101025_d3d70acb\\TEST_DOC.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.backup\\docs\\backup_20260214_101025_d3d70acb\\TEST_DOC.md",
+      "file_name": "TEST_DOC.md",
+      "size": 26,
+      "modified_time": "2026-02-14T10:10:25.073064"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\DOCUMENTATION_CHECKLIST.md",
+      "relative_path": ".kiro\\DOCUMENTATION_CHECKLIST.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\DOCUMENTATION_CHECKLIST.md",
+      "file_name": "DOCUMENTATION_CHECKLIST.md",
+      "size": 6152,
+      "modified_time": "2026-02-13T22:16:02.765595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\PROJECT.md",
+      "relative_path": ".kiro\\PROJECT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\PROJECT.md",
+      "file_name": "PROJECT.md",
+      "size": 14921,
+      "modified_time": "2026-02-13T22:16:02.765595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\QUICK_REFERENCE.md",
+      "relative_path": ".kiro\\QUICK_REFERENCE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\QUICK_REFERENCE.md",
+      "file_name": "QUICK_REFERENCE.md",
+      "size": 5073,
+      "modified_time": "2026-02-13T22:16:02.766595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\database-migration\\design.md",
+      "relative_path": ".kiro\\specs\\database-migration\\design.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\database-migration\\design.md",
+      "file_name": "design.md",
+      "size": 14286,
+      "modified_time": "2026-02-13T22:16:02.767596"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\database-migration\\requirements.md",
+      "relative_path": ".kiro\\specs\\database-migration\\requirements.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\database-migration\\requirements.md",
+      "file_name": "requirements.md",
+      "size": 7741,
+      "modified_time": "2026-02-13T22:16:02.767596"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\database-migration\\tasks.md",
+      "relative_path": ".kiro\\specs\\database-migration\\tasks.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\database-migration\\tasks.md",
+      "file_name": "tasks.md",
+      "size": 5644,
+      "modified_time": "2026-02-13T22:16:02.768597"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\ddc-device-matching\\design.md",
+      "relative_path": ".kiro\\specs\\ddc-device-matching\\design.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\ddc-device-matching\\design.md",
+      "file_name": "design.md",
+      "size": 44308,
+      "modified_time": "2026-02-09T09:02:07.627526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\ddc-device-matching\\requirements.md",
+      "relative_path": ".kiro\\specs\\ddc-device-matching\\requirements.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\ddc-device-matching\\requirements.md",
+      "file_name": "requirements.md",
+      "size": 10065,
+      "modified_time": "2026-02-09T09:02:07.628526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\ddc-device-matching\\tasks.md",
+      "relative_path": ".kiro\\specs\\ddc-device-matching\\tasks.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\ddc-device-matching\\tasks.md",
+      "file_name": "tasks.md",
+      "size": 8985,
+      "modified_time": "2026-02-09T09:02:07.628526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\device-row-intelligent-recognition\\design.md",
+      "relative_path": ".kiro\\specs\\device-row-intelligent-recognition\\design.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\device-row-intelligent-recognition\\design.md",
+      "file_name": "design.md",
+      "size": 39152,
+      "modified_time": "2026-02-09T09:02:07.629526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\device-row-intelligent-recognition\\requirements.md",
+      "relative_path": ".kiro\\specs\\device-row-intelligent-recognition\\requirements.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\device-row-intelligent-recognition\\requirements.md",
+      "file_name": "requirements.md",
+      "size": 10706,
+      "modified_time": "2026-02-09T09:02:07.630526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\device-row-intelligent-recognition\\tasks.md",
+      "relative_path": ".kiro\\specs\\device-row-intelligent-recognition\\tasks.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\device-row-intelligent-recognition\\tasks.md",
+      "file_name": "tasks.md",
+      "size": 7958,
+      "modified_time": "2026-02-09T09:02:07.630526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\documentation-organization\\design.md",
+      "relative_path": ".kiro\\specs\\documentation-organization\\design.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\documentation-organization\\design.md",
+      "file_name": "design.md",
+      "size": 30867,
+      "modified_time": "2026-02-13T22:26:55.326319"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\documentation-organization\\requirements.md",
+      "relative_path": ".kiro\\specs\\documentation-organization\\requirements.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\documentation-organization\\requirements.md",
+      "file_name": "requirements.md",
+      "size": 7377,
+      "modified_time": "2026-02-13T22:19:27.501018"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.kiro\\specs\\documentation-organization\\tasks.md",
+      "relative_path": ".kiro\\specs\\documentation-organization\\tasks.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.kiro\\specs\\documentation-organization\\tasks.md",
+      "file_name": "tasks.md",
+      "size": 11465,
+      "modified_time": "2026-02-14T10:11:18.066839"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\.pytest_cache\\README.md",
+      "relative_path": ".pytest_cache\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\.pytest_cache\\README.md",
+      "file_name": "README.md",
+      "size": 310,
+      "modified_time": "2026-02-13T22:34:14.836735"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\DATABASE_SETUP.md",
+      "relative_path": "backend\\DATABASE_SETUP.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\DATABASE_SETUP.md",
+      "file_name": "DATABASE_SETUP.md",
+      "size": 19036,
+      "modified_time": "2026-02-13T22:16:02.771595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\E2E_DATABASE_MIGRATION_TEST_REPORT.md",
+      "relative_path": "backend\\E2E_DATABASE_MIGRATION_TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\E2E_DATABASE_MIGRATION_TEST_REPORT.md",
+      "file_name": "E2E_DATABASE_MIGRATION_TEST_REPORT.md",
+      "size": 5336,
+      "modified_time": "2026-02-13T22:16:02.772595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\E2E_TEST_REPORT.md",
+      "relative_path": "backend\\E2E_TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\E2E_TEST_REPORT.md",
+      "file_name": "E2E_TEST_REPORT.md",
+      "size": 3925,
+      "modified_time": "2026-02-09T09:02:07.639523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\E2E_TEST_SUMMARY.md",
+      "relative_path": "backend\\E2E_TEST_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\E2E_TEST_SUMMARY.md",
+      "file_name": "E2E_TEST_SUMMARY.md",
+      "size": 6044,
+      "modified_time": "2026-02-09T09:02:07.640526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\EXCEL_EXPORTER_IMPLEMENTATION.md",
+      "relative_path": "backend\\EXCEL_EXPORTER_IMPLEMENTATION.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\EXCEL_EXPORTER_IMPLEMENTATION.md",
+      "file_name": "EXCEL_EXPORTER_IMPLEMENTATION.md",
+      "size": 9034,
+      "modified_time": "2026-02-09T09:02:07.640526"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\IMPLEMENTATION_VERIFICATION.md",
+      "relative_path": "backend\\IMPLEMENTATION_VERIFICATION.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\IMPLEMENTATION_VERIFICATION.md",
+      "file_name": "IMPLEMENTATION_VERIFICATION.md",
+      "size": 13131,
+      "modified_time": "2026-02-09T09:02:07.641522"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\IMPORT_DEVICES_GUIDE.md",
+      "relative_path": "backend\\IMPORT_DEVICES_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\IMPORT_DEVICES_GUIDE.md",
+      "file_name": "IMPORT_DEVICES_GUIDE.md",
+      "size": 4912,
+      "modified_time": "2026-02-13T22:16:02.772595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\MATCH_ENGINE_IMPLEMENTATION.md",
+      "relative_path": "backend\\MATCH_ENGINE_IMPLEMENTATION.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\MATCH_ENGINE_IMPLEMENTATION.md",
+      "file_name": "MATCH_ENGINE_IMPLEMENTATION.md",
+      "size": 5737,
+      "modified_time": "2026-02-09T09:02:07.641522"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\MIGRATION_GUIDE.md",
+      "relative_path": "backend\\MIGRATION_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\MIGRATION_GUIDE.md",
+      "file_name": "MIGRATION_GUIDE.md",
+      "size": 7151,
+      "modified_time": "2026-02-13T22:16:02.772595"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\RULE_GENERATION_GUIDE.md",
+      "relative_path": "backend\\RULE_GENERATION_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\RULE_GENERATION_GUIDE.md",
+      "file_name": "RULE_GENERATION_GUIDE.md",
+      "size": 7499,
+      "modified_time": "2026-02-13T22:16:02.773743"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\TASK10_DATALOADER_INTEGRATION_SUMMARY.md",
+      "relative_path": "backend\\TASK10_DATALOADER_INTEGRATION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\TASK10_DATALOADER_INTEGRATION_SUMMARY.md",
+      "file_name": "TASK10_DATALOADER_INTEGRATION_SUMMARY.md",
+      "size": 7041,
+      "modified_time": "2026-02-13T22:16:02.773743"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\TASK2_COMPLETION_SUMMARY.md",
+      "relative_path": "backend\\TASK2_COMPLETION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\TASK2_COMPLETION_SUMMARY.md",
+      "file_name": "TASK2_COMPLETION_SUMMARY.md",
+      "size": 7346,
+      "modified_time": "2026-02-09T09:02:07.642523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\TASK3_API_IMPLEMENTATION_SUMMARY.md",
+      "relative_path": "backend\\TASK3_API_IMPLEMENTATION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\TASK3_API_IMPLEMENTATION_SUMMARY.md",
+      "file_name": "TASK3_API_IMPLEMENTATION_SUMMARY.md",
+      "size": 7084,
+      "modified_time": "2026-02-09T09:02:07.642523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\TASK3_DATALOADER_REFACTORING_SUMMARY.md",
+      "relative_path": "backend\\TASK3_DATALOADER_REFACTORING_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\TASK3_DATALOADER_REFACTORING_SUMMARY.md",
+      "file_name": "TASK3_DATALOADER_REFACTORING_SUMMARY.md",
+      "size": 5853,
+      "modified_time": "2026-02-13T22:16:02.774147"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\TASK5_ACCURACY_VERIFICATION_SUMMARY.md",
+      "relative_path": "backend\\TASK5_ACCURACY_VERIFICATION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\TASK5_ACCURACY_VERIFICATION_SUMMARY.md",
+      "file_name": "TASK5_ACCURACY_VERIFICATION_SUMMARY.md",
+      "size": 4792,
+      "modified_time": "2026-02-09T09:02:07.642523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\TASK6_MIGRATION_SCRIPT_SUMMARY.md",
+      "relative_path": "backend\\TASK6_MIGRATION_SCRIPT_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\TASK6_MIGRATION_SCRIPT_SUMMARY.md",
+      "file_name": "TASK6_MIGRATION_SCRIPT_SUMMARY.md",
+      "size": 5301,
+      "modified_time": "2026-02-13T22:16:02.774647"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\TASK8_RULE_GENERATION_SUMMARY.md",
+      "relative_path": "backend\\TASK8_RULE_GENERATION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\TASK8_RULE_GENERATION_SUMMARY.md",
+      "file_name": "TASK8_RULE_GENERATION_SUMMARY.md",
+      "size": 6543,
+      "modified_time": "2026-02-13T22:16:02.774647"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\modules\\README_EXCEL_EXPORTER.md",
+      "relative_path": "backend\\modules\\README_EXCEL_EXPORTER.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\modules\\README_EXCEL_EXPORTER.md",
+      "file_name": "README_EXCEL_EXPORTER.md",
+      "size": 10003,
+      "modified_time": "2026-02-09T09:02:07.647523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\modules\\README_EXCEL_PARSER.md",
+      "relative_path": "backend\\modules\\README_EXCEL_PARSER.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\modules\\README_EXCEL_PARSER.md",
+      "file_name": "README_EXCEL_PARSER.md",
+      "size": 7137,
+      "modified_time": "2026-02-09T09:02:07.648523"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\backend\\sql_templates\\README.md",
+      "relative_path": "backend\\sql_templates\\README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\backend\\sql_templates\\README.md",
+      "file_name": "README.md",
+      "size": 8442,
+      "modified_time": "2026-02-13T22:16:02.781424"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\EXPORT_BUTTON_SUMMARY.md",
+      "relative_path": "frontend\\EXPORT_BUTTON_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\EXPORT_BUTTON_SUMMARY.md",
+      "file_name": "EXPORT_BUTTON_SUMMARY.md",
+      "size": 8539,
+      "modified_time": "2026-02-09T09:02:07.674855"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\IMPLEMENTATION_SUMMARY.md",
+      "relative_path": "frontend\\IMPLEMENTATION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\IMPLEMENTATION_SUMMARY.md",
+      "file_name": "IMPLEMENTATION_SUMMARY.md",
+      "size": 5940,
+      "modified_time": "2026-02-09T09:02:07.674855"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\RESULT_TABLE_IMPLEMENTATION.md",
+      "relative_path": "frontend\\RESULT_TABLE_IMPLEMENTATION.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\RESULT_TABLE_IMPLEMENTATION.md",
+      "file_name": "RESULT_TABLE_IMPLEMENTATION.md",
+      "size": 5596,
+      "modified_time": "2026-02-09T09:02:07.675859"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\RESULT_TABLE_VISUAL_GUIDE.md",
+      "relative_path": "frontend\\RESULT_TABLE_VISUAL_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\RESULT_TABLE_VISUAL_GUIDE.md",
+      "file_name": "RESULT_TABLE_VISUAL_GUIDE.md",
+      "size": 14155,
+      "modified_time": "2026-02-09T09:02:07.676856"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\TASK_10_VERIFICATION.md",
+      "relative_path": "frontend\\TASK_10_VERIFICATION.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\TASK_10_VERIFICATION.md",
+      "file_name": "TASK_10_VERIFICATION.md",
+      "size": 9173,
+      "modified_time": "2026-02-09T09:02:07.676856"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\TASK_6_COMPLETION_SUMMARY.md",
+      "relative_path": "frontend\\TASK_6_COMPLETION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\TASK_6_COMPLETION_SUMMARY.md",
+      "file_name": "TASK_6_COMPLETION_SUMMARY.md",
+      "size": 0,
+      "modified_time": "2026-02-09T09:02:07.676856"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\TASK_7_INTEGRATION_SUMMARY.md",
+      "relative_path": "frontend\\TASK_7_INTEGRATION_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\TASK_7_INTEGRATION_SUMMARY.md",
+      "file_name": "TASK_7_INTEGRATION_SUMMARY.md",
+      "size": 6971,
+      "modified_time": "2026-02-09T09:02:07.676856"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\TASK_8_VERIFICATION.md",
+      "relative_path": "frontend\\TASK_8_VERIFICATION.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\TASK_8_VERIFICATION.md",
+      "file_name": "TASK_8_VERIFICATION.md",
+      "size": 6806,
+      "modified_time": "2026-02-09T09:02:07.677856"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\TASK_9_VERIFICATION.md",
+      "relative_path": "frontend\\TASK_9_VERIFICATION.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\TASK_9_VERIFICATION.md",
+      "file_name": "TASK_9_VERIFICATION.md",
+      "size": 7230,
+      "modified_time": "2026-02-09T09:02:07.677856"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\test-integration-flow.md",
+      "relative_path": "frontend\\test-integration-flow.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\test-integration-flow.md",
+      "file_name": "test-integration-flow.md",
+      "size": 3688,
+      "modified_time": "2026-02-09T09:02:07.689101"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\src\\components\\README_DEVICE_ROW_ADJUSTMENT.md",
+      "relative_path": "frontend\\src\\components\\README_DEVICE_ROW_ADJUSTMENT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\src\\components\\README_DEVICE_ROW_ADJUSTMENT.md",
+      "file_name": "README_DEVICE_ROW_ADJUSTMENT.md",
+      "size": 5014,
+      "modified_time": "2026-02-09T09:02:07.682100"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\src\\components\\README_EXPORT_BUTTON.md",
+      "relative_path": "frontend\\src\\components\\README_EXPORT_BUTTON.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\src\\components\\README_EXPORT_BUTTON.md",
+      "file_name": "README_EXPORT_BUTTON.md",
+      "size": 6119,
+      "modified_time": "2026-02-09T09:02:07.683108"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\src\\components\\README_FILE_UPLOAD.md",
+      "relative_path": "frontend\\src\\components\\README_FILE_UPLOAD.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\src\\components\\README_FILE_UPLOAD.md",
+      "file_name": "README_FILE_UPLOAD.md",
+      "size": 7319,
+      "modified_time": "2026-02-09T09:02:07.684101"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\frontend\\src\\components\\README_RESULT_TABLE.md",
+      "relative_path": "frontend\\src\\components\\README_RESULT_TABLE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\frontend\\src\\components\\README_RESULT_TABLE.md",
+      "file_name": "README_RESULT_TABLE.md",
+      "size": 5673,
+      "modified_time": "2026-02-09T09:02:07.684101"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\organize_docs\\CLI_USAGE.md",
+      "relative_path": "organize_docs\\CLI_USAGE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\organize_docs\\CLI_USAGE.md",
+      "file_name": "CLI_USAGE.md",
+      "size": 6922,
+      "modified_time": "2026-02-13T23:52:55.947897"
+    },
+    {
+      "original_path": "D:\\excel_matching\\excel_matching\\organize_docs\\FINAL_REPORT.md",
+      "relative_path": "organize_docs\\FINAL_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101851_1e0b4c5e\\organize_docs\\FINAL_REPORT.md",
+      "file_name": "FINAL_REPORT.md",
+      "size": 6717,
+      "modified_time": "2026-02-14T10:11:02.627379"
+    }
+  ]
+}

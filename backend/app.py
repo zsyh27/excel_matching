@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Flask 应用入口
 
@@ -627,6 +628,279 @@ def get_final_device_rows():
         logger.error(f"获取最终设备行失败: {e}")
         logger.error(traceback.format_exc())
         return create_error_response('GET_FINAL_ROWS_ERROR', '获取最终设备行失败', {'error_detail': str(e)})
+
+
+@app.route('/api/database/statistics', methods=['GET'])
+def get_database_statistics():
+    """
+    获取数据库统计信息接口
+    
+    验证需求: 27.1
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式')
+        
+        # 导入 StatisticsReporter
+        from modules.statistics_reporter import StatisticsReporter
+        
+        # 创建统计报告器
+        reporter = StatisticsReporter(data_loader.loader.db_manager)
+        
+        # 获取各项统计信息
+        table_counts = reporter.get_table_counts()
+        brand_stats = reporter.get_devices_by_brand()
+        coverage = reporter.get_rule_coverage()
+        
+        # 组装响应数据
+        statistics = {
+            'total_devices': table_counts.get('devices', 0),
+            'total_rules': table_counts.get('rules', 0),
+            'total_brands': len(brand_stats),
+            'coverage_percentage': coverage.get('coverage_percentage', 0),
+            'devices_with_rules': coverage.get('devices_with_rules', 0),
+            'devices_without_rules': coverage.get('devices_without_rules', 0)
+        }
+        
+        return jsonify({
+            'success': True,
+            'data': statistics
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"获取统计信息失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_STATISTICS_ERROR', '获取统计信息失败', {'error_detail': str(e)})
+
+
+@app.route('/api/database/statistics/brands', methods=['GET'])
+def get_brand_distribution():
+    """
+    获取品牌分布统计接口
+    
+    验证需求: 27.2
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式')
+        
+        # 导入 StatisticsReporter
+        from modules.statistics_reporter import StatisticsReporter
+        
+        # 创建统计报告器
+        reporter = StatisticsReporter(data_loader.loader.db_manager)
+        
+        # 获取品牌统计
+        brand_stats = reporter.get_devices_by_brand()
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'brands': brand_stats
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"获取品牌分布失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_BRAND_DISTRIBUTION_ERROR', '获取品牌分布失败', {'error_detail': str(e)})
+
+
+@app.route('/api/database/statistics/prices', methods=['GET'])
+def get_price_distribution():
+    """
+    获取价格分布统计接口
+    
+    验证需求: 27.3
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式')
+        
+        # 查询所有设备价格并分组
+        with data_loader.loader.db_manager.session_scope() as session:
+            from modules.models import Device as DeviceModel
+            from sqlalchemy import func, case
+            
+            # 定义价格区间
+            price_ranges = [
+                (0, 100, '0-100'),
+                (100, 500, '100-500'),
+                (500, 1000, '500-1000'),
+                (1000, 5000, '1000-5000'),
+                (5000, 10000, '5000-10000'),
+                (10000, float('inf'), '10000+')
+            ]
+            
+            # 构建价格区间统计查询
+            price_stats = []
+            for min_price, max_price, range_label in price_ranges:
+                if max_price == float('inf'):
+                    count = session.query(DeviceModel).filter(
+                        DeviceModel.unit_price >= min_price
+                    ).count()
+                else:
+                    count = session.query(DeviceModel).filter(
+                        DeviceModel.unit_price >= min_price,
+                        DeviceModel.unit_price < max_price
+                    ).count()
+                
+                if count > 0:  # 只返回有数据的区间
+                    price_stats.append({
+                        'range': range_label,
+                        'min_price': min_price,
+                        'max_price': max_price if max_price != float('inf') else None,
+                        'count': count
+                    })
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'price_ranges': price_stats
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"获取价格分布失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_PRICE_DISTRIBUTION_ERROR', '获取价格分布失败', {'error_detail': str(e)})
+
+
+@app.route('/api/database/statistics/recent', methods=['GET'])
+def get_recent_devices():
+    """
+    获取最近添加的设备接口
+    
+    验证需求: 27.5
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式')
+        
+        # 获取查询参数
+        limit = request.args.get('limit', 10, type=int)
+        
+        # 查询最近添加的设备（按 device_id 倒序，假设 device_id 包含时间信息）
+        with data_loader.loader.db_manager.session_scope() as session:
+            from modules.models import Device as DeviceModel
+            
+            recent_devices = session.query(DeviceModel).order_by(
+                DeviceModel.device_id.desc()
+            ).limit(limit).all()
+            
+            # 转换为字典列表
+            devices_list = []
+            for device_model in recent_devices:
+                device = data_loader.loader._model_to_device(device_model)
+                devices_list.append(device.to_dict())
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'devices': devices_list
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"获取最近设备失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_RECENT_DEVICES_ERROR', '获取最近设备失败', {'error_detail': str(e)})
+
+
+@app.route('/api/database/statistics/without-rules', methods=['GET'])
+def get_devices_without_rules():
+    """
+    获取没有规则的设备列表接口
+    
+    验证需求: 27.6
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式')
+        
+        # 查找没有规则的设备
+        devices_without_rules = data_loader.loader.find_devices_without_rules()
+        
+        # 转换为字典列表
+        devices_list = [device.to_dict() for device in devices_without_rules]
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'devices': devices_list
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"获取无规则设备失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_DEVICES_WITHOUT_RULES_ERROR', '获取无规则设备失败', {'error_detail': str(e)})
+
+
+@app.route('/api/database/consistency-check', methods=['GET'])
+def check_data_consistency():
+    """
+    数据一致性检查接口
+    
+    验证需求: 28.1-28.4
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式')
+        
+        # 执行一致性检查
+        report = data_loader.loader.check_data_consistency()
+        
+        return jsonify({
+            'success': True,
+            'data': report
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"数据一致性检查失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('CONSISTENCY_CHECK_ERROR', '数据一致性检查失败', {'error_detail': str(e)})
+
+
+@app.route('/api/database/fix-consistency', methods=['POST'])
+def fix_data_consistency():
+    """
+    修复数据一致性问题接口
+    
+    验证需求: 28.5-28.7
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式')
+        
+        # 获取修复选项
+        data = request.get_json()
+        generate_missing_rules = data.get('generate_missing_rules', True)
+        delete_orphan_rules = data.get('delete_orphan_rules', False)
+        
+        # 执行修复
+        stats = data_loader.loader.fix_consistency_issues(
+            generate_missing_rules=generate_missing_rules,
+            delete_orphan_rules=delete_orphan_rules
+        )
+        
+        return jsonify({
+            'success': True,
+            'data': stats,
+            'message': f"修复完成：生成规则 {stats['rules_generated']} 条，删除规则 {stats['rules_deleted']} 条"
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"修复数据一致性失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('FIX_CONSISTENCY_ERROR', '修复数据一致性失败', {'error_detail': str(e)})
 
 
 if __name__ == '__main__':

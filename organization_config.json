@@ -1,0 +1,82 @@
+{
+  "classification": {
+    "core_documents": [
+      "README.md",
+      "SETUP.md",
+      "MAINTENANCE.md",
+      "CHANGELOG.md",
+      ".kiro/PROJECT.md"
+    ],
+    "core_directories": [
+      ".kiro/specs/**"
+    ],
+    "archive_keywords": [
+      "SUMMARY",
+      "REPORT",
+      "COMPLETION",
+      "FIX",
+      "TROUBLESHOOTING",
+      "TASK_",
+      "FINAL_",
+      "INTEGRATION_TEST_"
+    ],
+    "development_keywords": [
+      "GUIDE",
+      "SETUP",
+      "DATABASE_",
+      "MIGRATION_",
+      "IMPORT_",
+      "RULE_GENERATION"
+    ],
+    "exclude_patterns": [
+      "node_modules/**",
+      ".git/**",
+      "**/__pycache__/**",
+      "**/venv/**"
+    ]
+  },
+  "directory_structure": {
+    "docs_root": "docs",
+    "archive_dir": "docs/archive",
+    "development_dir": "docs/development",
+    "backend_docs_dir": "backend/docs",
+    "frontend_docs_dir": "frontend/docs"
+  },
+  "archive_grouping": {
+    "device-row-recognition": [
+      "DEVICE_ROW_RECOGNITION",
+      "TASK_9"
+    ],
+    "device-library": [
+      "DEVICE_LIBRARY_EXPANSION"
+    ],
+    "ui-optimization": [
+      "UI_OPTIMIZATION",
+      "UI_TOOLTIP"
+    ],
+    "troubleshooting": [
+      "TROUBLESHOOTING",
+      "MANUAL_ADJUST"
+    ],
+    "testing": [
+      "TEST_REPORT",
+      "INTEGRATION_TEST",
+      "ACCEPTANCE_REPORT"
+    ],
+    "tasks": [
+      "TASK_7",
+      "TASK_12"
+    ]
+  },
+  "backup": {
+    "enabled": true,
+    "backup_dir": ".backup/docs",
+    "keep_backups": 5
+  },
+  "index_generation": {
+    "include_file_size": true,
+    "include_modified_date": true,
+    "include_description": true,
+    "max_description_length": 100
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "backup_id": "backup_20260213_235717_9c5a4f47",
+  "timestamp": "2026-02-13T23:57:17.946910",
+  "document_count": 3,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpulelo06f",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpulelo06f\\DEVELOPMENT_GUIDE.md",
+      "relative_path": "DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260213_235717_9c5a4f47\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 54,
+      "modified_time": "2026-02-13T23:57:17.940098"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpulelo06f\\README.md",
+      "relative_path": "README.md",
+      "backup_path": ".backup/docs\\backup_20260213_235717_9c5a4f47\\README.md",
+      "file_name": "README.md",
+      "size": 36,
+      "modified_time": "2026-02-13T23:57:17.939084"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpulelo06f\\TASK_1_SUMMARY.md",
+      "relative_path": "TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260213_235717_9c5a4f47\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 47,
+      "modified_time": "2026-02-13T23:57:17.940098"
+    }
+  ]
+}

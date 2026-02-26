@@ -441,6 +441,22 @@ class JSONLoader:
         Returns:
             生成的规则
         """
+        # 如果有预处理器，使用 RuleGenerator 生成规则
+        if self.preprocessor:
+            from .rule_generator import RuleGenerator
+            
+            # 使用默认匹配阈值
+            config = self.load_config()
+            default_threshold = config.get('global_config', {}).get('default_match_threshold', 5.0)
+            
+            # 创建规则生成器并生成规则
+            rule_generator = RuleGenerator(self.preprocessor, default_threshold)
+            rule = rule_generator.generate_rule(device)
+            
+            if rule:
+                return rule
+        
+        # 如果没有预处理器或生成失败，使用简单的默认策略
         # 生成规则 ID
         rule_id = f"R_{device.device_id}"
         
@@ -462,7 +478,7 @@ class JSONLoader:
         
         # 使用默认匹配阈值
         config = self.load_config()
-        match_threshold = config.get('global_config', {}).get('default_match_threshold', 2.0)
+        match_threshold = config.get('global_config', {}).get('default_match_threshold', 5.0)
         
         # 创建规则
         rule = Rule(
@@ -574,9 +590,14 @@ class DataLoader:
                 try:
                     from .database import DatabaseManager
                     from .database_loader import DatabaseLoader
+                    from .rule_generator import RuleGenerator
                     
                     db_manager = DatabaseManager(config.DATABASE_URL)
-                    self.loader = DatabaseLoader(db_manager, preprocessor)
+                    
+                    # 创建 RuleGenerator 用于自动生成规则
+                    rule_generator = RuleGenerator(preprocessor) if preprocessor else None
+                    
+                    self.loader = DatabaseLoader(db_manager, preprocessor, rule_generator)
                     logger.info(f"使用数据库存储模式: {getattr(config, 'DATABASE_TYPE', 'unknown')}")
                 except Exception as e:
                     if getattr(config, 'FALLBACK_TO_JSON', True):

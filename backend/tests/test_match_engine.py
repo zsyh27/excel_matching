@@ -26,7 +26,7 @@ def config():
         "feature_split_chars": [",", ";", "，"],
         "ignore_keywords": ["施工要求"],
         "global_config": {
-            "default_match_threshold": 2.0,
+            "default_match_threshold": 5.0,
             "unify_lowercase": True,
             "remove_whitespace": True,
             "fullwidth_to_halfwidth": True
@@ -103,34 +103,42 @@ class TestMatchEngine:
     
     def test_successful_match_with_threshold(self, match_engine):
         """测试成功匹配 - 刚好达到阈值"""
-        # 只包含品牌，权重为3，刚好达到阈值
-        features = ["霍尼韦尔"]
+        # 包含品牌和型号，权重为3+3=6，超过阈值5
+        features = ["霍尼韦尔", "hscm-r100u"]
         result = match_engine.match(features)
         
         assert result.match_status == "success"
         assert result.device_id == "SENSOR001"
-        assert result.match_score == 3.0
+        assert result.match_score == 6.0
     
     def test_best_match_selection(self, match_engine):
         """测试最佳匹配选择 - 多个规则匹配时选择得分最高的"""
         # 包含两个设备都有的特征，但霍尼韦尔的得分更高
-        features = ["霍尼韦尔", "4-20ma"]
+        features = ["霍尼韦尔", "hscm-r100u", "4-20ma"]
         result = match_engine.match(features)
         
         assert result.match_status == "success"
-        assert result.device_id == "SENSOR001"  # 霍尼韦尔得分 3+2=5
-        assert result.match_score == 5.0
+        assert result.device_id == "SENSOR001"  # 霍尼韦尔得分 3+3+2=8
+        assert result.match_score == 8.0
     
     def test_fallback_to_default_threshold(self, match_engine):
         """测试兜底机制 - 使用 default_match_threshold"""
-        # 得分为2，未达到规则阈值3，但达到默认阈值2
-        features = ["4-20ma"]  # 权重为2
+        # 得分为6，未达到规则阈值3，但达到默认阈值5
+        features = ["霍尼韦尔", "hscm-r100u"]  # 权重为3+3=6
+        
+        # 临时修改规则阈值为更高的值，使其不满足规则阈值但满足默认阈值
+        original_threshold = match_engine.rules[0].match_threshold
+        match_engine.rules[0].match_threshold = 10.0  # 设置为10，使得6分不满足
+        
         result = match_engine.match(features)
         
-        # 应该匹配成功（使用兜底阈值）
+        # 应该匹配成功（使用兜底阈值5.0）
         assert result.match_status == "success"
-        assert result.match_score == 2.0
+        assert result.match_score == 6.0
         assert "兜底阈值" in result.match_reason
+        
+        # 恢复原始阈值
+        match_engine.rules[0].match_threshold = original_threshold
     
     def test_failed_match_below_threshold(self, match_engine):
         """测试匹配失败 - 得分低于所有阈值"""
@@ -189,14 +197,14 @@ class TestMatchEngine:
         bad_rule = Rule(
             rule_id="R999",
             target_device_id="NONEXISTENT",
-            auto_extracted_features=["测试"],
-            feature_weights={"测试": 5.0},
-            match_threshold=2.0,
+            auto_extracted_features=["测试特征"],
+            feature_weights={"测试特征": 10.0},
+            match_threshold=5.0,
             remark="测试规则"
         )
         match_engine.rules.append(bad_rule)
         
-        features = ["测试"]
+        features = ["测试特征"]
         result = match_engine.match(features)
         
         assert result.match_status == "failed"

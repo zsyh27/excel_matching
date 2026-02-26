@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import FileUploadView from '../views/FileUploadView.vue'
 import DeviceRowAdjustmentView from '../views/DeviceRowAdjustmentView.vue'
 import MatchingView from '../views/MatchingView.vue'
+import RuleManagementView from '../views/RuleManagementView.vue'
+import RuleEditorView from '../views/RuleEditorView.vue'
+import MatchTesterView from '../views/MatchTesterView.vue'
+import DeviceManagementView from '../views/DeviceManagementView.vue'
+import StatisticsDashboardView from '../views/StatisticsDashboardView.vue'
 
 const routes = [
   {
@@ -28,6 +33,47 @@ const routes = [
     props: true,
     meta: {
       title: '设备匹配'
+    }
+  },
+  {
+    path: '/rule-management',
+    name: 'RuleManagement',
+    component: RuleManagementView,
+    meta: {
+      title: '规则管理'
+    }
+  },
+  {
+    path: '/rule-editor/:ruleId',
+    name: 'RuleEditor',
+    component: RuleEditorView,
+    props: true,
+    meta: {
+      title: '编辑规则'
+    }
+  },
+  {
+    path: '/match-tester',
+    name: 'MatchTester',
+    component: MatchTesterView,
+    meta: {
+      title: '匹配测试'
+    }
+  },
+  {
+    path: '/database/devices',
+    name: 'DeviceManagement',
+    component: DeviceManagementView,
+    meta: {
+      title: '设备库管理'
+    }
+  },
+  {
+    path: '/database/statistics',
+    name: 'DatabaseStatistics',
+    component: StatisticsDashboardView,
+    meta: {
+      title: '统计仪表板'
     }
   }
 ]

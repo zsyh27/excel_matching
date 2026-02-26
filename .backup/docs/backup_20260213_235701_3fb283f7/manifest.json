@@ -1,0 +1,16 @@
+{
+  "backup_id": "backup_20260213_235701_3fb283f7",
+  "timestamp": "2026-02-13T23:57:01.613979",
+  "document_count": 1,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp1_bg0xlu",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp1_bg0xlu\\TEST_REPORT.md",
+      "relative_path": "TEST_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260213_235701_3fb283f7\\TEST_REPORT.md",
+      "file_name": "TEST_REPORT.md",
+      "size": 24,
+      "modified_time": "2026-02-13T23:57:01.608780"
+    }
+  ]
+}

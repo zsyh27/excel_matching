@@ -1,0 +1,16 @@
+{
+  "backup_id": "backup_20260213_235541_a827a220",
+  "timestamp": "2026-02-13T23:55:41.369668",
+  "document_count": 1,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpsbegin3p",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpsbegin3p\\TEST_DOC.md",
+      "relative_path": "TEST_DOC.md",
+      "backup_path": ".backup/docs\\backup_20260213_235541_a827a220\\TEST_DOC.md",
+      "file_name": "TEST_DOC.md",
+      "size": 26,
+      "modified_time": "2026-02-13T23:55:41.363832"
+    }
+  ]
+}

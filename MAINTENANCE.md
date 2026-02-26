@@ -1206,6 +1206,304 @@ with db_manager.session_scope() as session:
     print(f"查询时间: {query_time:.3f}秒")
 ```
 
+## 规则优化指南
+
+### 规则优化概述
+
+规则优化是提升匹配准确率的关键环节。通过系统的规则管理界面，您可以可视化地查看、调整和优化匹配规则。
+
+### 优化原则
+
+1. **设备类型关键词权重最高**: 设备类型（如"温度传感器"、"DDC控制器"）应该有最高的权重（5.0-10.0）
+2. **品牌和型号权重次之**: 品牌和型号权重建议设置为 3.0
+3. **通用参数权重最低**: 通用参数（如"4-20mA"、"0-10V"）权重应该最低（1.0）
+4. **匹配阈值适中**: 建议阈值范围为 5.0-10.0，避免过低导致误匹配
+
+### 常见问题诊断
+
+#### 问题 1: 不同类型设备匹配到相同结果
+
+**症状**: 输入"温度传感器"和"压力传感器"都匹配到同一个设备
+
+**原因**: 通用参数权重过高，设备类型权重不足
+
+**解决方案**:
+1. 使用规则管理界面查看规则详情
+2. 降低通用参数（如"4-20mA"）权重到 1.0
+3. 提高设备类型关键词权重到 5.0 或更高
+4. 使用匹配测试工具验证效果
+
+**批量操作**:
+```bash
+# 使用批量操作降低所有参数类型的权重
+curl -X POST "http://localhost:5000/api/rules/management/batch-update" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operation": "update_weights_by_type",
+    "feature_type": "parameter",
+    "new_weight": 1.0,
+    "rule_ids": []
+  }'
+```
+
+#### 问题 2: 匹配阈值过低导致误匹配
+
+**症状**: 很多不相关的设备也能匹配成功
+
+**原因**: 默认阈值 2.0 太低，只需一个通用参数就能匹配
+
+**解决方案**:
+1. 查看统计分析，确认阈值分布
+2. 使用批量操作提高所有规则的阈值到 5.0
+3. 或修改配置文件中的 `default_match_threshold`
+
+**批量操作**:
+```bash
+# 批量提高阈值
+curl -X POST "http://localhost:5000/api/rules/management/batch-update" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operation": "update_threshold",
+    "new_threshold": 5.0,
+    "rule_ids": []
+  }'
+```
+
+#### 问题 3: 特定设备总是匹配失败
+
+**症状**: 某个设备的描述总是匹配不到正确的设备
+
+**原因**: 规则特征不够准确，或权重分配不合理
+
+**解决方案**:
+1. 使用匹配测试工具测试该设备描述
+2. 查看候选规则得分列表，找出得分最高的规则
+3. 查看规则详情，分析特征权重配置
+4. 添加缺失的特征或调整权重
+5. 重新测试验证效果
+
+### 权重调整策略
+
+#### 策略 1: 基于特征类型的权重分配
+
+| 特征类型 | 建议权重 | 说明 |
+|---------|---------|------|
+| 设备类型 | 5.0-10.0 | 最重要，决定设备大类 |
+| 品牌 | 3.0 | 重要，但不同品牌可能有相同设备 |
+| 型号 | 3.0 | 重要，但需要完全匹配 |
+| 参数 | 1.0-2.0 | 辅助判断，但很多设备共享相同参数 |
+| 可选特征 | 0.5-1.0 | 锦上添花，有则加分 |
+
+#### 策略 2: 基于特征区分度的权重分配
+
+**高区分度特征**（权重 3.0-10.0）:
+- 设备类型关键词（如"温度传感器"、"DDC控制器"）
+- 品牌名称（如"霍尼韦尔"、"西门子"）
+- 型号（如"HST-RA"、"FX-PCV3624E"）
+
+**中区分度特征**（权重 1.5-2.5）:
+- 特定参数范围（如"0-50℃"、"0-100PPM"）
+- 特殊功能（如"带显示"、"无继电器输出"）
+
+**低区分度特征**（权重 0.5-1.0）:
+- 通用参数（如"4-20mA"、"0-10V"）
+- 通用描述（如"管道式安装"）
+
+#### 策略 3: 基于匹配日志的动态调整
+
+1. **查看匹配日志**，识别高频误匹配特征
+2. **降低误匹配特征的权重**
+3. **提高正确匹配特征的权重**
+4. **使用批量测试验证调整效果**
+
+### 阈值调整策略
+
+#### 阈值设置原则
+
+- **阈值过低**（< 3.0）: 容易误匹配，准确率下降
+- **阈值适中**（5.0-7.0）: 平衡准确率和召回率（推荐）
+- **阈值过高**（> 10.0）: 匹配过于严格，很多设备匹配失败
+
+#### 基于设备类型的差异化阈值
+
+不同类型的设备可以设置不同的阈值：
+
+| 设备类型 | 建议阈值 | 原因 |
+|---------|---------|------|
+| 传感器 | 5.0-7.0 | 特征较多，容易区分 |
+| 控制器 | 7.0-10.0 | 型号复杂，需要更严格匹配 |
+| 阀门/执行器 | 5.0-7.0 | 参数相似，需要适中阈值 |
+| 控制柜 | 7.0-10.0 | 配置复杂，需要严格匹配 |
+
+### 优化工作流程
+
+#### 第一步: 诊断问题
+
+1. 使用匹配测试工具测试问题描述
+2. 查看候选规则得分列表
+3. 分析为什么错误的规则得分更高
+4. 查看匹配日志，识别高频误匹配模式
+
+#### 第二步: 制定优化方案
+
+1. 确定需要调整的特征和权重
+2. 确定需要调整的阈值
+3. 评估影响范围（多少条规则会受影响）
+4. 准备测试数据集验证效果
+
+#### 第三步: 实施优化
+
+1. 使用规则管理界面调整单个规则
+2. 或使用批量操作调整多个规则
+3. 使用匹配测试工具验证单个案例
+4. 使用批量测试验证整体效果
+
+#### 第四步: 验证效果
+
+1. 运行批量测试，对比优化前后的准确率
+2. 查看失败案例，分析是否有新的问题
+3. 如果效果不理想，回滚到之前的版本
+4. 如果效果良好，应用到生产环境
+
+### 批量操作指南
+
+#### 操作 1: 按特征类型批量调整权重
+
+**场景**: 降低所有通用参数的权重
+
+```bash
+curl -X POST "http://localhost:5000/api/rules/management/batch-update" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operation": "update_weights_by_type",
+    "feature_type": "parameter",
+    "new_weight": 1.0,
+    "rule_ids": []
+  }'
+```
+
+**参数说明**:
+- `feature_type`: 特征类型（brand/device_type/model/parameter）
+- `new_weight`: 新的权重值
+- `rule_ids`: 规则ID列表，空数组表示应用到所有规则
+
+#### 操作 2: 批量调整阈值
+
+**场景**: 提高所有规则的匹配阈值
+
+```bash
+curl -X POST "http://localhost:5000/api/rules/management/batch-update" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operation": "update_threshold",
+    "new_threshold": 5.0,
+    "rule_ids": []
+  }'
+```
+
+#### 操作 3: 批量重置规则
+
+**场景**: 将某些规则恢复到初始状态
+
+```bash
+curl -X POST "http://localhost:5000/api/rules/management/batch-update" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operation": "reset_rules",
+    "rule_ids": ["R_SENSOR001", "R_SENSOR002"]
+  }'
+```
+
+### 测试验证指南
+
+#### 准备测试数据集
+
+创建测试数据集文件 `test_dataset.json`:
+
+```json
+{
+  "dataset_id": "TEST_001",
+  "name": "传感器匹配测试集",
+  "description": "包含各类传感器的测试用例",
+  "test_cases": [
+    {
+      "case_id": "CASE_001",
+      "input_description": "温度传感器，0-50℃，4-20mA",
+      "expected_device_id": "SENSOR001",
+      "expected_device_name": "霍尼韦尔 温度传感器 HST-RA",
+      "category": "传感器",
+      "difficulty": "easy"
+    },
+    {
+      "case_id": "CASE_002",
+      "input_description": "压力传感器，0-10bar，4-20mA输出",
+      "expected_device_id": "SENSOR010",
+      "expected_device_name": "西门子 压力传感器 QBE2003",
+      "category": "传感器",
+      "difficulty": "medium"
+    }
+  ]
+}
+```
+
+#### 运行批量测试
+
+```bash
+curl -X POST "http://localhost:5000/api/optimization/batch-test" \
+  -H "Content-Type: application/json" \
+  -d @test_dataset.json
+```
+
+#### 查看测试报告
+
+```bash
+curl "http://localhost:5000/api/optimization/batch-test/REPORT_001"
+```
+
+### 最佳实践
+
+1. **小步快跑**: 每次只调整少量规则，测试验证后再继续
+2. **记录变更**: 每次调整都记录原因和效果，便于回溯
+3. **保留备份**: 使用版本管理功能，重要调整前创建版本
+4. **数据驱动**: 基于匹配日志和测试结果做决策，不要盲目调整
+5. **持续监控**: 定期查看匹配准确率趋势，及时发现问题
+
+### 常用优化命令速查
+
+```bash
+# 1. 查看规则列表
+curl "http://localhost:5000/api/rules/management/list?page=1&page_size=20"
+
+# 2. 查看规则详情
+curl "http://localhost:5000/api/rules/management/R_SENSOR001"
+
+# 3. 更新规则
+curl -X PUT "http://localhost:5000/api/rules/management/R_SENSOR001" \
+  -H "Content-Type: application/json" \
+  -d '{"match_threshold": 5.0}'
+
+# 4. 测试匹配
+curl -X POST "http://localhost:5000/api/rules/management/test" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "温度传感器，0-50℃，4-20mA"}'
+
+# 5. 查看匹配日志
+curl "http://localhost:5000/api/rules/management/logs?status=failed"
+
+# 6. 批量降低参数权重
+curl -X POST "http://localhost:5000/api/rules/management/batch-update" \
+  -H "Content-Type: application/json" \
+  -d '{"operation": "update_weights_by_type", "feature_type": "parameter", "new_weight": 1.0, "rule_ids": []}'
+
+# 7. 批量提高阈值
+curl -X POST "http://localhost:5000/api/rules/management/batch-update" \
+  -H "Content-Type: application/json" \
+  -d '{"operation": "update_threshold", "new_threshold": 5.0, "rule_ids": []}'
+
+# 8. 查看统计信息
+curl "http://localhost:5000/api/rules/management/statistics"
+```
+
 ---
 
 **文档版本**: v2.0.0  

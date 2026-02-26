@@ -1,0 +1,40 @@
+{
+  "backup_id": "backup_20260214_101025_76deb116",
+  "timestamp": "2026-02-14T10:10:25.027727",
+  "document_count": 4,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpn_pwywel",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpn_pwywel\\DEVELOPMENT_GUIDE.md",
+      "relative_path": "DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260214_101025_76deb116\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 38,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpn_pwywel\\README.md",
+      "relative_path": "README.md",
+      "backup_path": ".backup/docs\\backup_20260214_101025_76deb116\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpn_pwywel\\TASK_1_SUMMARY.md",
+      "relative_path": "TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260214_101025_76deb116\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 35,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpn_pwywel\\TASK_2_REPORT.md",
+      "relative_path": "TASK_2_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260214_101025_76deb116\\TASK_2_REPORT.md",
+      "file_name": "TASK_2_REPORT.md",
+      "size": 34,
+      "modified_time": "2026-02-14T10:10:25.021569"
+    }
+  ]
+}

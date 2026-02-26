@@ -4,9 +4,9 @@
     "～": "-",
     "—": "-",
     " ": "",
-    "℃": "摄氏度",
-    "°C": "摄氏度",
-    "度": "摄氏度",
+    "℃": "",
+    "°C": "",
+    "度": "",
     "到": "-",
     "至": "-",
     "VDC": "V",
@@ -36,7 +36,18 @@
     "牛米": "nm",
     "扭矩": "nm"
   },
-  "feature_split_chars": [",", ";", "，", "；", "：", ":", "/", "、", "|", "\\"],
+  "feature_split_chars": [
+    ",",
+    ";",
+    "，",
+    "；",
+    "：",
+    ":",
+    "/",
+    "、",
+    "|",
+    "\\"
+  ],
   "ignore_keywords": [
     "施工要求",
     "验收",
@@ -61,14 +72,18 @@
     "质保"
   ],
   "global_config": {
-    "default_match_threshold": 2,
+    "default_match_threshold": 5.0,
     "unify_lowercase": true,
     "remove_whitespace": true,
     "fullwidth_to_halfwidth": true
   },
   "ui_config": {
     "max_file_size_mb": 10,
-    "supported_formats": ["xls", "xlsm", "xlsx"],
+    "supported_formats": [
+      "xls",
+      "xlsm",
+      "xlsx"
+    ],
     "default_export_format": "xlsx"
   },
   "performance_config": {
@@ -78,7 +93,7 @@
   },
   "device_row_recognition": {
     "scoring_weights": {
-      "data_type": 0.30,
+      "data_type": 0.3,
       "structure": 0.35,
       "industry": 0.35
     },
@@ -88,23 +103,92 @@
     },
     "industry_keywords": {
       "device_types": [
-        "传感器", "控制器", "DDC", "阀门", "执行器", "控制柜",
-        "电源", "继电器", "网关", "模块", "探测器", "开关",
-        "变送器", "温控器", "风阀", "水阀", "电动阀", "调节阀",
-        "压力传感器", "温度传感器", "湿度传感器", "CO2传感器",
-        "流量计", "压差开关", "液位开关", "风机", "水泵"
+        "传感器",
+        "控制器",
+        "DDC",
+        "阀门",
+        "执行器",
+        "控制柜",
+        "电源",
+        "继电器",
+        "网关",
+        "模块",
+        "探测器",
+        "开关",
+        "变送器",
+        "温控器",
+        "风阀",
+        "水阀",
+        "电动阀",
+        "调节阀",
+        "压力传感器",
+        "温度传感器",
+        "湿度传感器",
+        "CO2传感器",
+        "流量计",
+        "压差开关",
+        "液位开关",
+        "风机",
+        "水泵"
       ],
       "parameters": [
-        "PPM", "ppm", "℃", "摄氏度", "Pa", "pa", "%RH", "%rh", "m/s", "MPa", "mA",
-        "4-20mA", "0-10V", "2-10V", "AC220V", "DC24V", "DN", "dn",
-        "AI", "AO", "DI", "DO", "点位", "通道", "路", "个",
-        "V", "A", "W", "Hz", "kW", "kg", "mm", "cm", "m"
+        "PPM",
+        "ppm",
+        "℃",
+        "摄氏度",
+        "Pa",
+        "pa",
+        "%RH",
+        "%rh",
+        "m/s",
+        "MPa",
+        "mA",
+        "4-20mA",
+        "0-10V",
+        "2-10V",
+        "AC220V",
+        "DC24V",
+        "DN",
+        "dn",
+        "AI",
+        "AO",
+        "DI",
+        "DO",
+        "点位",
+        "通道",
+        "路",
+        "个",
+        "V",
+        "A",
+        "W",
+        "Hz",
+        "kW",
+        "kg",
+        "mm",
+        "cm",
+        "m"
       ],
       "brands": [
-        "霍尼韦尔", "西门子", "江森自控", "施耐德", "明纬",
-        "欧姆龙", "ABB", "丹佛斯", "贝尔莫", "Honeywell",
-        "Siemens", "Johnson", "Schneider", "OMRON", "Danfoss",
-        "Belimo", "Delta", "台达", "正泰", "德力西"
+        "霍尼韦尔",
+        "西门子",
+        "江森自控",
+        "施耐德",
+        "明纬",
+        "欧姆龙",
+        "ABB",
+        "丹佛斯",
+        "贝尔莫",
+        "Honeywell",
+        "Siemens",
+        "Johnson",
+        "Schneider",
+        "OMRON",
+        "Danfoss",
+        "Belimo",
+        "Delta",
+        "台达",
+        "正泰",
+        "德力西"
       ],
       "model_patterns": [
         "[A-Z]{2,}-[A-Z0-9]+",
@@ -113,5 +197,9 @@
         "[A-Z]+-\\d+"
       ]
     }
+  },
+  "python_test_config": {
+    "test_enabled": false,
+    "test_value": 456
   }
 }

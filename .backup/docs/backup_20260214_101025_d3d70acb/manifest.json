@@ -1,0 +1,16 @@
+{
+  "backup_id": "backup_20260214_101025_d3d70acb",
+  "timestamp": "2026-02-14T10:10:25.077615",
+  "document_count": 1,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp4wdf611i",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp4wdf611i\\TEST_DOC.md",
+      "relative_path": "TEST_DOC.md",
+      "backup_path": ".backup/docs\\backup_20260214_101025_d3d70acb\\TEST_DOC.md",
+      "file_name": "TEST_DOC.md",
+      "size": 26,
+      "modified_time": "2026-02-14T10:10:25.073064"
+    }
+  ]
+}

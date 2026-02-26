@@ -1,0 +1,16 @@
+{
+  "backup_id": "backup_20260213_235718_c404e28d",
+  "timestamp": "2026-02-13T23:57:18.145372",
+  "document_count": 1,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp01tzpncu",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp01tzpncu\\SUMMARY.md",
+      "relative_path": "SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260213_235718_c404e28d\\SUMMARY.md",
+      "file_name": "SUMMARY.md",
+      "size": 20,
+      "modified_time": "2026-02-13T23:57:18.138742"
+    }
+  ]
+}

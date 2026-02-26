@@ -1,0 +1,40 @@
+{
+  "backup_id": "backup_20260213_235708_75d10c82",
+  "timestamp": "2026-02-13T23:57:08.866729",
+  "document_count": 4,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp82gaju3r",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp82gaju3r\\DEVELOPMENT_GUIDE.md",
+      "relative_path": "DEVELOPMENT_GUIDE.md",
+      "backup_path": ".backup/docs\\backup_20260213_235708_75d10c82\\DEVELOPMENT_GUIDE.md",
+      "file_name": "DEVELOPMENT_GUIDE.md",
+      "size": 38,
+      "modified_time": "2026-02-13T23:57:08.860405"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp82gaju3r\\README.md",
+      "relative_path": "README.md",
+      "backup_path": ".backup/docs\\backup_20260213_235708_75d10c82\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:57:08.859405"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp82gaju3r\\TASK_1_SUMMARY.md",
+      "relative_path": "TASK_1_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260213_235708_75d10c82\\TASK_1_SUMMARY.md",
+      "file_name": "TASK_1_SUMMARY.md",
+      "size": 35,
+      "modified_time": "2026-02-13T23:57:08.859405"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmp82gaju3r\\TASK_2_REPORT.md",
+      "relative_path": "TASK_2_REPORT.md",
+      "backup_path": ".backup/docs\\backup_20260213_235708_75d10c82\\TASK_2_REPORT.md",
+      "file_name": "TASK_2_REPORT.md",
+      "size": 34,
+      "modified_time": "2026-02-13T23:57:08.860405"
+    }
+  ]
+}

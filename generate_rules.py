@@ -29,13 +29,13 @@ print(f"正在为 {len(devices)} 个设备生成匹配规则...")
 
 rules = []
 for device_id, device in devices.items():
-    rule = loader._generate_rule_for_device(device)
+    rule = loader.loader._generate_rule_for_device(device)
     rules.append(rule)
     print(f"  ✓ {device_id}: {device.brand} {device.device_name}")
 
 # 保存规则
-loader._rules = rules
-loader._save_rules(rules)
+loader.loader._rules = rules
+loader.loader._save_rules(rules)
 
 print(f"\n成功生成 {len(rules)} 条规则！")
 print(f"规则已保存到: {RULE_FILE}")

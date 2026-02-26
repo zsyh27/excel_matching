@@ -1,0 +1,24 @@
+{
+  "backup_id": "backup_20260213_235541_94ddcd78",
+  "timestamp": "2026-02-13T23:55:41.345951",
+  "document_count": 2,
+  "project_root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpcx92_0sp",
+  "documents": [
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpcx92_0sp\\README.md",
+      "relative_path": "README.md",
+      "backup_path": ".backup/docs\\backup_20260213_235541_94ddcd78\\README.md",
+      "file_name": "README.md",
+      "size": 27,
+      "modified_time": "2026-02-13T23:55:41.340245"
+    },
+    {
+      "original_path": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tmpcx92_0sp\\TASK_SUMMARY.md",
+      "relative_path": "TASK_SUMMARY.md",
+      "backup_path": ".backup/docs\\backup_20260213_235541_94ddcd78\\TASK_SUMMARY.md",
+      "file_name": "TASK_SUMMARY.md",
+      "size": 33,
+      "modified_time": "2026-02-13T23:55:41.341252"
+    }
+  ]
+}

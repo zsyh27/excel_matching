@@ -120,8 +120,9 @@ def test_database_loader():
         
         # 测试9: 删除设备
         logger.info("测试9: 删除设备")
-        result = loader.delete_device("TEST001")
-        assert result is True, "删除设备应该成功"
+        success, rules_count = loader.delete_device("TEST001")
+        assert success is True, "删除设备应该成功"
+        assert isinstance(rules_count, int), "应该返回规则数量"
         
         # 验证删除
         device = loader.get_device_by_id("TEST001")
@@ -133,8 +134,9 @@ def test_database_loader():
         
         # 测试10: 删除不存在的设备
         logger.info("测试10: 删除不存在的设备")
-        result = loader.delete_device("NONEXISTENT")
-        assert result is False, "删除不存在的设备应该返回False"
+        success, rules_count = loader.delete_device("NONEXISTENT")
+        assert success is False, "删除不存在的设备应该返回False"
+        assert rules_count == 0, "不存在的设备应该返回0条规则"
         logger.info("✓ 测试10通过")
         
         # 测试11: 加载规则（空列表）

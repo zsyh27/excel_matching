@@ -1,0 +1,535 @@
+================================================================================
+文档清单对比报告
+================================================================================
+生成时间: 2026-02-14 10:18:52
+项目根目录: D:\excel_matching\excel_matching
+扫描文档总数: 141
+处理文档总数: 120
+移动成功: 120
+移动失败: 0
+================================================================================
+
+按分类统计:
+--------------------------------------------------------------------------------
+  archive: 69 个文档
+  core: 21 个文档
+  development: 29 个文档
+  unknown: 22 个文档
+
+文档移动详情:
+--------------------------------------------------------------------------------
+
+ARCHIVE (69 个):
+--------------------------------------------------------------------------------
+✓ DEVICE_LIBRARY_EXPANSION_REPORT.md
+  原路径: D:\excel_matching\excel_matching\DEVICE_LIBRARY_EXPANSION_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\device-library\DEVICE_LIBRARY_EXPANSION_REPORT.md
+
+✓ DEVICE_LIBRARY_EXPANSION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\DEVICE_LIBRARY_EXPANSION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\device-library\DEVICE_LIBRARY_EXPANSION_SUMMARY.md
+
+✓ DEVICE_ROW_DETECTION_FIX_REPORT.md
+  原路径: D:\excel_matching\excel_matching\DEVICE_ROW_DETECTION_FIX_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\DEVICE_ROW_DETECTION_FIX_REPORT.md
+
+✓ DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\device-row-recognition\DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md
+
+✓ FINAL_ACCEPTANCE_REPORT.md
+  原路径: D:\excel_matching\excel_matching\FINAL_ACCEPTANCE_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\FINAL_ACCEPTANCE_REPORT.md
+
+✓ INTEGRATION_TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\INTEGRATION_TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\INTEGRATION_TEST_REPORT.md
+
+✓ MANUAL_ADJUST_DEBUG_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\MANUAL_ADJUST_DEBUG_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\troubleshooting\MANUAL_ADJUST_DEBUG_SUMMARY.md
+
+✓ MANUAL_ADJUST_TROUBLESHOOTING.md
+  原路径: D:\excel_matching\excel_matching\MANUAL_ADJUST_TROUBLESHOOTING.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\troubleshooting\MANUAL_ADJUST_TROUBLESHOOTING.md
+
+✓ MANUAL_ADJUST_TROUBLESHOOTING_V2.md
+  原路径: D:\excel_matching\excel_matching\MANUAL_ADJUST_TROUBLESHOOTING_V2.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\troubleshooting\MANUAL_ADJUST_TROUBLESHOOTING_V2.md
+
+✓ MATCH_API_FIX_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\MATCH_API_FIX_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\MATCH_API_FIX_SUMMARY.md
+
+✓ TASK_12_COMPLETION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\TASK_12_COMPLETION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\tasks\TASK_12_COMPLETION_SUMMARY.md
+
+✓ TASK_7_FINAL_REPORT.md
+  原路径: D:\excel_matching\excel_matching\TASK_7_FINAL_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\tasks\TASK_7_FINAL_REPORT.md
+
+✓ TASK_9_FINAL_CHECKPOINT_REPORT.md
+  原路径: D:\excel_matching\excel_matching\TASK_9_FINAL_CHECKPOINT_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\device-row-recognition\TASK_9_FINAL_CHECKPOINT_REPORT.md
+
+✓ TROUBLESHOOTING_QUICK_REFERENCE.md
+  原路径: D:\excel_matching\excel_matching\TROUBLESHOOTING_QUICK_REFERENCE.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\troubleshooting\TROUBLESHOOTING_QUICK_REFERENCE.md
+
+✓ UI_OPTIMIZATION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\UI_OPTIMIZATION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\ui-optimization\UI_OPTIMIZATION_SUMMARY.md
+
+✓ UI_TOOLTIP_FIX_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\UI_TOOLTIP_FIX_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\ui-optimization\UI_TOOLTIP_FIX_SUMMARY.md
+
+✓ TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234603_c4d383c2\TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\TEST_REPORT.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234603_c6936d5e\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234603_d4cce387\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234746_05da9d48\TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\TEST_REPORT.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234746_189c763e\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234746_cc775f6b\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_185a0caf\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ TASK_2_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_185a0caf\TASK_2_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_2_REPORT.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_48cdccac\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ TASK_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_94ddcd78\TASK_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_SUMMARY.md
+
+✓ TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_a2d519db\TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\TEST_REPORT.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_ae210e05\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_b596f110\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235701_3fb283f7\TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\TEST_REPORT.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_464025b7\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_567ee168\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_5e1ce58f\TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\TEST_REPORT.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_75d10c82\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ TASK_2_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_75d10c82\TASK_2_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_2_REPORT.md
+
+✓ TASK_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_a3dca764\TASK_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_bb3eebf3\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235717_57044b87\TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\TEST_REPORT.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235717_9c5a4f47\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235718_416c693b\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ TASK_2_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235718_416c693b\TASK_2_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_2_REPORT.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235718_47481726\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TASK_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235718_609c1a70\TASK_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235718_c404e28d\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101024_1818fde6\TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\TEST_REPORT.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101024_5cf76ef6\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101025_57419a26\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101025_6a4e7120\SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\SUMMARY.md
+
+✓ TASK_1_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101025_76deb116\TASK_1_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_1_SUMMARY.md
+
+✓ TASK_2_REPORT.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101025_76deb116\TASK_2_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_2_REPORT.md
+
+✓ TASK_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101025_7f9754ac\TASK_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_SUMMARY.md
+
+✓ E2E_DATABASE_MIGRATION_TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\backend\E2E_DATABASE_MIGRATION_TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\E2E_DATABASE_MIGRATION_TEST_REPORT.md
+
+✓ E2E_TEST_REPORT.md
+  原路径: D:\excel_matching\excel_matching\backend\E2E_TEST_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\testing\E2E_TEST_REPORT.md
+
+✓ E2E_TEST_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\E2E_TEST_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\E2E_TEST_SUMMARY.md
+
+✓ TASK10_DATALOADER_INTEGRATION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\TASK10_DATALOADER_INTEGRATION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK10_DATALOADER_INTEGRATION_SUMMARY.md
+
+✓ TASK2_COMPLETION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\TASK2_COMPLETION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK2_COMPLETION_SUMMARY.md
+
+✓ TASK3_API_IMPLEMENTATION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\TASK3_API_IMPLEMENTATION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK3_API_IMPLEMENTATION_SUMMARY.md
+
+✓ TASK3_DATALOADER_REFACTORING_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\TASK3_DATALOADER_REFACTORING_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK3_DATALOADER_REFACTORING_SUMMARY.md
+
+✓ TASK5_ACCURACY_VERIFICATION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\TASK5_ACCURACY_VERIFICATION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK5_ACCURACY_VERIFICATION_SUMMARY.md
+
+✓ TASK6_MIGRATION_SCRIPT_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\TASK6_MIGRATION_SCRIPT_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK6_MIGRATION_SCRIPT_SUMMARY.md
+
+✓ TASK8_RULE_GENERATION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\backend\TASK8_RULE_GENERATION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK8_RULE_GENERATION_SUMMARY.md
+
+✓ EXPORT_BUTTON_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\frontend\EXPORT_BUTTON_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\EXPORT_BUTTON_SUMMARY.md
+
+✓ IMPLEMENTATION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\frontend\IMPLEMENTATION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\IMPLEMENTATION_SUMMARY.md
+
+✓ TASK_10_VERIFICATION.md
+  原路径: D:\excel_matching\excel_matching\frontend\TASK_10_VERIFICATION.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_10_VERIFICATION.md
+
+✓ TASK_6_COMPLETION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\frontend\TASK_6_COMPLETION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_6_COMPLETION_SUMMARY.md
+
+✓ TASK_7_INTEGRATION_SUMMARY.md
+  原路径: D:\excel_matching\excel_matching\frontend\TASK_7_INTEGRATION_SUMMARY.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\tasks\TASK_7_INTEGRATION_SUMMARY.md
+
+✓ TASK_8_VERIFICATION.md
+  原路径: D:\excel_matching\excel_matching\frontend\TASK_8_VERIFICATION.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\TASK_8_VERIFICATION.md
+
+✓ TASK_9_VERIFICATION.md
+  原路径: D:\excel_matching\excel_matching\frontend\TASK_9_VERIFICATION.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\device-row-recognition\TASK_9_VERIFICATION.md
+
+✓ FINAL_REPORT.md
+  原路径: D:\excel_matching\excel_matching\organize_docs\FINAL_REPORT.md
+  新路径: D:\excel_matching\excel_matching\docs\archive\FINAL_REPORT.md
+
+
+DEVELOPMENT (29 个):
+--------------------------------------------------------------------------------
+✓ MANUAL_ADJUST_USER_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\MANUAL_ADJUST_USER_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\MANUAL_ADJUST_USER_GUIDE.md
+
+✓ ORGANIZATION_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\ORGANIZATION_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\ORGANIZATION_GUIDE.md
+
+✓ QUICK_START_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\QUICK_START_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\QUICK_START_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234603_c6936d5e\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_234746_189c763e\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_185a0caf\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_48cdccac\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_464025b7\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_75d10c82\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235717_9c5a4f47\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235718_416c693b\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101024_5cf76ef6\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DEVELOPMENT_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101025_76deb116\DEVELOPMENT_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DEVELOPMENT_GUIDE.md
+
+✓ DATABASE_SETUP.md
+  原路径: D:\excel_matching\excel_matching\backend\DATABASE_SETUP.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\DATABASE_SETUP.md
+
+✓ EXCEL_EXPORTER_IMPLEMENTATION.md
+  原路径: D:\excel_matching\excel_matching\backend\EXCEL_EXPORTER_IMPLEMENTATION.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\EXCEL_EXPORTER_IMPLEMENTATION.md
+
+✓ IMPLEMENTATION_VERIFICATION.md
+  原路径: D:\excel_matching\excel_matching\backend\IMPLEMENTATION_VERIFICATION.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\IMPLEMENTATION_VERIFICATION.md
+
+✓ IMPORT_DEVICES_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\backend\IMPORT_DEVICES_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\IMPORT_DEVICES_GUIDE.md
+
+✓ MATCH_ENGINE_IMPLEMENTATION.md
+  原路径: D:\excel_matching\excel_matching\backend\MATCH_ENGINE_IMPLEMENTATION.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\MATCH_ENGINE_IMPLEMENTATION.md
+
+✓ MIGRATION_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\backend\MIGRATION_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\MIGRATION_GUIDE.md
+
+✓ RULE_GENERATION_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\backend\RULE_GENERATION_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\RULE_GENERATION_GUIDE.md
+
+✓ README_EXCEL_EXPORTER.md
+  原路径: D:\excel_matching\excel_matching\backend\modules\README_EXCEL_EXPORTER.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\README_EXCEL_EXPORTER.md
+
+✓ README_EXCEL_PARSER.md
+  原路径: D:\excel_matching\excel_matching\backend\modules\README_EXCEL_PARSER.md
+  新路径: D:\excel_matching\excel_matching\backend\docs\README_EXCEL_PARSER.md
+
+✓ RESULT_TABLE_IMPLEMENTATION.md
+  原路径: D:\excel_matching\excel_matching\frontend\RESULT_TABLE_IMPLEMENTATION.md
+  新路径: D:\excel_matching\excel_matching\frontend\docs\RESULT_TABLE_IMPLEMENTATION.md
+
+✓ RESULT_TABLE_VISUAL_GUIDE.md
+  原路径: D:\excel_matching\excel_matching\frontend\RESULT_TABLE_VISUAL_GUIDE.md
+  新路径: D:\excel_matching\excel_matching\frontend\docs\RESULT_TABLE_VISUAL_GUIDE.md
+
+✓ test-integration-flow.md
+  原路径: D:\excel_matching\excel_matching\frontend\test-integration-flow.md
+  新路径: D:\excel_matching\excel_matching\frontend\docs\test-integration-flow.md
+
+✓ README_DEVICE_ROW_ADJUSTMENT.md
+  原路径: D:\excel_matching\excel_matching\frontend\src\components\README_DEVICE_ROW_ADJUSTMENT.md
+  新路径: D:\excel_matching\excel_matching\frontend\docs\README_DEVICE_ROW_ADJUSTMENT.md
+
+✓ README_EXPORT_BUTTON.md
+  原路径: D:\excel_matching\excel_matching\frontend\src\components\README_EXPORT_BUTTON.md
+  新路径: D:\excel_matching\excel_matching\frontend\docs\README_EXPORT_BUTTON.md
+
+✓ README_FILE_UPLOAD.md
+  原路径: D:\excel_matching\excel_matching\frontend\src\components\README_FILE_UPLOAD.md
+  新路径: D:\excel_matching\excel_matching\frontend\docs\README_FILE_UPLOAD.md
+
+✓ README_RESULT_TABLE.md
+  原路径: D:\excel_matching\excel_matching\frontend\src\components\README_RESULT_TABLE.md
+  新路径: D:\excel_matching\excel_matching\frontend\docs\README_RESULT_TABLE.md
+
+
+UNKNOWN (22 个):
+--------------------------------------------------------------------------------
+✓ CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md
+  原路径: D:\excel_matching\excel_matching\CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md
+
+✓ PROJECT_OVERVIEW.md
+  原路径: D:\excel_matching\excel_matching\PROJECT_OVERVIEW.md
+  新路径: D:\excel_matching\excel_matching\docs\development\PROJECT_OVERVIEW.md
+
+✓ PROJECT_STATUS.md
+  原路径: D:\excel_matching\excel_matching\PROJECT_STATUS.md
+  新路径: D:\excel_matching\excel_matching\docs\development\PROJECT_STATUS.md
+
+✓ TEST_DOC.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235541_a827a220\TEST_DOC.md
+  新路径: D:\excel_matching\excel_matching\docs\development\TEST_DOC.md
+
+✓ TEST_DOC.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235708_36791c4e\TEST_DOC.md
+  新路径: D:\excel_matching\excel_matching\docs\development\TEST_DOC.md
+
+✓ TEST_DOC.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260213_235718_29125127\TEST_DOC.md
+  新路径: D:\excel_matching\excel_matching\docs\development\TEST_DOC.md
+
+✓ TEST_DOC.md
+  原路径: D:\excel_matching\excel_matching\.backup\docs\backup_20260214_101025_d3d70acb\TEST_DOC.md
+  新路径: D:\excel_matching\excel_matching\docs\development\TEST_DOC.md
+
+✓ DOCUMENTATION_CHECKLIST.md
+  原路径: D:\excel_matching\excel_matching\.kiro\DOCUMENTATION_CHECKLIST.md
+  新路径: D:\excel_matching\excel_matching\docs\development\DOCUMENTATION_CHECKLIST.md
+
+✓ QUICK_REFERENCE.md
+  原路径: D:\excel_matching\excel_matching\.kiro\QUICK_REFERENCE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\QUICK_REFERENCE.md
+
+✓ design.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\database-migration\design.md
+  新路径: D:\excel_matching\excel_matching\docs\development\design.md
+
+✓ requirements.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\database-migration\requirements.md
+  新路径: D:\excel_matching\excel_matching\docs\development\requirements.md
+
+✓ tasks.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\database-migration\tasks.md
+  新路径: D:\excel_matching\excel_matching\docs\development\tasks.md
+
+✓ design.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\ddc-device-matching\design.md
+  新路径: D:\excel_matching\excel_matching\docs\development\design.md
+
+✓ requirements.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\ddc-device-matching\requirements.md
+  新路径: D:\excel_matching\excel_matching\docs\development\requirements.md
+
+✓ tasks.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\ddc-device-matching\tasks.md
+  新路径: D:\excel_matching\excel_matching\docs\development\tasks.md
+
+✓ design.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\device-row-intelligent-recognition\design.md
+  新路径: D:\excel_matching\excel_matching\docs\development\design.md
+
+✓ requirements.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\device-row-intelligent-recognition\requirements.md
+  新路径: D:\excel_matching\excel_matching\docs\development\requirements.md
+
+✓ tasks.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\device-row-intelligent-recognition\tasks.md
+  新路径: D:\excel_matching\excel_matching\docs\development\tasks.md
+
+✓ design.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\documentation-organization\design.md
+  新路径: D:\excel_matching\excel_matching\docs\development\design.md
+
+✓ requirements.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\documentation-organization\requirements.md
+  新路径: D:\excel_matching\excel_matching\docs\development\requirements.md
+
+✓ tasks.md
+  原路径: D:\excel_matching\excel_matching\.kiro\specs\documentation-organization\tasks.md
+  新路径: D:\excel_matching\excel_matching\docs\development\tasks.md
+
+✓ CLI_USAGE.md
+  原路径: D:\excel_matching\excel_matching\organize_docs\CLI_USAGE.md
+  新路径: D:\excel_matching\excel_matching\docs\development\CLI_USAGE.md
+
+
+未处理的文档:
+--------------------------------------------------------------------------------
+  - CHANGELOG.md
+  - MAINTENANCE.md
+  - README.md
+  - SETUP.md
+  - .backup\docs\backup_20260213_234603_c6936d5e\README.md
+  - .backup\docs\backup_20260213_234746_189c763e\README.md
+  - .backup\docs\backup_20260213_235541_185a0caf\README.md
+  - .backup\docs\backup_20260213_235541_48cdccac\README.md
+  - .backup\docs\backup_20260213_235541_94ddcd78\README.md
+  - .backup\docs\backup_20260213_235708_464025b7\README.md
+  - .backup\docs\backup_20260213_235708_75d10c82\README.md
+  - .backup\docs\backup_20260213_235708_a3dca764\README.md
+  - .backup\docs\backup_20260213_235717_9c5a4f47\README.md
+  - .backup\docs\backup_20260213_235718_416c693b\README.md
+  - .backup\docs\backup_20260213_235718_609c1a70\README.md
+  - .backup\docs\backup_20260214_101024_5cf76ef6\README.md
+  - .backup\docs\backup_20260214_101025_76deb116\README.md
+  - .backup\docs\backup_20260214_101025_7f9754ac\README.md
+  - .kiro\PROJECT.md
+  - .pytest_cache\README.md
+  - backend\sql_templates\README.md
+
+================================================================================

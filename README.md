@@ -224,6 +224,84 @@ pytest tests/ -v -k "property"
 8. **人工调整**: 对匹配失败的设备，从下拉框中手动选择正确的设备
 9. **导出报价**: 点击导出按钮，下载包含匹配结果的报价清单
 
+### 规则管理界面使用说明
+
+系统提供了强大的规则管理界面，用于可视化查看、调整和优化匹配规则，提升匹配准确率。
+
+#### 访问规则管理界面
+
+在主界面导航栏点击"规则管理"进入规则管理系统。
+
+#### 核心功能
+
+**1. 规则列表查看**
+- 查看所有设备的匹配规则概览
+- 支持按设备ID、品牌、名称、型号搜索
+- 支持按品牌、设备类型、阈值范围筛选
+- 显示规则ID、匹配阈值、特征数量等信息
+
+**2. 规则详情编辑**
+- 查看单个设备的详细匹配规则
+- 查看所有提取的特征及其权重值（按权重降序排列）
+- 实时修改特征权重和匹配阈值
+- 修改后自动保存到数据库并重新加载规则
+
+**3. 匹配测试工具**
+- 输入设备描述，实时测试匹配效果
+- 查看预处理结果（归一化、特征提取）
+- 查看候选规则得分明细（前10个）
+- 查看每个候选规则匹配到的特征和对应权重
+- 高亮显示最终选中的规则及得分原因
+
+**4. 匹配日志查看**
+- 查看历史匹配记录
+- 按时间范围、匹配状态、设备类型筛选
+- 查看每条记录的输入描述、匹配结果、得分
+- 支持导出为 CSV 或 Excel 格式
+
+**5. 批量操作**
+- 按特征类型批量调整权重（品牌/型号/参数）
+- 批量调整匹配阈值
+- 批量重置规则到初始状态
+- 一键应用优化建议
+
+**6. 统计分析**
+- 查看权重分布图表
+- 查看阈值分布图表
+- 查看匹配准确率趋势
+- 识别权重配置问题
+
+#### 使用场景示例
+
+**场景 1: 诊断匹配问题**
+1. 在匹配测试工具中输入问题描述
+2. 查看候选规则得分列表，找出得分最高的规则
+3. 点击规则详情，查看特征权重配置
+4. 调整权重或阈值，重新测试验证效果
+
+**场景 2: 优化匹配准确率**
+1. 查看统计分析，识别通用参数权重过高的问题
+2. 使用批量操作降低通用参数（如"4-20mA"）权重
+3. 使用批量操作提高设备类型关键词权重
+4. 使用批量操作提高匹配阈值
+5. 查看匹配日志验证优化效果
+
+**场景 3: 日常规则维护**
+1. 在规则列表中搜索需要调整的设备
+2. 查看规则详情，了解当前配置
+3. 修改特征权重或匹配阈值
+4. 使用匹配测试工具验证修改效果
+
+#### 注意事项
+
+- 规则管理功能需要使用数据库模式（JSON 文件模式不支持）
+- 规则更新后会自动重新加载数据并更新匹配引擎
+- 建议权重范围为 0.5-10.0，阈值范围为 3.0-10.0
+- 批量操作会逐个处理规则，部分失败不影响其他规则
+- 匹配测试不会记录日志，只有实际匹配操作才会记录
+
+详细的规则管理 API 文档请参考 [backend/docs/rule_management_api.md](backend/docs/rule_management_api.md)
+
 ### 设备行智能识别功能
 
 #### 三维度评分模型
@@ -541,6 +619,97 @@ pytest tests/ --cov=modules --cov-report=html
 MIT License
 
 Copyright (c) 2024 DDC Device Matching System
+
+## 文档导航
+
+### 核心文档
+
+- [README.md](README.md) - 项目概述和快速开始
+- [SETUP.md](SETUP.md) - 详细安装和配置指南
+- [MAINTENANCE.md](MAINTENANCE.md) - 数据维护和故障排查指南
+- [CHANGELOG.md](CHANGELOG.md) - 版本变更历史
+- [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) - 快速启动指南
+- [.kiro/PROJECT.md](.kiro/PROJECT.md) - 项目规格概述
+
+### 开发文档
+
+- [DATABASE_SETUP.md](backend/DATABASE_SETUP.md) - 数据库设置和配置指南
+- [MANUAL_ADJUST_USER_GUIDE.md](MANUAL_ADJUST_USER_GUIDE.md) - 手动调整功能用户指南
+- [TROUBLESHOOTING_QUICK_REFERENCE.md](TROUBLESHOOTING_QUICK_REFERENCE.md) - 故障排查快速参考
+
+### 功能总结文档
+
+- [DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md](DEVICE_ROW_RECOGNITION_FINAL_SUMMARY.md) - 设备行识别功能总结
+- [DEVICE_LIBRARY_EXPANSION_REPORT.md](DEVICE_LIBRARY_EXPANSION_REPORT.md) - 设备库扩充报告
+- [DEVICE_LIBRARY_EXPANSION_SUMMARY.md](DEVICE_LIBRARY_EXPANSION_SUMMARY.md) - 设备库扩充总结
+- [UI_OPTIMIZATION_SUMMARY.md](UI_OPTIMIZATION_SUMMARY.md) - UI优化总结
+- [UI_TOOLTIP_FIX_SUMMARY.md](UI_TOOLTIP_FIX_SUMMARY.md) - UI Tooltip修复总结
+- [MATCH_API_FIX_SUMMARY.md](MATCH_API_FIX_SUMMARY.md) - 匹配API修复总结
+
+### 任务报告文档
+
+- [TASK_9_FINAL_CHECKPOINT_REPORT.md](TASK_9_FINAL_CHECKPOINT_REPORT.md) - 任务9最终检查点报告
+- [TASK_7_FINAL_REPORT.md](TASK_7_FINAL_REPORT.md) - 任务7最终报告
+- [TASK_12_COMPLETION_SUMMARY.md](TASK_12_COMPLETION_SUMMARY.md) - 任务12完成总结
+- [FINAL_ACCEPTANCE_REPORT.md](FINAL_ACCEPTANCE_REPORT.md) - 最终验收报告
+- [INTEGRATION_TEST_REPORT.md](INTEGRATION_TEST_REPORT.md) - 集成测试报告
+
+### 故障排查文档
+
+- [MANUAL_ADJUST_TROUBLESHOOTING_V2.md](MANUAL_ADJUST_TROUBLESHOOTING_V2.md) - 手动调整功能故障排查（V2）
+- [MANUAL_ADJUST_TROUBLESHOOTING.md](MANUAL_ADJUST_TROUBLESHOOTING.md) - 手动调整功能故障排查
+- [MANUAL_ADJUST_DEBUG_SUMMARY.md](MANUAL_ADJUST_DEBUG_SUMMARY.md) - 手动调整调试总结
+- [DEVICE_ROW_DETECTION_FIX_REPORT.md](DEVICE_ROW_DETECTION_FIX_REPORT.md) - 设备行检测修复报告
+- [CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md](CRITICAL_DEVICE_ROW_DETECTION_ISSUE.md) - 设备行检测关键问题
+
+### 项目状态文档
+
+- [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) - 项目概览
+- [PROJECT_STATUS.md](PROJECT_STATUS.md) - 项目状态
+
+---
+
+**文档说明**: 
+- 核心文档包含项目的基本信息和使用指南
+- 开发文档提供技术实现细节和配置说明
+- 功能总结文档记录各功能模块的开发总结
+- 任务报告文档记录开发过程中的任务完成情况
+- 故障排查文档提供问题诊断和解决方案
+- 项目状态文档提供项目整体状态和进展
+
+### 文档整理工具
+
+项目提供了自动化的文档整理工具，用于系统化地整理项目中的 MD 文档：
+
+**功能特性**:
+- 自动文档分类（核心文档、归档文档、开发文档）
+- 智能归档（按功能模块分组）
+- 自动备份和恢复
+- 索引生成和导航链接
+- 配置驱动的整理规则
+
+**快速使用**:
+```bash
+# 验证配置
+python -m organize_docs.cli validate
+
+# 试运行（推荐首次使用）
+python -m organize_docs.cli organize --dry-run
+
+# 执行整理
+python -m organize_docs.cli organize --yes
+
+# 列出备份
+python -m organize_docs.cli list-backups
+
+# 从备份恢复
+python -m organize_docs.cli restore --backup-id <backup_id>
+```
+
+**详细文档**:
+- [ORGANIZATION_GUIDE.md](ORGANIZATION_GUIDE.md) - 文档整理功能使用指南
+- [organize_docs/CLI_USAGE.md](organize_docs/CLI_USAGE.md) - CLI 命令行使用指南
+- [organization_config.json](organization_config.json) - 配置文件
 
 ## 联系方式
 

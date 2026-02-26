@@ -2,7 +2,21 @@
   <div id="app">
     <el-container>
       <el-header>
-        <h1>DDC设备清单匹配报价系统</h1>
+        <div class="header-content">
+          <h1>DDC设备清单匹配报价系统</h1>
+          <el-menu
+            :default-active="activeMenu"
+            mode="horizontal"
+            :ellipsis="false"
+            background-color="#409EFF"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+            @select="handleMenuSelect"
+          >
+            <el-menu-item index="/">上传清单</el-menu-item>
+            <el-menu-item index="/rule-management">规则管理</el-menu-item>
+          </el-menu>
+        </div>
       </el-header>
       <el-main>
         <router-view />
@@ -12,7 +26,26 @@
 </template>
 
 <script setup>
-// 路由视图将自动渲染对应的组件
+import { ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+const activeMenu = ref(route.path)
+
+// 监听路由变化更新活动菜单
+watch(() => route.path, (newPath) => {
+  if (newPath.startsWith('/rule-management')) {
+    activeMenu.value = '/rule-management'
+  } else if (newPath === '/') {
+    activeMenu.value = '/'
+  }
+})
+
+// 菜单选择处理
+const handleMenuSelect = (index) => {
+  router.push(index)
+}
 </script>
 
 <style>
@@ -23,8 +56,25 @@
 .el-header {
   background-color: #409EFF;
   color: white;
-  text-align: center;
-  line-height: 60px;
+  padding: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.header-content h1 {
+  margin: 0;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.el-menu--horizontal {
+  border-bottom: none;
 }
 
 .el-main {
