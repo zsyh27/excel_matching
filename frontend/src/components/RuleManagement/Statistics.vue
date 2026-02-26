@@ -169,42 +169,73 @@ const renderWeightChart = (distribution) => {
   }
   
   // 转换数据格式
+  const rangeLabels = {
+    'low': '低权重 (0-2)',
+    'medium': '中权重 (2-4)',
+    'high': '高权重 (4+)'
+  }
+  
   const ranges = Object.keys(distribution).sort()
-  const values = ranges.map(range => distribution[range])
+  const data = ranges.map(range => ({
+    name: rangeLabels[range] || range,
+    value: distribution[range]
+  }))
   
   const option = {
     title: {
       text: '特征权重分布',
-      left: 'center'
+      left: 'center',
+      top: 10
     },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow'
-      }
+      },
+      formatter: '{b}<br/>特征数量: {c}'
+    },
+    grid: {
+      left: '10%',
+      right: '10%',
+      top: '20%',
+      bottom: '15%',
+      containLabel: true
     },
     xAxis: {
       type: 'category',
-      data: ranges,
-      name: '权重范围'
+      data: data.map(d => d.name),
+      name: '权重范围',
+      nameLocation: 'middle',
+      nameGap: 30,
+      axisLabel: {
+        interval: 0,
+        rotate: 0
+      }
     },
     yAxis: {
       type: 'value',
-      name: '特征数量'
+      name: '特征数量',
+      nameLocation: 'middle',
+      nameGap: 50
     },
     series: [
       {
         name: '特征数量',
         type: 'bar',
-        data: values,
+        data: data.map(d => d.value),
         itemStyle: {
           color: '#409EFF'
+        },
+        label: {
+          show: true,
+          position: 'top',
+          formatter: '{c}'
         }
       }
     ]
   }
   
-  weightChart.setOption(option)
+  weightChart.setOption(option, true)
 }
 
 const renderThresholdChart = (distribution) => {
@@ -215,30 +246,41 @@ const renderThresholdChart = (distribution) => {
   }
   
   // 转换数据格式
+  const thresholdLabels = {
+    'low': '低阈值 (<3)',
+    'medium': '中阈值 (3-5)',
+    'high': '高阈值 (≥5)'
+  }
+  
   const data = Object.keys(distribution).map(threshold => ({
-    name: `阈值 ${threshold}`,
+    name: thresholdLabels[threshold] || threshold,
     value: distribution[threshold]
-  }))
+  })).filter(d => d.value > 0) // 只显示有数据的项
   
   const option = {
     title: {
       text: '匹配阈值分布',
-      left: 'center'
+      left: 'center',
+      top: 10
     },
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c} ({d}%)'
+      formatter: '{b}<br/>规则数量: {c} ({d}%)'
     },
     legend: {
       orient: 'vertical',
-      left: 'left',
-      top: 'middle'
+      left: '5%',
+      top: 'middle',
+      textStyle: {
+        fontSize: 14
+      }
     },
     series: [
       {
         name: '规则数量',
         type: 'pie',
-        radius: '60%',
+        radius: ['40%', '70%'],
+        center: ['60%', '55%'],
         data: data,
         emphasis: {
           itemStyle: {
@@ -246,12 +288,16 @@ const renderThresholdChart = (distribution) => {
             shadowOffsetX: 0,
             shadowColor: 'rgba(0, 0, 0, 0.5)'
           }
+        },
+        label: {
+          formatter: '{b}\n{c} ({d}%)',
+          fontSize: 12
         }
       }
     ]
   }
   
-  thresholdChart.setOption(option)
+  thresholdChart.setOption(option, true)
 }
 
 const renderTrendChart = (dailyStats) => {
@@ -268,20 +314,35 @@ const renderTrendChart = (dailyStats) => {
   const option = {
     title: {
       text: '匹配成功率趋势',
-      left: 'center'
+      left: 'center',
+      top: 10
     },
     tooltip: {
       trigger: 'axis',
       formatter: '{b}<br/>{a}: {c}%'
     },
+    grid: {
+      left: '10%',
+      right: '10%',
+      top: '20%',
+      bottom: '15%',
+      containLabel: true
+    },
     xAxis: {
       type: 'category',
       data: dates,
-      name: '日期'
+      name: '日期',
+      nameLocation: 'middle',
+      nameGap: 30,
+      axisLabel: {
+        rotate: 45
+      }
     },
     yAxis: {
       type: 'value',
       name: '成功率 (%)',
+      nameLocation: 'middle',
+      nameGap: 50,
       min: 0,
       max: 100
     },
@@ -296,6 +357,11 @@ const renderTrendChart = (dailyStats) => {
         },
         areaStyle: {
           color: 'rgba(103, 194, 58, 0.2)'
+        },
+        label: {
+          show: true,
+          position: 'top',
+          formatter: '{c}%'
         }
       }
     ]
@@ -317,7 +383,7 @@ const renderTrendChart = (dailyStats) => {
     }
   }
   
-  trendChart.setOption(option)
+  trendChart.setOption(option, true)
 }
 
 const refreshData = () => {

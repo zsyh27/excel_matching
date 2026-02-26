@@ -18,24 +18,27 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import RuleEditor from '../components/RuleManagement/RuleEditor.vue'
 
 const router = useRouter()
 const route = useRoute()
-const ruleId = route.params.ruleId
+const ruleId = computed(() => route.params.ruleId)
 
 const handleBack = () => {
-  router.push('/rule-management')
+  // 如果有历史记录，返回上一页；否则跳转到规则管理页面
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/rule-management')
+  }
 }
 
 const handleSave = () => {
   ElMessage.success('规则已保存')
-  // 延迟返回，让用户看到成功消息
-  setTimeout(() => {
-    handleBack()
-  }, 1000)
+  // 不自动返回，让用户决定是否继续编辑或手动返回
 }
 
 const handleCancel = () => {

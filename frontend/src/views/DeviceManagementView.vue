@@ -134,11 +134,12 @@ const handleFixSuccess = () => {
 
 // 查看规则详情
 const handleViewRule = (rule) => {
-  // 跳转到规则编辑页面
-  router.push({
+  // 在新标签页打开规则编辑页面
+  const routeData = router.resolve({
     name: 'RuleEditor',
     params: { ruleId: rule.rule_id }
   })
+  window.open(routeData.href, '_blank')
 }
 </script>
 

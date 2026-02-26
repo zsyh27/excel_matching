@@ -287,15 +287,392 @@ def get_devices():
     """获取设备列表接口"""
     try:
         all_devices = data_loader.get_all_devices()
+        all_rules = data_loader.get_all_rules()
+        
+        # 创建设备ID到规则的映射
+        device_has_rules = set()
+        for rule in all_rules:
+            device_has_rules.add(rule.target_device_id)
+        
         devices_list = []
         for device_id, device in all_devices.items():
             device_dict = device.to_dict()
             device_dict['display_text'] = device.get_display_text()
+            device_dict['has_rules'] = device_id in device_has_rules
             devices_list.append(device_dict)
         return jsonify({'success': True, 'devices': devices_list}), 200
     except Exception as e:
         logger.error(f"获取设备列表失败: {e}")
         return create_error_response('GET_DEVICES_ERROR', '获取设备列表失败', {'error_detail': str(e)})
+
+
+@app.route('/api/devices/<device_id>', methods=['GET'])
+def get_device_by_id(device_id):
+    """获取单个设备详情接口"""
+    try:
+        all_devices = data_loader.get_all_devices()
+        
+        if device_id not in all_devices:
+            return create_error_response('DEVICE_NOT_FOUND', f'设备不存在: {device_id}'), 404
+        
+        device = all_devices[device_id]
+        device_dict = device.to_dict()
+        device_dict['display_text'] = device.get_display_text()
+        
+        # 获取关联的规则
+        all_rules = data_loader.get_all_rules()
+        device_rules = []
+        for rule in all_rules:
+            if rule.target_device_id == device_id:
+                device_rules.append(rule.to_dict())
+        
+        device_dict['rules'] = device_rules
+        device_dict['has_rules'] = len(device_rules) > 0
+        
+        return jsonify({'success': True, 'data': device_dict}), 200
+    except Exception as e:
+        logger.error(f"获取设备详情失败: {e}")
+        return create_error_response('GET_DEVICE_ERROR', '获取设备详情失败', {'error_detail': str(e)})
+
+
+@app.route('/api/rules/management/<rule_id>', methods=['GET'])
+def get_rule_by_id(rule_id):
+    """获取单个规则详情接口"""
+    try:
+        all_rules = data_loader.get_all_rules()
+        
+        # 查找指定的规则
+        target_rule = None
+        for rule in all_rules:
+            if rule.rule_id == rule_id:
+                target_rule = rule
+                break
+        
+        if not target_rule:
+            return jsonify(create_error_response('RULE_NOT_FOUND', f'规则不存在: {rule_id}')), 404
+        
+        rule_dict = target_rule.to_dict()
+        
+        # 获取关联的设备信息
+        all_devices = data_loader.get_all_devices()
+        device_info = None
+        if target_rule.target_device_id in all_devices:
+            device = all_devices[target_rule.target_device_id]
+            device_info = {
+                'device_id': device.device_id,
+                'brand': device.brand,
+                'device_name': device.device_name,
+                'spec_model': device.spec_model,
+                'detailed_params': device.detailed_params if hasattr(device, 'detailed_params') else '',
+                'unit_price': device.unit_price if hasattr(device, 'unit_price') else 0
+            }
+        
+        # 将特征和权重转换为前端期望的格式，并添加类型信息
+        features = []
+        for feature, weight in target_rule.feature_weights.items():
+            # 根据特征名称推断类型
+            feature_type = 'parameter'  # 默认类型
+            if '品牌' in feature or feature == target_rule.target_device_id.split('_')[0]:
+                feature_type = 'brand'
+            elif '型号' in feature or 'model' in feature.lower():
+                feature_type = 'model'
+            elif '设备' in feature or 'device' in feature.lower():
+                feature_type = 'device_type'
+            
+            features.append({
+                'feature': feature,
+                'weight': weight,
+                'type': feature_type
+            })
+        
+        # 构建返回数据
+        result = {
+            'rule_id': target_rule.rule_id,
+            'target_device_id': target_rule.target_device_id,
+            'match_threshold': target_rule.match_threshold,
+            'remark': target_rule.remark if hasattr(target_rule, 'remark') else '',
+            'device_info': device_info,
+            'features': features
+        }
+        
+        return jsonify({'success': True, 'rule': result})
+    except Exception as e:
+        logger.error(f"获取规则详情失败: {e}")
+        return jsonify(create_error_response('GET_RULE_ERROR', '获取规则详情失败', {'error_detail': str(e)}))
+
+
+@app.route('/api/rules/management/list', methods=['GET'])
+def get_rules_list():
+    """获取规则列表接口（支持分页和筛选）"""
+    try:
+        # 获取查询参数
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('page_size', 20))
+        search = request.args.get('search', '').strip()
+        brand = request.args.get('brand', '').strip()
+        device_type = request.args.get('device_type', '').strip()
+        threshold_min = request.args.get('threshold_min', '')
+        threshold_max = request.args.get('threshold_max', '')
+        
+        # 获取所有规则和设备
+        all_rules = data_loader.get_all_rules()
+        all_devices = data_loader.get_all_devices()
+        
+        # 构建规则列表（包含设备信息）
+        rules_with_device = []
+        for rule in all_rules:
+            if rule.target_device_id in all_devices:
+                device = all_devices[rule.target_device_id]
+                rule_item = {
+                    'rule_id': rule.rule_id,
+                    'device_id': rule.target_device_id,
+                    'brand': device.brand,
+                    'device_name': device.device_name,
+                    'spec_model': device.spec_model,
+                    'match_threshold': rule.match_threshold,
+                    'feature_count': len(rule.feature_weights),
+                    'remark': rule.remark if hasattr(rule, 'remark') else ''
+                }
+                rules_with_device.append(rule_item)
+        
+        # 应用筛选条件
+        filtered_rules = rules_with_device
+        
+        # 搜索关键词筛选
+        if search:
+            search_lower = search.lower()
+            filtered_rules = [
+                r for r in filtered_rules
+                if search_lower in r['device_id'].lower()
+                or search_lower in r['brand'].lower()
+                or search_lower in r['device_name'].lower()
+                or search_lower in r['spec_model'].lower()
+            ]
+        
+        # 品牌筛选
+        if brand:
+            filtered_rules = [r for r in filtered_rules if r['brand'] == brand]
+        
+        # 设备类型筛选
+        if device_type:
+            filtered_rules = [r for r in filtered_rules if device_type in r['device_name']]
+        
+        # 阈值范围筛选
+        if threshold_min:
+            try:
+                min_val = float(threshold_min)
+                filtered_rules = [r for r in filtered_rules if r['match_threshold'] >= min_val]
+            except ValueError:
+                pass
+        
+        if threshold_max:
+            try:
+                max_val = float(threshold_max)
+                filtered_rules = [r for r in filtered_rules if r['match_threshold'] <= max_val]
+            except ValueError:
+                pass
+        
+        # 计算总数
+        total = len(filtered_rules)
+        
+        # 分页
+        start_idx = (page - 1) * page_size
+        end_idx = start_idx + page_size
+        paginated_rules = filtered_rules[start_idx:end_idx]
+        
+        return jsonify({
+            'success': True,
+            'rules': paginated_rules,
+            'total': total,
+            'page': page,
+            'page_size': page_size
+        })
+    except Exception as e:
+        logger.error(f"获取规则列表失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify(create_error_response('GET_RULES_LIST_ERROR', '获取规则列表失败', {'error_detail': str(e)}))
+
+
+@app.route('/api/rules/management/statistics', methods=['GET'])
+def get_rules_statistics():
+    """获取规则管理统计信息接口"""
+    try:
+        all_rules = data_loader.get_all_rules()
+        all_devices = data_loader.get_all_devices()
+        
+        # 计算统计信息
+        total_rules = len(all_rules)
+        total_devices = len(all_devices)
+        
+        # 计算平均阈值
+        if total_rules > 0:
+            avg_threshold = sum(rule.match_threshold for rule in all_rules) / total_rules
+        else:
+            avg_threshold = 0
+        
+        # 计算平均特征数
+        if total_rules > 0:
+            avg_features = sum(len(rule.feature_weights) for rule in all_rules) / total_rules
+        else:
+            avg_features = 0
+        
+        # 计算平均权重
+        if total_rules > 0:
+            total_weight = 0
+            total_feature_count = 0
+            for rule in all_rules:
+                for weight in rule.feature_weights.values():
+                    total_weight += weight
+                    total_feature_count += 1
+            avg_weight = total_weight / total_feature_count if total_feature_count > 0 else 0
+        else:
+            avg_weight = 0
+        
+        # 阈值分布
+        threshold_distribution = {
+            'low': sum(1 for rule in all_rules if rule.match_threshold < 3),
+            'medium': sum(1 for rule in all_rules if 3 <= rule.match_threshold < 5),
+            'high': sum(1 for rule in all_rules if rule.match_threshold >= 5)
+        }
+        
+        # 权重分布（按权重范围统计特征数量）
+        weight_distribution = {
+            'low': 0,      # 0-2
+            'medium': 0,   # 2-4
+            'high': 0      # 4+
+        }
+        for rule in all_rules:
+            for weight in rule.feature_weights.values():
+                if weight < 2:
+                    weight_distribution['low'] += 1
+                elif weight < 4:
+                    weight_distribution['medium'] += 1
+                else:
+                    weight_distribution['high'] += 1
+        
+        # 品牌分布（前10）
+        brand_counts = {}
+        for device in all_devices.values():
+            brand = device.brand
+            brand_counts[brand] = brand_counts.get(brand, 0) + 1
+        
+        top_brands = sorted(brand_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+        
+        statistics = {
+            'total_rules': total_rules,
+            'total_devices': total_devices,
+            'avg_threshold': round(avg_threshold, 2),
+            'avg_features': round(avg_features, 1),
+            'avg_weight': round(avg_weight, 2),
+            'threshold_distribution': threshold_distribution,
+            'weight_distribution': weight_distribution,
+            'top_brands': [{'brand': brand, 'count': count} for brand, count in top_brands],
+            'match_success_rate': {
+                'overall': 0.85  # 默认值，实际应该从匹配日志计算
+            }
+        }
+        
+        return jsonify({'success': True, 'statistics': statistics})
+    except Exception as e:
+        logger.error(f"获取规则统计信息失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify(create_error_response('GET_RULES_STATISTICS_ERROR', '获取规则统计信息失败', {'error_detail': str(e)}))
+
+
+@app.route('/api/rules/management/logs', methods=['GET'])
+def get_match_logs():
+    """获取匹配日志列表接口"""
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            # 如果不是数据库模式，返回空列表
+            return jsonify({
+                'success': True,
+                'logs': [],
+                'total': 0,
+                'page': 1,
+                'page_size': 20,
+                'message': '当前不是数据库模式，无法查询匹配日志'
+            })
+        
+        # 获取查询参数
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('page_size', 20))
+        status = request.args.get('status', '').strip()
+        start_date = request.args.get('start_date', '').strip()
+        end_date = request.args.get('end_date', '').strip()
+        
+        try:
+            # 查询数据库
+            with data_loader.loader.db_manager.session_scope() as session:
+                from modules.models import MatchLog
+                from sqlalchemy import desc
+                
+                query = session.query(MatchLog)
+                
+                # 应用筛选条件
+                if status:
+                    query = query.filter(MatchLog.match_status == status)
+                
+                if start_date:
+                    try:
+                        start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+                        query = query.filter(MatchLog.created_at >= start_dt)
+                    except ValueError:
+                        pass
+                
+                if end_date:
+                    try:
+                        end_dt = datetime.strptime(end_date, '%Y-%m-%d')
+                        # 包含结束日期的全天
+                        end_dt = end_dt.replace(hour=23, minute=59, second=59)
+                        query = query.filter(MatchLog.created_at <= end_dt)
+                    except ValueError:
+                        pass
+                
+                # 计算总数
+                total = query.count()
+                
+                # 分页和排序
+                logs = query.order_by(desc(MatchLog.created_at))\
+                           .offset((page - 1) * page_size)\
+                           .limit(page_size)\
+                           .all()
+                
+                # 转换为字典
+                logs_list = []
+                for log in logs:
+                    logs_list.append({
+                        'log_id': log.log_id,
+                        'input_description': log.input_description,
+                        'match_status': log.match_status,
+                        'matched_device_id': log.matched_device_id,
+                        'match_score': log.match_score,
+                        'created_at': log.created_at.isoformat() if log.created_at else None
+                    })
+                
+                return jsonify({
+                    'success': True,
+                    'logs': logs_list,
+                    'total': total,
+                    'page': page,
+                    'page_size': page_size
+                })
+        except Exception as db_error:
+            # 如果表不存在或其他数据库错误，返回空列表
+            logger.warning(f"匹配日志表可能不存在: {db_error}")
+            return jsonify({
+                'success': True,
+                'logs': [],
+                'total': 0,
+                'page': page,
+                'page_size': page_size,
+                'message': '匹配日志功能尚未启用或表不存在'
+            })
+    except Exception as e:
+        logger.error(f"获取匹配日志失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify(create_error_response('GET_MATCH_LOGS_ERROR', '获取匹配日志失败', {'error_detail': str(e)}))
 
 
 @app.route('/api/export', methods=['POST'])
