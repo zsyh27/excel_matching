@@ -129,3 +129,26 @@ class OptimizationSuggestion(Base):
             'applied_at': self.applied_at.isoformat() if self.applied_at else None,
             'applied_by': self.applied_by
         }
+
+
+class ConfigHistory(Base):
+    """配置历史模型"""
+    __tablename__ = 'config_history'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    version = Column(Integer, nullable=False, unique=True, index=True)
+    config_data = Column(Text, nullable=False)  # JSON格式的配置数据
+    remark = Column(Text)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    
+    def __repr__(self):
+        return f"<ConfigHistory(version={self.version}, created_at='{self.created_at}')>"
+    
+    def to_dict(self):
+        """转换为字典格式"""
+        return {
+            'id': self.id,
+            'version': self.version,
+            'remark': self.remark,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }

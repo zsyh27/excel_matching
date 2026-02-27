@@ -356,15 +356,34 @@ def get_rule_by_id(rule_id):
         # 获取关联的设备信息
         all_devices = data_loader.get_all_devices()
         device_info = None
+        
+        # 尝试通过target_device_id查找设备
+        target_device = None
         if target_rule.target_device_id in all_devices:
-            device = all_devices[target_rule.target_device_id]
+            target_device = all_devices[target_rule.target_device_id]
+        else:
+            # 如果直接查找失败，尝试通过rule_id查找（规则ID通常与设备ID相同）
+            if rule_id in all_devices:
+                target_device = all_devices[rule_id]
+        
+        if target_device:
             device_info = {
-                'device_id': device.device_id,
-                'brand': device.brand,
-                'device_name': device.device_name,
-                'spec_model': device.spec_model,
-                'detailed_params': device.detailed_params if hasattr(device, 'detailed_params') else '',
-                'unit_price': device.unit_price if hasattr(device, 'unit_price') else 0
+                'device_id': target_device.device_id,
+                'brand': target_device.brand,
+                'device_name': target_device.device_name,
+                'spec_model': target_device.spec_model,
+                'detailed_params': target_device.detailed_params if hasattr(target_device, 'detailed_params') else '',
+                'unit_price': target_device.unit_price if hasattr(target_device, 'unit_price') else 0
+            }
+        else:
+            # 如果找不到设备，使用target_device_id作为默认值
+            device_info = {
+                'device_id': target_rule.target_device_id,
+                'brand': '未知',
+                'device_name': '未找到关联设备',
+                'spec_model': '',
+                'detailed_params': '',
+                'unit_price': 0
             }
         
         # 将特征和权重转换为前端期望的格式，并添加类型信息
@@ -675,6 +694,104 @@ def get_match_logs():
         return jsonify(create_error_response('GET_MATCH_LOGS_ERROR', '获取匹配日志失败', {'error_detail': str(e)}))
 
 
+@app.route('/api/rules/management/test', methods=['POST'])
+def test_rule_matching():
+    """匹配测试接口"""
+    try:
+        data = request.get_json()
+        if not data or 'description' not in data:
+            return jsonify(create_error_response('MISSING_DESCRIPTION', '请求中缺少 description 参数'))
+        
+        description = data['description'].strip()
+        if not description:
+            return jsonify(create_error_response('EMPTY_DESCRIPTION', '设备描述不能为空'))
+        
+        # 1. 预处理（使用匹配模式，支持多种分隔符）
+        preprocess_result = preprocessor.preprocess(description, mode='matching')
+        
+        # 2. 获取所有规则
+        all_rules = data_loader.get_all_rules()
+        all_devices = data_loader.get_all_devices()
+        
+        # 3. 计算每个规则的得分
+        candidates = []
+        for rule in all_rules:
+            # 计算匹配得分
+            score = 0
+            matched_features = []
+            
+            for feature in preprocess_result.features:
+                if feature in rule.feature_weights:
+                    weight = rule.feature_weights[feature]
+                    score += weight
+                    matched_features.append({
+                        'feature': feature,
+                        'weight': weight
+                    })
+            
+            # 获取设备信息
+            device = all_devices.get(rule.target_device_id)
+            if device:
+                # 显示：品牌 设备名称 (规格型号)
+                device_name = f"{device.brand} {device.device_name}"
+                if device.spec_model:
+                    device_name += f" ({device.spec_model})"
+            else:
+                device_name = rule.target_device_id
+            
+            candidates.append({
+                'rule_id': rule.rule_id,
+                'device_id': rule.target_device_id,
+                'device_name': device_name,
+                'score': score,
+                'threshold': rule.match_threshold,
+                'is_match': score >= rule.match_threshold,
+                'matched_features': matched_features
+            })
+        
+        # 4. 按得分排序
+        candidates.sort(key=lambda x: x['score'], reverse=True)
+        
+        # 5. 添加排名
+        for i, candidate in enumerate(candidates, 1):
+            candidate['rank'] = i
+        
+        # 6. 确定最终匹配结果
+        final_match = None
+        if candidates and candidates[0]['is_match']:
+            best_candidate = candidates[0]
+            device = all_devices.get(best_candidate['device_id'])
+            final_match = {
+                'match_status': 'success',
+                'device_id': best_candidate['device_id'],
+                'device_text': best_candidate['device_name'],
+                'score': best_candidate['score'],
+                'threshold': best_candidate['threshold'],
+                'match_reason': f"匹配到 {len(best_candidate['matched_features'])} 个特征，总得分 {best_candidate['score']:.1f} 超过阈值 {best_candidate['threshold']}"
+            }
+        else:
+            final_match = {
+                'match_status': 'failed',
+                'match_reason': '没有规则的得分超过匹配阈值'
+            }
+        
+        return jsonify({
+            'success': True,
+            'preprocessing': {
+                'original': preprocess_result.original,
+                'cleaned': preprocess_result.cleaned,
+                'normalized': preprocess_result.normalized,
+                'features': preprocess_result.features
+            },
+            'candidates': candidates,
+            'final_match': final_match
+        })
+    except Exception as e:
+        logger.error(f"匹配测试失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify(create_error_response('TEST_MATCHING_ERROR', '匹配测试失败', {'error_detail': str(e)}))
+
+
 @app.route('/api/export', methods=['POST'])
 def export_file():
     """Excel 导出接口"""
@@ -722,7 +839,7 @@ def get_config():
 
 @app.route('/api/config', methods=['PUT'])
 def update_config():
-    """更新配置接口"""
+    """更新配置接口（旧版本，保留兼容性）"""
     try:
         data = request.get_json()
         if not data or 'updates' not in data:
@@ -741,6 +858,254 @@ def update_config():
             return create_error_response('UPDATE_CONFIG_ERROR', '配置更新失败')
     except Exception as e:
         return create_error_response('UPDATE_CONFIG_ERROR', '更新配置失败', {'error_detail': str(e)})
+
+
+@app.route('/api/config/save', methods=['POST'])
+def save_config():
+    """保存配置接口（新版本，支持历史记录）"""
+    try:
+        data = request.get_json()
+        if not data or 'config' not in data:
+            return create_error_response('MISSING_CONFIG', '请求中缺少 config 参数')
+        
+        new_config = data['config']
+        remark = data.get('remark', '')
+        
+        # 初始化扩展配置管理器
+        from modules.config_manager_extended import ConfigManagerExtended
+        db_manager = data_loader.loader.db_manager if hasattr(data_loader, 'loader') and data_loader.loader else None
+        config_manager_ext = ConfigManagerExtended(Config.CONFIG_FILE, db_manager)
+        
+        # 保存配置
+        success, message = config_manager_ext.save_config(new_config, remark)
+        
+        if success:
+            # 重新加载配置和组件
+            global config, preprocessor, match_engine, device_row_classifier
+            config = data_loader.load_config()
+            preprocessor = TextPreprocessor(config)
+            data_loader.preprocessor = preprocessor
+            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
+            device_row_classifier = DeviceRowClassifier(config)
+            
+            return jsonify({'success': True, 'message': message}), 200
+        else:
+            return jsonify({'success': False, 'error_message': message}), 400
+    except Exception as e:
+        logger.error(f"保存配置失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('SAVE_CONFIG_ERROR', '保存配置失败', {'error_detail': str(e)})
+
+
+@app.route('/api/config/validate', methods=['POST'])
+def validate_config():
+    """验证配置接口"""
+    try:
+        data = request.get_json()
+        if not data or 'config' not in data:
+            return create_error_response('MISSING_CONFIG', '请求中缺少 config 参数')
+        
+        config_to_validate = data['config']
+        
+        # 初始化扩展配置管理器
+        from modules.config_manager_extended import ConfigManagerExtended
+        db_manager = data_loader.loader.db_manager if hasattr(data_loader, 'loader') and data_loader.loader else None
+        config_manager_ext = ConfigManagerExtended(Config.CONFIG_FILE, db_manager)
+        
+        # 验证配置
+        is_valid, errors = config_manager_ext.validate_config(config_to_validate)
+        
+        return jsonify({
+            'success': True,
+            'is_valid': is_valid,
+            'errors': errors
+        }), 200
+    except Exception as e:
+        logger.error(f"验证配置失败: {e}")
+        return create_error_response('VALIDATE_CONFIG_ERROR', '验证配置失败', {'error_detail': str(e)})
+
+
+@app.route('/api/config/test', methods=['POST'])
+def test_config():
+    """测试配置效果接口"""
+    try:
+        data = request.get_json()
+        if not data or 'test_text' not in data:
+            return create_error_response('MISSING_TEST_TEXT', '请求中缺少 test_text 参数')
+        
+        test_text = data['test_text']
+        test_config = data.get('config')  # 可选，如果不提供则使用当前配置
+        
+        # 如果提供了测试配置，使用测试配置创建临时预处理器
+        if test_config:
+            test_preprocessor = TextPreprocessor(test_config)
+        else:
+            test_preprocessor = preprocessor
+        
+        # 预处理
+        preprocess_result = test_preprocessor.preprocess(test_text)
+        
+        # 匹配
+        match_result = match_engine.match(preprocess_result.features)
+        
+        return jsonify({
+            'success': True,
+            'preprocessing': {
+                'original': preprocess_result.original,
+                'cleaned': preprocess_result.cleaned,
+                'normalized': preprocess_result.normalized,
+                'features': preprocess_result.features
+            },
+            'match_result': match_result.to_dict() if match_result else None
+        }), 200
+    except Exception as e:
+        logger.error(f"测试配置失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('TEST_CONFIG_ERROR', '测试配置失败', {'error_detail': str(e)})
+
+
+@app.route('/api/config/history', methods=['GET'])
+def get_config_history():
+    """获取配置历史接口"""
+    try:
+        limit = request.args.get('limit', 50, type=int)
+        
+        # 初始化扩展配置管理器
+        from modules.config_manager_extended import ConfigManagerExtended
+        db_manager = data_loader.loader.db_manager if hasattr(data_loader, 'loader') and data_loader.loader else None
+        
+        if not db_manager:
+            return jsonify({
+                'success': True,
+                'history': [],
+                'message': '当前不是数据库模式，无法查询配置历史'
+            }), 200
+        
+        config_manager_ext = ConfigManagerExtended(Config.CONFIG_FILE, db_manager)
+        
+        # 获取历史记录
+        history = config_manager_ext.get_history(limit)
+        
+        return jsonify({
+            'success': True,
+            'history': history
+        }), 200
+    except Exception as e:
+        logger.error(f"获取配置历史失败: {e}")
+        return create_error_response('GET_HISTORY_ERROR', '获取配置历史失败', {'error_detail': str(e)})
+
+
+@app.route('/api/config/rollback', methods=['POST'])
+def rollback_config():
+    """回滚配置接口"""
+    try:
+        data = request.get_json()
+        if not data or 'version' not in data:
+            return create_error_response('MISSING_VERSION', '请求中缺少 version 参数')
+        
+        version = data['version']
+        
+        # 初始化扩展配置管理器
+        from modules.config_manager_extended import ConfigManagerExtended
+        db_manager = data_loader.loader.db_manager if hasattr(data_loader, 'loader') and data_loader.loader else None
+        
+        if not db_manager:
+            return jsonify({
+                'success': False,
+                'error_message': '当前不是数据库模式，无法回滚配置'
+            }), 400
+        
+        config_manager_ext = ConfigManagerExtended(Config.CONFIG_FILE, db_manager)
+        
+        # 回滚配置
+        success, message = config_manager_ext.rollback(version)
+        
+        if success:
+            # 重新加载配置和组件
+            global config, preprocessor, match_engine, device_row_classifier
+            config = data_loader.load_config()
+            preprocessor = TextPreprocessor(config)
+            data_loader.preprocessor = preprocessor
+            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
+            device_row_classifier = DeviceRowClassifier(config)
+            
+            return jsonify({'success': True, 'message': message}), 200
+        else:
+            return jsonify({'success': False, 'error_message': message}), 400
+    except Exception as e:
+        logger.error(f"回滚配置失败: {e}")
+        return create_error_response('ROLLBACK_ERROR', '回滚配置失败', {'error_detail': str(e)})
+
+
+@app.route('/api/config/export', methods=['GET'])
+def export_config():
+    """导出配置接口"""
+    try:
+        # 初始化扩展配置管理器
+        from modules.config_manager_extended import ConfigManagerExtended
+        db_manager = data_loader.loader.db_manager if hasattr(data_loader, 'loader') and data_loader.loader else None
+        config_manager_ext = ConfigManagerExtended(Config.CONFIG_FILE, db_manager)
+        
+        # 导出配置
+        config_json = config_manager_ext.export_config()
+        
+        # 创建临时文件
+        import tempfile
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
+            f.write(config_json)
+            temp_path = f.name
+        
+        return send_file(
+            temp_path,
+            as_attachment=True,
+            download_name=f"config_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+            mimetype='application/json'
+        )
+    except Exception as e:
+        logger.error(f"导出配置失败: {e}")
+        return create_error_response('EXPORT_CONFIG_ERROR', '导出配置失败', {'error_detail': str(e)})
+
+
+@app.route('/api/config/import', methods=['POST'])
+def import_config():
+    """导入配置接口"""
+    try:
+        if 'file' not in request.files:
+            return create_error_response('NO_FILE', '请求中没有文件')
+        
+        file = request.files['file']
+        if file.filename == '':
+            return create_error_response('EMPTY_FILENAME', '文件名为空')
+        
+        # 读取文件内容
+        config_data = file.read().decode('utf-8')
+        
+        # 获取备注
+        remark = request.form.get('remark', '导入配置')
+        
+        # 初始化扩展配置管理器
+        from modules.config_manager_extended import ConfigManagerExtended
+        db_manager = data_loader.loader.db_manager if hasattr(data_loader, 'loader') and data_loader.loader else None
+        config_manager_ext = ConfigManagerExtended(Config.CONFIG_FILE, db_manager)
+        
+        # 导入配置
+        success, message = config_manager_ext.import_config(config_data, remark)
+        
+        if success:
+            # 重新加载配置和组件
+            global config, preprocessor, match_engine, device_row_classifier
+            config = data_loader.load_config()
+            preprocessor = TextPreprocessor(config)
+            data_loader.preprocessor = preprocessor
+            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
+            device_row_classifier = DeviceRowClassifier(config)
+            
+            return jsonify({'success': True, 'message': message}), 200
+        else:
+            return jsonify({'success': False, 'error_message': message}), 400
+    except Exception as e:
+        logger.error(f"导入配置失败: {e}")
+        return create_error_response('IMPORT_CONFIG_ERROR', '导入配置失败', {'error_detail': str(e)})
 
 
 @app.route('/api/excel/analyze', methods=['POST'])
@@ -1283,3 +1648,97 @@ def fix_data_consistency():
 if __name__ == '__main__':
     logger.info("启动 Flask 应用...")
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+# ==================== 规则重新生成 API ====================
+
+@app.route('/api/rules/regenerate', methods=['POST'])
+def regenerate_rules():
+    """
+    重新生成规则接口
+    
+    接收配置，重新生成所有设备的匹配规则
+    支持后台任务模式（可选）
+    """
+    try:
+        data = request.get_json()
+        config_data = data.get('config')
+        
+        if not config_data:
+            return create_error_response('MISSING_CONFIG', '缺少配置数据')
+        
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader:
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式，无法重新生成规则')
+        
+        logger.info("开始重新生成规则...")
+        
+        # 导入规则生成器
+        from modules.rule_generator import RuleGenerator
+        
+        # 创建规则生成器实例
+        rule_generator = RuleGenerator(config_data)
+        
+        # 获取所有设备
+        devices = data_loader.load_devices()
+        total_devices = len(devices)
+        
+        logger.info(f"共有 {total_devices} 个设备需要生成规则")
+        
+        # 生成规则
+        generated_count = 0
+        failed_count = 0
+        
+        for device in devices:
+            try:
+                # 生成规则
+                rules = rule_generator.generate_rules(device)
+                
+                # 保存规则到数据库
+                if rules:
+                    for rule in rules:
+                        data_loader.loader.save_rule(rule)
+                    generated_count += 1
+                else:
+                    failed_count += 1
+                    logger.warning(f"设备 {device.device_id} 未生成规则")
+                    
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"设备 {device.device_id} 生成规则失败: {e}")
+        
+        # 重新加载规则到内存
+        global match_engine
+        rules = data_loader.load_rules()
+        match_engine = MatchEngine(rules=rules, devices=devices, config=config_data)
+        
+        logger.info(f"规则生成完成: 成功 {generated_count}, 失败 {failed_count}")
+        
+        return jsonify({
+            'success': True,
+            'message': '规则重新生成完成',
+            'data': {
+                'total': total_devices,
+                'generated': generated_count,
+                'failed': failed_count
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"重新生成规则失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('REGENERATE_RULES_ERROR', '重新生成规则失败', {'error_detail': str(e)})
+
+
+@app.route('/api/rules/regenerate/status', methods=['GET'])
+def get_regenerate_status():
+    """
+    获取规则重新生成状态接口（预留，用于异步任务）
+    """
+    # 目前是同步执行，直接返回完成状态
+    return jsonify({
+        'success': True,
+        'status': 'completed',
+        'progress': 100,
+        'message': '规则生成已完成'
+    }), 200

@@ -24,6 +24,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from modules.database import DatabaseManager
 from modules.models import Device as DeviceModel, Rule as RuleModel
 from modules.text_preprocessor import TextPreprocessor
+from modules.rule_generator import RuleGenerator as ModuleRuleGenerator
+from modules.data_loader import Device
 from config import Config
 
 # 配置日志
@@ -34,8 +36,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class RuleGenerator:
-    """规则生成器"""
+class RuleGeneratorWrapper:
+    """规则生成器包装器"""
     
     def __init__(self, db_manager: DatabaseManager, preprocessor: TextPreprocessor, 
                  default_threshold: float = 2.0):
@@ -50,6 +52,8 @@ class RuleGenerator:
         self.db_manager = db_manager
         self.preprocessor = preprocessor
         self.default_threshold = default_threshold
+        # 使用模块中的 RuleGenerator
+        self.rule_generator = ModuleRuleGenerator(preprocessor, default_threshold)
         self.stats = {
             'total_devices': 0,
             'devices_without_rules': 0,
@@ -80,7 +84,6 @@ class RuleGenerator:
                 devices_without_rules = []
                 for device in all_devices:
                     if not device.rules or len(device.rules) == 0:
-                        # 在会话内部提取设备数据
                         device_data = {
                             'device_id': device.device_id,
                             'brand': device.brand,
@@ -101,181 +104,54 @@ class RuleGenerator:
             logger.error(f"查询设备失败: {e}")
             raise
     
-    def extract_features_from_device(self, device: Dict) -> List[str]:
-        """
-        从设备信息中提取特征
-        
-        验证需求: 3.1
-        
-        Args:
-            device: 设备数据字典
-            
-        Returns:
-            特征列表
-        """
-        # 组合设备的所有文本信息
-        text_parts = []
-        
-        if device.get('brand'):
-            text_parts.append(device['brand'])
-        if device.get('device_name'):
-            text_parts.append(device['device_name'])
-        if device.get('spec_model'):
-            text_parts.append(device['spec_model'])
-        if device.get('detailed_params'):
-            text_parts.append(device['detailed_params'])
-        
-        # 使用分隔符连接（使用配置中的第一个分隔符）
-        separator = self.preprocessor.feature_split_chars[0] if self.preprocessor.feature_split_chars else ','
-        combined_text = separator.join(text_parts)
-        
-        # 使用预处理器提取特征
-        preprocess_result = self.preprocessor.preprocess(combined_text)
-        features = preprocess_result.features
-        
-        # 去重并保持顺序
-        unique_features = []
-        seen = set()
-        for feature in features:
-            if feature and feature not in seen:
-                unique_features.append(feature)
-                seen.add(feature)
-        
-        logger.debug(f"设备 {device['device_id']} 提取特征: {unique_features}")
-        
-        return unique_features
-    
-    def assign_feature_weights(self, features: List[str], device: Dict) -> Dict[str, float]:
-        """
-        为特征分配权重
-        
-        验证需求: 3.2
-        
-        权重分配策略:
-        - 品牌: 3.0
-        - 型号: 3.0
-        - 设备类型关键词: 2.5
-        - 其他参数: 1.0
-        
-        Args:
-            features: 特征列表
-            device: 设备数据字典
-            
-        Returns:
-            特征权重字典
-        """
-        weights = {}
-        
-        # 设备类型关键词（从配置中获取）
-        device_type_keywords = [
-            '传感器', '控制器', 'DDC', '阀门', '执行器', '控制柜',
-            '电源', '继电器', '网关', '模块', '探测器', '开关',
-            '变送器', '温控器', '风阀', '水阀', '电动阀', '调节阀',
-            '压力传感器', '温度传感器', '湿度传感器', 'CO2传感器',
-            '流量计', '压差开关', '液位开关', '风机', '水泵',
-            '采集器', '服务器', '电脑', '软件', '系统'
-        ]
-        
-        # 品牌关键词
-        brand_keywords = [
-            '霍尼韦尔', '西门子', '江森自控', '施耐德', '明纬',
-            '欧姆龙', 'ABB', '丹佛斯', '贝尔莫', 'Honeywell',
-            'Siemens', 'Johnson', 'Schneider', 'OMRON', 'Danfoss',
-            'Belimo', 'Delta', '台达', '正泰', '德力西'
-        ]
-        
-        for feature in features:
-            # 检查是否是品牌
-            if any(brand in feature for brand in brand_keywords):
-                weights[feature] = 3.0
-            # 检查是否是型号（通常包含字母和数字的组合）
-            elif self._is_model_number(feature):
-                weights[feature] = 3.0
-            # 检查是否是设备类型关键词
-            elif any(keyword in feature for keyword in device_type_keywords):
-                weights[feature] = 2.5
-            # 其他参数
-            else:
-                weights[feature] = 1.0
-        
-        logger.debug(f"设备 {device['device_id']} 特征权重: {weights}")
-        
-        return weights
-    
-    def _is_model_number(self, text: str) -> bool:
-        """
-        判断文本是否像型号
-        
-        Args:
-            text: 文本
-            
-        Returns:
-            是否是型号
-        """
-        import re
-        
-        # 型号通常包含字母和数字的组合
-        # 例如: QAA2061, V5011N1040, ML6420A3018
-        patterns = [
-            r'[A-Za-z]{2,}[0-9]+',  # 字母+数字
-            r'[0-9]+[A-Za-z]+',      # 数字+字母
-            r'[A-Za-z]+-[0-9]+',     # 字母-数字
-            r'[0-9]+-[A-Za-z]+',     # 数字-字母
-        ]
-        
-        for pattern in patterns:
-            if re.search(pattern, text):
-                return True
-        
-        return False
-    
-    def generate_rule(self, device: Dict) -> Optional[RuleModel]:
+    def generate_rule(self, device_data: Dict) -> Optional[RuleModel]:
         """
         为设备生成规则
         
         验证需求: 3.1, 3.2, 3.3, 3.4
         
         Args:
-            device: 设备数据字典
+            device_data: 设备数据字典
             
         Returns:
             规则模型，如果生成失败返回None
         """
         try:
-            # 提取特征
-            features = self.extract_features_from_device(device)
-            
-            if not features:
-                logger.warning(f"设备 {device['device_id']} 无法提取特征，跳过")
-                return None
-            
-            # 分配权重
-            feature_weights = self.assign_feature_weights(features, device)
-            
-            # 生成规则ID
-            rule_id = f"R_{device['device_id']}"
-            
-            # 生成备注
-            remark = f"自动生成的规则 - {device['brand']} {device['device_name']}"
-            
-            # 创建规则模型
-            rule = RuleModel(
-                rule_id=rule_id,
-                target_device_id=device['device_id'],
-                auto_extracted_features=features,
-                feature_weights=feature_weights,
-                match_threshold=self.default_threshold,
-                remark=remark
+            # 转换为 Device 数据类
+            device_obj = Device(
+                device_id=device_data['device_id'],
+                brand=device_data['brand'],
+                device_name=device_data['device_name'],
+                spec_model=device_data['spec_model'],
+                detailed_params=device_data['detailed_params'],
+                unit_price=device_data['unit_price']
             )
             
-            logger.debug(f"为设备 {device['device_id']} 生成规则: {rule_id}")
+            # 使用模块中的 RuleGenerator 生成规则
+            rule = self.rule_generator.generate_rule(device_obj)
             
-            return rule
+            if rule:
+                # 转换为 RuleModel
+                rule_model = RuleModel(
+                    rule_id=rule.rule_id,
+                    target_device_id=rule.target_device_id,
+                    auto_extracted_features=rule.auto_extracted_features,
+                    feature_weights=rule.feature_weights,
+                    match_threshold=rule.match_threshold,
+                    remark=rule.remark
+                )
+                
+                logger.debug(f"为设备 {device_data['device_id']} 生成规则: {rule.rule_id}")
+                
+                return rule_model
+            else:
+                logger.warning(f"设备 {device_data['device_id']} 无法生成规则")
+                return None
             
         except Exception as e:
-            logger.error(f"为设备 {device['device_id']} 生成规则失败: {e}")
+            logger.error(f"为设备 {device_data['device_id']} 生成规则失败: {e}")
             self.stats['errors'] += 1
-            self.stats['error_details'].append(f"设备 {device['device_id']}: {str(e)}")
+            self.stats['error_details'].append(f"设备 {device_data['device_id']}: {str(e)}")
             return None
     
     def save_rules(self, rules: List[RuleModel], batch_size: int = 100) -> None:
@@ -360,8 +236,8 @@ class RuleGenerator:
         logger.info(f"开始为 {len(devices)} 个设备生成规则...")
         
         rules = []
-        for device in devices:
-            rule = self.generate_rule(device)
+        for device_data in devices:
+            rule = self.generate_rule(device_data)
             if rule:
                 rules.append(rule)
         
@@ -460,18 +336,18 @@ def main():
         preprocessor = TextPreprocessor(config)
         
         # 创建规则生成器
-        generator = RuleGenerator(db_manager, preprocessor, default_threshold)
+        generator = RuleGeneratorWrapper(db_manager, preprocessor, default_threshold)
         
         # 查找需要生成规则的设备
         if args.all:
             logger.info("为所有设备重新生成规则...")
             with db_manager.session_scope() as session:
-                all_devices = session.query(DeviceModel).all()
-                generator.stats['total_devices'] = len(all_devices)
-                generator.stats['devices_without_rules'] = len(all_devices)
-                # 转换为字典列表
+                all_devices_models = session.query(DeviceModel).all()
+                generator.stats['total_devices'] = len(all_devices_models)
+                generator.stats['devices_without_rules'] = len(all_devices_models)
+                # 在会话内部提取设备数据为字典
                 devices = []
-                for device in all_devices:
+                for device in all_devices_models:
                     device_data = {
                         'device_id': device.device_id,
                         'brand': device.brand,

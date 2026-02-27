@@ -148,9 +148,9 @@ class ExcelParser:
                 device_desc = self._extract_device_description(row.raw_data)
                 row.device_description = device_desc
                 
-                # 预处理设备描述
+                # 预处理设备描述（使用匹配模式，支持多种分隔符）
                 if device_desc:
-                    preprocess_result = self.preprocessor.preprocess(device_desc)
+                    preprocess_result = self.preprocessor.preprocess(device_desc, mode='matching')
                     row.preprocessed_features = preprocess_result.features
             
             classified_rows.append(row)

@@ -4,27 +4,22 @@
 
 ## 核心文档
 
-- [CHANGELOG.md](../CHANGELOG.md) - 版本变更历史
-- [MAINTENANCE.md](../MAINTENANCE.md) - 维护和故障排查指南
-- [PROJECT.md](../.kiro/PROJECT.md) - # DDC 设备清单匹配报价系统  ## 项目概述  这是一个轻量化的 DDC 设备清单匹配报价系统，旨在解决 DDC 自控领域空调机房、末端设备清单报价过程中的效率和准确性问题。系统实现从 Exce...
+### 项目概述
 - [README.md](../README.md) - 项目概述和快速开始
-- [README.md](../.backup/docs/backup_20260213_234603_c6936d5e/README.md) - # README.md  Test content for core
-- [README.md](../.backup/docs/backup_20260213_234746_189c763e/README.md) - # README.md  Test content for core
-- [README.md](../.backup/docs/backup_20260213_235541_185a0caf/README.md) - # README.md  Test content
-- [README.md](../.backup/docs/backup_20260213_235541_48cdccac/README.md) - # README.md  Test content for core
-- [README.md](../.backup/docs/backup_20260213_235541_94ddcd78/README.md) - # README.md  Test content
-- [README.md](../.backup/docs/backup_20260213_235708_464025b7/README.md) - # README.md  Test content for core
-- [README.md](../.backup/docs/backup_20260213_235708_75d10c82/README.md) - # README.md  Test content
-- [README.md](../.backup/docs/backup_20260213_235708_a3dca764/README.md) - # README.md  Test content
-- [README.md](../.backup/docs/backup_20260213_235717_9c5a4f47/README.md) - # README.md  Test content for core
-- [README.md](../.backup/docs/backup_20260213_235718_416c693b/README.md) - # README.md  Test content
-- [README.md](../.backup/docs/backup_20260213_235718_609c1a70/README.md) - # README.md  Test content
-- [README.md](../.backup/docs/backup_20260214_101024_5cf76ef6/README.md) - # README.md  Test content for core
-- [README.md](../.backup/docs/backup_20260214_101025_76deb116/README.md) - # README.md  Test content
-- [README.md](../.backup/docs/backup_20260214_101025_7f9754ac/README.md) - # README.md  Test content
-- [README.md](../.pytest_cache/README.md) - # pytest cache directory #  This directory contains data from the pytest's cache plugin, which provi...
-- [README.md](../backend/sql_templates/README.md) - # SQL导入模板使用指南  本目录包含用于手动向数据库导入设备和规则数据的SQL模板文件。  ## 文件说明  - `insert_devices.sql` - 设备数据批量插入模板 - `inse...
+- [PROJECT.md](../.kiro/PROJECT.md) - 项目详细说明
+- [CHANGELOG.md](../CHANGELOG.md) - 版本变更历史
 - [SETUP.md](../SETUP.md) - 安装和配置指南
+
+### 系统维护
+- [MAINTENANCE.md](../MAINTENANCE.md) - 系统维护和故障排查指南
+- [MATCHING_OPTIMIZATION_SUMMARY.md](../MATCHING_OPTIMIZATION_SUMMARY.md) - 匹配优化总结
+
+### 特征提取与匹配 ⭐ 核心功能
+- [特征提取与匹配优化指南](FEATURE_EXTRACTION_AND_MATCHING_GUIDE.md) - 完整的技术指南（推荐）
+- [快速优化指南](QUICK_OPTIMIZATION_GUIDE.md) - 常见任务快速参考
+- [匹配问题诊断指南](MATCHING_PROBLEM_DIAGNOSIS_GUIDE.md) - 问题诊断和解决方案
+### 规则管理
+- [规则管理用户手册](RULE_MANAGEMENT_USER_MANUAL.md) - 规则管理界面使用指南
 
 ## 归档文档
 
@@ -40,5 +35,33 @@
 
 ---
 
-**最后更新**: 2026-02-14
+## 📖 文档使用建议
+
+### 对于 Kiro AI 助手
+
+当需要调整或优化特征提取和匹配功能时：
+
+1. **首选**: [特征提取与匹配优化指南](FEATURE_EXTRACTION_AND_MATCHING_GUIDE.md)
+   - 包含完整的技术细节
+   - 系统化的优化策略
+   - 详细的配置说明
+
+2. **快速参考**: [快速优化指南](QUICK_OPTIMIZATION_GUIDE.md)
+   - 常见任务的快速命令
+   - 关键参数推荐值
+   - 问题速查表
+
+3. **问题诊断**: [匹配问题诊断指南](MATCHING_PROBLEM_DIAGNOSIS_GUIDE.md)
+   - 常见问题和解决方案
+   - 诊断工具使用方法
+
+### 对于系统维护人员
+
+- 日常维护: [MAINTENANCE.md](../MAINTENANCE.md)
+- 特征优化: [特征提取与匹配优化指南](FEATURE_EXTRACTION_AND_MATCHING_GUIDE.md)
+- 规则管理: [规则管理用户手册](RULE_MANAGEMENT_USER_MANUAL.md)
+
+---
+
+**最后更新**: 2026-02-26
 **维护者**: 开发团队

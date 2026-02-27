@@ -37,13 +37,28 @@ class TextPreprocessor:
         
         Args:
             config: 配置字典，包含 normalization_map, feature_split_chars, 
-                   ignore_keywords, global_config
+                   ignore_keywords, global_config, synonym_map, brand_keywords, device_type_keywords
         """
         self.config = config
         self.normalization_map = config.get('normalization_map', {})
         self.feature_split_chars = config.get('feature_split_chars', [])
         self.ignore_keywords = config.get('ignore_keywords', [])
         self.global_config = config.get('global_config', {})
+        self.synonym_map = config.get('synonym_map', {})
+        self.brand_keywords = config.get('brand_keywords', [])
+        self.device_type_keywords = config.get('device_type_keywords', [])
+        
+        # 元数据关键词（字段名称，不应该作为特征）
+        self.metadata_keywords = [
+            '型号', '通径', '阀体类型', '适用介质', '品牌', 
+            '规格', '参数', '名称', '类型', '尺寸', '材质',
+            '功率', '电压', '电流', '频率', '温度', '压力',
+            '流量', '湿度', '浓度', '范围', '精度', '输出',
+            '输入', '信号', '接口', '安装', '防护', '等级'
+        ]
+        
+        # 最小特征长度
+        self.min_feature_length = 2
         
         # 编译正则表达式以提高性能
         self._compile_patterns()
@@ -64,7 +79,7 @@ class TextPreprocessor:
         else:
             self.split_pattern = None
     
-    def preprocess(self, text: str) -> PreprocessResult:
+    def preprocess(self, text: str, mode: str = 'matching') -> PreprocessResult:
         """
         统一的文本预处理入口
         
@@ -79,6 +94,9 @@ class TextPreprocessor:
         
         Args:
             text: 待处理的文本
+            mode: 处理模式
+                  'device' - 设备库数据（严格模式，只使用 + 和 \n 分隔）
+                  'matching' - 匹配数据（宽松模式，使用多种分隔符）
             
         Returns:
             PreprocessResult: 包含原始文本、清理后文本、归一化文本和特征列表
@@ -94,15 +112,19 @@ class TextPreprocessor:
         # 步骤 1: 删除无关关键词
         cleaned_text = self.remove_ignore_keywords(text)
         
-        # 步骤 1.5: 将空格转换为分隔符（在归一化删除空格之前）
-        # 这样可以保留空格作为特征分隔的作用
-        if self.feature_split_chars and len(self.feature_split_chars) > 0:
-            # 使用第一个分隔符作为空格的替代
-            temp_separator = self.feature_split_chars[0]
-            cleaned_text = cleaned_text.replace(' ', temp_separator)
+        # 步骤 1.5: 根据模式处理分隔符
+        if mode == 'matching':
+            # 匹配模式：将常见分隔符统一转换为配置的第一个分隔符
+            # 这样可以处理各种格式的真实数据
+            if self.feature_split_chars and len(self.feature_split_chars) > 0:
+                temp_separator = self.feature_split_chars[0]
+                # 将常见的分隔符都转换为标准分隔符
+                for sep in [',', '，', ' ', '  ', '\t']:
+                    cleaned_text = cleaned_text.replace(sep, temp_separator)
+        # 设备库模式：不做额外处理，因为设备库数据已经使用标准分隔符（+、\n等）
         
         # 步骤 2: 三层归一化
-        normalized_text = self.normalize_text(cleaned_text)
+        normalized_text = self.normalize_text(cleaned_text, mode=mode)
         
         # 步骤 3: 特征拆分
         features = self.extract_features(normalized_text)
@@ -136,18 +158,22 @@ class TextPreprocessor:
         
         return result
     
-    def normalize_text(self, text: str) -> str:
+    def normalize_text(self, text: str, mode: str = 'matching') -> str:
         """
         三层归一化处理
         
-        层次 1: 精准映射 - 应用配置文件中的 normalization_map
-        层次 2: 通用归一化 - 全角转半角、删除空格、统一大小写
-        层次 3: 模糊兼容 - 在匹配阶段的兜底处理（本方法不实现，由匹配引擎处理）
+        层次 1: 同义词映射 - 应用配置文件中的 synonym_map
+        层次 2: 精准映射 - 应用配置文件中的 normalization_map
+        层次 3: 通用归一化 - 全角转半角、删除空格、统一大小写
+        层次 4: 模糊兼容 - 在匹配阶段的兜底处理（本方法不实现，由匹配引擎处理）
         
         验证需求: 3.2, 3.3, 3.4, 3.5
         
         Args:
             text: 待归一化的文本
+            mode: 处理模式
+                  'device' - 设备库数据（不删除"度"）
+                  'matching' - 匹配数据（删除温度单位）
             
         Returns:
             归一化后的文本
@@ -157,15 +183,29 @@ class TextPreprocessor:
         
         result = text
         
-        # 层次 1: 精准映射 - 应用 normalization_map
+        # 层次 1: 同义词映射 - 应用 synonym_map
+        # 按照键的长度从长到短排序，优先匹配较长的字符串
+        sorted_synonyms = sorted(self.synonym_map.items(), key=lambda x: len(x[0]), reverse=True)
+        for old_word, new_word in sorted_synonyms:
+            if old_word in result:
+                result = result.replace(old_word, new_word)
+        
+        # 层次 2: 精准映射 - 应用 normalization_map
         # 需求 3.2: 应用配置文件 normalization_map 字段中的归一化映射
         # 按照键的长度从长到短排序，优先匹配较长的字符串，避免重复替换
         sorted_mappings = sorted(self.normalization_map.items(), key=lambda x: len(x[0]), reverse=True)
+        
+        # 在设备库模式下需要跳过的映射（保留温度单位）
+        skip_in_device_mode = ['℃', '°C', '度']
+        
         for old_char, new_char in sorted_mappings:
+            # 在设备库模式下，跳过温度单位的映射
+            if mode == 'device' and old_char in skip_in_device_mode:
+                continue
             if old_char in result:
                 result = result.replace(old_char, new_char)
         
-        # 层次 2: 通用归一化
+        # 层次 3: 通用归一化
         
         # 需求 3.3: 将全角字符转换为半角字符
         if self.global_config.get('fullwidth_to_halfwidth', True):
@@ -203,6 +243,12 @@ class TextPreprocessor:
         """
         使用配置文件中的分隔符拆分文本为特征列表
         
+        改进：
+        1. 先处理括号内容，分别提取括号内外的特征
+        2. 使用配置的分隔符拆分
+        3. 智能拆分：识别品牌和设备类型，生成多层次特征
+        4. 过滤元数据关键词和过短的特征
+        
         验证需求: 3.6
         
         Args:
@@ -214,25 +260,156 @@ class TextPreprocessor:
         if not text:
             return []
         
-        # 使用配置的分隔符拆分文本
-        if self.split_pattern:
-            features = self.split_pattern.split(text)
-        else:
+        features = []
+        
+        # 步骤1: 处理括号内容
+        # 例如: "1/2"(dn15)" -> 提取 "1/2"" 和 "dn15"
+        bracket_pattern = r'([^()]+)\(([^)]+)\)'
+        remaining_text = text
+        
+        # 查找所有括号匹配
+        for match in re.finditer(bracket_pattern, text):
+            outside = match.group(1).strip()  # 括号外的内容
+            inside = match.group(2).strip()   # 括号内的内容
+            
+            # 添加括号外的内容
+            if outside:
+                features.append(outside)
+            
+            # 添加括号内的内容
+            if inside:
+                features.append(inside)
+        
+        # 移除已处理的括号部分
+        remaining_text = re.sub(bracket_pattern, '', text)
+        
+        # 步骤2: 使用配置的分隔符拆分剩余文本
+        if self.split_pattern and remaining_text:
+            split_features = self.split_pattern.split(remaining_text)
+            features.extend([f.strip() for f in split_features if f and f.strip()])
+        elif remaining_text:
             # 如果没有配置分隔符，返回整个文本作为单一特征
-            features = [text]
+            features.append(remaining_text.strip())
         
-        # 过滤空字符串并去除首尾空格
-        features = [f.strip() for f in features if f and f.strip()]
+        # 步骤3: 智能拆分 - 生成多层次特征
+        enhanced_features = []
+        for feature in features:
+            # 添加原始特征
+            enhanced_features.append(feature)
+            
+            # 智能拆分：识别品牌和设备类型
+            sub_features = self._smart_split_feature(feature)
+            enhanced_features.extend(sub_features)
         
-        # 如果只有一个特征且长度较长，尝试用空格再次拆分
-        # 这是为了处理没有明确分隔符但用空格分隔的情况
-        if len(features) == 1 and len(features[0]) > 20:
-            # 在原始文本中查找空格位置，在归一化文本中对应位置拆分
-            # 但这很复杂，所以我们采用另一种策略：
-            # 如果特征过长，保持原样，让匹配引擎处理
-            pass
+        # 步骤4: 过滤无效特征并去重
+        filtered_features = []
+        seen = set()
         
-        return features
+        for feature in enhanced_features:
+            # 过滤条件：
+            # 1. 对于中文字符，长度至少为1
+            # 2. 对于其他字符，长度至少为 min_feature_length
+            # 3. 不是元数据关键词
+            # 4. 不是无意义的单字符
+            # 5. 未重复
+            
+            has_chinese = any('\u4e00' <= char <= '\u9fff' for char in feature)
+            min_length = 1 if has_chinese else self.min_feature_length
+            
+            if (len(feature) >= min_length and 
+                feature not in self.metadata_keywords and
+                not self._is_meaningless_single_char(feature) and
+                feature not in seen):
+                filtered_features.append(feature)
+                seen.add(feature)
+        
+        return filtered_features
+    
+    def _smart_split_feature(self, feature: str) -> List[str]:
+        """
+        智能拆分特征，识别品牌和设备类型
+        
+        例如：
+        - "霍尼韦尔室内温传感器" -> ["霍尼韦尔", "室内温传感器", "室内", "温传感器"]
+        - "西门子ddc控制器" -> ["西门子", "ddc控制器", "ddc", "控制器"]
+        
+        Args:
+            feature: 待拆分的特征
+            
+        Returns:
+            拆分后的子特征列表
+        """
+        sub_features = []
+        remaining = feature
+        
+        # 1. 识别并提取品牌
+        for brand in self.brand_keywords:
+            brand_lower = brand.lower()
+            if brand_lower in remaining:
+                # 提取品牌
+                sub_features.append(brand_lower)
+                # 移除品牌，保留剩余部分
+                remaining = remaining.replace(brand_lower, '', 1).strip()
+                break
+        
+        # 2. 识别并提取设备类型
+        if remaining:
+            # 按长度从长到短排序，优先匹配较长的设备类型
+            sorted_device_types = sorted(self.device_type_keywords, key=len, reverse=True)
+            
+            for device_type in sorted_device_types:
+                device_type_lower = device_type.lower()
+                if device_type_lower in remaining:
+                    # 提取设备类型
+                    sub_features.append(device_type_lower)
+                    
+                    # 提取设备类型前面的修饰词（如"室内"、"室外"、"管道"等）
+                    idx = remaining.find(device_type_lower)
+                    if idx > 0:
+                        prefix = remaining[:idx].strip()
+                        if prefix and len(prefix) >= 2:  # 修饰词至少2个字符
+                            # 添加修饰词
+                            sub_features.append(prefix)
+                            # 添加"修饰词+设备类型"组合
+                            sub_features.append(prefix + device_type_lower)
+                    
+                    # 提取设备类型后面的内容
+                    suffix_start = idx + len(device_type_lower)
+                    if suffix_start < len(remaining):
+                        suffix = remaining[suffix_start:].strip()
+                        if suffix and len(suffix) >= 2:
+                            sub_features.append(suffix)
+                    
+                    break
+        
+        return sub_features
+    
+    def _is_meaningless_single_char(self, text: str) -> bool:
+        """
+        判断是否是无意义的单字符
+        
+        Args:
+            text: 文本
+            
+        Returns:
+            是否是无意义的单字符
+        """
+        # 如果长度大于1，不是单字符
+        if len(text) > 1:
+            return False
+        
+        # 单字符但有意义的情况（保留）
+        # 1. 单位符号
+        meaningful_chars = ['v', 'a', 'w', 'm', 'k', 'h', 'l', 'g', 'f', 'c', 'p', 't', 's']
+        if text.lower() in meaningful_chars:
+            return False
+        
+        # 2. 中文单字（通常有意义）
+        if any('\u4e00' <= char <= '\u9fff' for char in text):
+            return False
+        
+        # 其他单字符都认为是无意义的
+        return True
     
     @classmethod
     def from_config_file(cls, config_file_path: str) -> 'TextPreprocessor':

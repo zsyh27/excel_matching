@@ -692,6 +692,127 @@ python app.py
 }
 ```
 
+### UI配置
+
+控制前端界面的行为和限制：
+
+```json
+{
+  "ui_config": {
+    "max_file_size_mb": 10,           // 最大上传文件大小（MB）
+    "supported_formats": [             // 支持的文件格式
+      "xls",
+      "xlsm",
+      "xlsx"
+    ],
+    "default_export_format": "xlsx"   // 默认导出格式
+  }
+}
+```
+
+**字段说明**：
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| max_file_size_mb | number | 10 | 上传文件大小限制（MB），超过此大小的文件将被拒绝 |
+| supported_formats | array | ["xls", "xlsm", "xlsx"] | 支持的Excel文件格式列表 |
+| default_export_format | string | "xlsx" | 导出报价单时的默认文件格式 |
+
+**调整示例**：
+
+```json
+{
+  "ui_config": {
+    "max_file_size_mb": 20,           // 提高到20MB
+    "supported_formats": [
+      "xls",
+      "xlsm",
+      "xlsx",
+      "csv"                            // 添加CSV支持
+    ],
+    "default_export_format": "xlsx"
+  }
+}
+```
+
+### 性能配置
+
+控制系统性能和超时设置：
+
+```json
+{
+  "performance_config": {
+    "parse_timeout_seconds": 5,       // Excel解析超时时间（秒）
+    "match_timeout_seconds": 10,      // 设备匹配超时时间（秒）
+    "max_rows_per_file": 10000        // 单个文件最大行数
+  }
+}
+```
+
+**字段说明**：
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| parse_timeout_seconds | number | 5 | Excel文件解析的超时时间（秒），超时将中止解析 |
+| match_timeout_seconds | number | 10 | 设备匹配的超时时间（秒），超时将返回部分结果 |
+| max_rows_per_file | number | 10000 | 单个Excel文件允许的最大行数，超过将被拒绝 |
+
+**性能优化建议**：
+
+1. **小文件快速处理**：
+   ```json
+   {
+     "performance_config": {
+       "parse_timeout_seconds": 3,
+       "match_timeout_seconds": 5,
+       "max_rows_per_file": 1000
+     }
+   }
+   ```
+
+2. **大文件处理**：
+   ```json
+   {
+     "performance_config": {
+       "parse_timeout_seconds": 30,
+       "match_timeout_seconds": 60,
+       "max_rows_per_file": 50000
+     }
+   }
+   ```
+
+3. **高性能服务器**：
+   ```json
+   {
+     "performance_config": {
+       "parse_timeout_seconds": 10,
+       "match_timeout_seconds": 20,
+       "max_rows_per_file": 100000
+     }
+   }
+   ```
+
+**注意事项**：
+
+- 超时时间过短可能导致大文件处理失败
+- 超时时间过长可能导致系统响应缓慢
+- max_rows_per_file 应根据服务器内存设置
+- 建议根据实际业务需求和服务器性能调整
+
+**监控性能指标**：
+
+```python
+# 查看平均处理时间
+import time
+
+start = time.time()
+# 执行解析或匹配
+elapsed = time.time() - start
+
+if elapsed > performance_config['parse_timeout_seconds']:
+    logger.warning(f"处理时间 {elapsed}秒 超过配置的超时时间")
+```
+
 ## 故障排查
 
 ### 常见问题

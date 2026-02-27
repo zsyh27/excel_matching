@@ -127,19 +127,19 @@
     >
       <div v-if="currentRule" class="rule-detail">
         <el-descriptions :column="2" border>
-          <el-descriptions-item label="设备ID">{{ currentRule.device_id }}</el-descriptions-item>
+          <el-descriptions-item label="设备ID">{{ currentRule.device_info?.device_id || currentRule.target_device_id }}</el-descriptions-item>
           <el-descriptions-item label="规则ID">{{ currentRule.rule_id }}</el-descriptions-item>
-          <el-descriptions-item label="品牌">{{ currentRule.device_info.brand }}</el-descriptions-item>
-          <el-descriptions-item label="设备名称">{{ currentRule.device_info.device_name }}</el-descriptions-item>
-          <el-descriptions-item label="规格型号" :span="2">{{ currentRule.device_info.spec_model }}</el-descriptions-item>
-          <el-descriptions-item label="详细参数" :span="2">{{ currentRule.device_info.detailed_params }}</el-descriptions-item>
-          <el-descriptions-item label="单价">¥{{ currentRule.device_info.unit_price }}</el-descriptions-item>
+          <el-descriptions-item label="品牌">{{ currentRule.device_info?.brand || '未知' }}</el-descriptions-item>
+          <el-descriptions-item label="设备名称">{{ currentRule.device_info?.device_name || '未知' }}</el-descriptions-item>
+          <el-descriptions-item label="规格型号" :span="2">{{ currentRule.device_info?.spec_model || '' }}</el-descriptions-item>
+          <el-descriptions-item label="详细参数" :span="2">{{ currentRule.device_info?.detailed_params || '' }}</el-descriptions-item>
+          <el-descriptions-item label="单价">¥{{ currentRule.device_info?.unit_price || 0 }}</el-descriptions-item>
           <el-descriptions-item label="匹配阈值">
             <el-tag :type="getThresholdType(currentRule.match_threshold)">
               {{ currentRule.match_threshold }}
             </el-tag>
           </el-descriptions-item>
-          <el-descriptions-item label="特征数量">{{ currentRule.features.length }}</el-descriptions-item>
+          <el-descriptions-item label="特征数量">{{ currentRule.features?.length || 0 }}</el-descriptions-item>
           <el-descriptions-item label="备注" :span="2">{{ currentRule.remark || '无' }}</el-descriptions-item>
         </el-descriptions>
 

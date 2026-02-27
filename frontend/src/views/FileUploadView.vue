@@ -49,6 +49,19 @@
           </el-card>
         </el-col>
       </el-row>
+      <el-row :gutter="20" style="margin-top: 20px;">
+        <el-col :span="6">
+          <el-card class="nav-card" shadow="hover" @click="navigateTo('/config-management')">
+            <div class="nav-card-content">
+              <el-icon :size="40" color="#9C27B0">
+                <tools />
+              </el-icon>
+              <h3>配置管理</h3>
+              <p>管理系统配置参数和预处理规则</p>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
     </div>
 
     <!-- 上传卡片 -->
@@ -119,7 +132,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElNotification } from 'element-plus'
-import { UploadFilled, Collection, DataAnalysis, Setting } from '@element-plus/icons-vue'
+import { UploadFilled, Collection, DataAnalysis, Setting, Tools } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
@@ -313,6 +326,13 @@ const handleError = (title, error) => {
   cursor: pointer;
   transition: all 0.3s ease;
   height: 180px;
+  overflow: hidden;
+}
+
+.nav-card :deep(.el-card__body) {
+  height: 100%;
+  overflow: hidden;
+  padding: 20px;
 }
 
 .nav-card:hover {
@@ -332,7 +352,8 @@ const handleError = (title, error) => {
   justify-content: center;
   height: 100%;
   text-align: center;
-  padding: 10px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .nav-card-content .el-icon {

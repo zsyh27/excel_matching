@@ -58,6 +58,11 @@ class RuleGenerator:
         """
         从设备信息中提取特征
         
+        改进的提取策略：
+        1. 品牌和设备名称直接作为特征（不拆分）
+        2. 规格型号使用"+"拆分
+        3. 详细参数先按行拆分，再处理键值对和括号
+        
         验证需求: 3.1
         
         Args:
@@ -66,27 +71,46 @@ class RuleGenerator:
         Returns:
             特征列表
         """
-        # 组合设备的所有文本信息
-        text_parts = []
+        features = []
         
+        # 1. 品牌（直接使用，不拆分）
         if device.brand:
-            text_parts.append(device.brand)
+            # 归一化品牌名称（不拆分）
+            normalized_brand = self.preprocessor.normalize_text(device.brand)
+            if normalized_brand:
+                features.append(normalized_brand)
+        
+        # 2. 设备名称（直接使用，不拆分）
         if device.device_name:
-            text_parts.append(device.device_name)
+            # 归一化设备名称（不拆分）
+            normalized_name = self.preprocessor.normalize_text(device.device_name)
+            if normalized_name:
+                features.append(normalized_name)
+        
+        # 3. 规格型号（使用"+"拆分）
         if device.spec_model:
-            text_parts.append(device.spec_model)
+            # 规格型号用"+"分隔多个部分
+            # 例如：二通+DN15+水+V5011N1040/U+V5011系列
+            spec_parts = device.spec_model.split('+')
+            for part in spec_parts:
+                part = part.strip()
+                if part:
+                    # 归一化每个部分，但不使用预处理器的特征拆分
+                    # 只进行归一化处理
+                    normalized_part = self.preprocessor.normalize_text(part)
+                    if normalized_part and len(normalized_part) >= 1:
+                        # 对中文字符放宽长度限制
+                        has_chinese = any('\u4e00' <= char <= '\u9fff' for char in normalized_part)
+                        min_length = 1 if has_chinese else 2
+                        if len(normalized_part) >= min_length:
+                            features.append(normalized_part)
+        
+        # 4. 详细参数（结构化解析）
         if device.detailed_params:
-            text_parts.append(device.detailed_params)
+            param_features = self._parse_detailed_params(device.detailed_params)
+            features.extend(param_features)
         
-        # 使用分隔符连接
-        separator = self.preprocessor.feature_split_chars[0] if self.preprocessor.feature_split_chars else ','
-        combined_text = separator.join(text_parts)
-        
-        # 使用预处理器提取特征
-        preprocess_result = self.preprocessor.preprocess(combined_text)
-        features = preprocess_result.features
-        
-        # 去重并保持顺序
+        # 5. 去重并保持顺序
         unique_features = []
         seen = set()
         for feature in features:
@@ -97,6 +121,63 @@ class RuleGenerator:
         logger.debug(f"设备 {device.device_id} 提取特征: {unique_features}")
         
         return unique_features
+    
+    def _parse_detailed_params(self, detailed_params: str) -> List[str]:
+        """
+        解析详细参数，提取特征
+        
+        处理逻辑：
+        1. 按行拆分（处理\\n和真正的换行符）
+        2. 识别键值对格式（键：值）
+        3. 只提取值部分，忽略键（字段名）
+        4. 处理括号内容，分别提取
+        
+        Args:
+            detailed_params: 详细参数文本
+            
+        Returns:
+            特征列表
+        """
+        features = []
+        
+        # 处理转义的换行符（数据库中可能存储为字面的\n）
+        # 先尝试替换字面的\n
+        if '\\n' in detailed_params:
+            detailed_params = detailed_params.replace('\\n', '\n')
+        
+        # 按行拆分
+        lines = detailed_params.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            
+            # 检查是否是键值对格式（包含冒号）
+            if '：' in line or ':' in line:
+                # 拆分键值对，只取第一个冒号
+                if '：' in line:
+                    parts = line.split('：', 1)
+                else:
+                    parts = line.split(':', 1)
+                
+                if len(parts) == 2:
+                    key, value = parts
+                    key = key.strip()
+                    value = value.strip()
+                    
+                    # 只处理值部分，完全忽略键（字段名）
+                    if value:
+                        # 使用预处理器处理值
+                        # 预处理器会自动处理括号和拆分
+                        value_result = self.preprocessor.preprocess(value)
+                        features.extend(value_result.features)
+            else:
+                # 不是键值对格式，直接处理
+                line_result = self.preprocessor.preprocess(line)
+                features.extend(line_result.features)
+        
+        return features
     
     def assign_weights(self, features: List[str]) -> Dict[str, float]:
         """

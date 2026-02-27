@@ -75,6 +75,14 @@ const routes = [
     meta: {
       title: '统计仪表板'
     }
+  },
+  {
+    path: '/config-management',
+    name: 'ConfigManagement',
+    component: () => import('../views/ConfigManagementView.vue'),
+    meta: {
+      title: '配置管理'
+    }
   }
 ]
 
