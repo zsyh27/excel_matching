@@ -4,6 +4,47 @@
 
 ---
 
+## [2.1.0] - 2026-02-27
+
+### 新增功能 🎉
+- **项目文件管理系统**: 完整的文件管理和清理解决方案
+  - Git Hooks 自动检查临时文件
+  - 自动清理脚本（cleanup_project.py）
+  - 文档整理工具（organize_docs.py）
+  - 完整的文件管理指南
+
+### 改进
+- 项目结构规范化：清理 47 个文件
+  - 22 个临时文件归档到 `.archive/`
+  - 7 个诊断工具移动到 `backend/tools/`
+  - 7 个运维脚本移动到 `backend/scripts/`
+  - 7 个文档移动到 `docs/`
+  - 4 个脚本移动到 `scripts/`
+- 根目录文件数量减少 69%（13+ → 4 个）
+
+### 核心组件
+- `.githooks/pre-commit` - Git 提交前检查
+- `scripts/cleanup_project.py` - 项目清理工具
+- `scripts/organize_docs.py` - 文档整理工具
+- `scripts/install_hooks.bat` - Git Hooks 安装脚本
+- `scripts/verify_hooks.bat` - Git Hooks 验证脚本
+
+### 文档
+- `docs/FILE_MANAGEMENT_GUIDE.md` - 文件管理完整指南
+- `docs/GIT_HOOKS_GUIDE.md` - Git Hooks 使用指南
+- `docs/KIRO_WORKFLOW_GUIDE.md` - Kiro 工作流程指南
+- `docs/QUICK_CLEANUP_GUIDE.md` - 快速清理参考
+- `docs/PROJECT_CLEANUP_COMPLETION_REPORT.md` - 清理完成报告
+
+### 目录结构
+- 新增 `backend/tools/` - 诊断工具目录
+- 新增 `backend/scripts/` - 运维脚本目录
+- 新增 `.archive/` - 临时文件归档目录
+- 规范 `docs/` - 文档集中管理
+- 规范 `scripts/` - 项目脚本集中管理
+
+---
+
 ## [2.0.0] - 2026-02-12
 
 ### 新增功能 🎉

@@ -33,3 +33,17 @@ htmlcov/
 
 # Logs
 *.log
+
+# Temporary test files (should be deleted after verification)
+backend/test_*_fix.py
+backend/test_*_debug.py
+backend/fix_*.py
+backend/check_temp_*.py
+backend/demo_*.py
+
+# Temporary documentation
+docs/*_TEMP.md
+docs/*_DRAFT.md
+
+# Archive directory
+.archive/

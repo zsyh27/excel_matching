@@ -372,8 +372,8 @@ def main():
     # 全局参数
     parser.add_argument(
         '--config',
-        default='organization_config.json',
-        help='配置文件路径（默认: organization_config.json）'
+        default='scripts/organization_config.json',
+        help='配置文件路径（默认: scripts/organization_config.json）'
     )
     
     parser.add_argument(
