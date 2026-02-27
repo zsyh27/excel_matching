@@ -81,15 +81,15 @@ class MatchEngine:
         self.match_logger = match_logger
         self.default_match_threshold = config.get('global_config', {}).get('default_match_threshold', 5.0)
         
-        # 设备类型关键词（用于必需特征检查）
-        self.device_type_keywords = [
+        # 从配置加载设备类型关键词（用于必需特征检查）
+        self.device_type_keywords = config.get('device_type_keywords', [
             '传感器', '控制器', 'DDC', '阀门', '执行器', '控制柜',
             '电源', '继电器', '网关', '模块', '探测器', '开关',
             '变送器', '温控器', '风阀', '水阀', '电动阀', '调节阀',
             '压力传感器', '温度传感器', '湿度传感器', 'CO2传感器',
             '流量计', '压差开关', '液位开关', '风机', '水泵',
             '采集器', '服务器', '电脑', '软件', '系统'
-        ]
+        ])
         
         logger.info(f"匹配引擎初始化完成，加载 {len(rules)} 条规则，{len(devices)} 个设备")
     

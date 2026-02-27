@@ -244,12 +244,11 @@ class TextPreprocessor:
         """
         使用配置文件中的分隔符拆分文本为特征列表
         
-        改进（2024-02-27修复）：
-        1. 先按分隔符拆分文本
-        2. 再处理每个片段中的括号
-        3. 移除元数据关键词前缀
-        4. 智能拆分：识别品牌和设备类型
-        5. 过滤和去重
+        改进：
+        1. 先处理括号内容，分别提取括号内外的特征
+        2. 使用配置的分隔符拆分
+        3. 智能拆分：识别品牌和设备类型，生成多层次特征
+        4. 过滤元数据关键词和过短的特征
         
         验证需求: 3.6
         
@@ -264,26 +263,34 @@ class TextPreprocessor:
         
         features = []
         
-        # 步骤1: 先按分隔符拆分（修复：调整处理顺序）
-        if self.split_pattern:
-            segments = self.split_pattern.split(text)
-        else:
-            segments = [text]
+        # 步骤1: 处理括号内容
+        # 例如: "1/2"(dn15)" -> 提取 "1/2"" 和 "dn15"
+        bracket_pattern = r'([^()]+)\(([^)]+)\)'
+        remaining_text = text
         
-        # 步骤2: 处理每个片段
-        for segment in segments:
-            segment = segment.strip()
-            if not segment:
-                continue
+        # 查找所有括号匹配
+        for match in re.finditer(bracket_pattern, text):
+            outside = match.group(1).strip()  # 括号外的内容
+            inside = match.group(2).strip()   # 括号内的内容
             
-            # 2.1 处理括号
-            bracket_features = self._extract_bracket_features(segment)
+            # 添加括号外的内容
+            if outside:
+                features.append(outside)
             
-            # 2.2 移除元数据关键词前缀（修复：新增）
-            for feature in bracket_features:
-                cleaned = self._remove_metadata_prefix(feature)
-                if cleaned:
-                    features.append(cleaned)
+            # 添加括号内的内容
+            if inside:
+                features.append(inside)
+        
+        # 移除已处理的括号部分
+        remaining_text = re.sub(bracket_pattern, '', text)
+        
+        # 步骤2: 使用配置的分隔符拆分剩余文本
+        if self.split_pattern and remaining_text:
+            split_features = self.split_pattern.split(remaining_text)
+            features.extend([f.strip() for f in split_features if f and f.strip()])
+        elif remaining_text:
+            # 如果没有配置分隔符，返回整个文本作为单一特征
+            features.append(remaining_text.strip())
         
         # 步骤3: 智能拆分 - 生成多层次特征
         enhanced_features = []
@@ -291,109 +298,41 @@ class TextPreprocessor:
             # 添加原始特征
             enhanced_features.append(feature)
             
-            # 只对较长的特征进行智能拆分（修复：避免过度拆分）
-            if len(feature) > 4:
-                sub_features = self._smart_split_feature(feature)
-                enhanced_features.extend(sub_features)
+            # 智能拆分：识别品牌和设备类型
+            sub_features = self._smart_split_feature(feature)
+            enhanced_features.extend(sub_features)
         
         # 步骤4: 过滤无效特征并去重
-        return self._filter_and_deduplicate(enhanced_features)
-    
-    def _extract_bracket_features(self, text: str) -> List[str]:
-        """
-        从单个片段中提取括号内外的特征
-        
-        Args:
-            text: 单个文本片段，如 "1/2\"(dn15)"
-            
-        Returns:
-            特征列表，如 ["1/2\"", "dn15"]
-        """
-        features = []
-        bracket_pattern = r'([^()]+)\(([^)]+)\)'
-        
-        match = re.search(bracket_pattern, text)
-        if match:
-            outside = match.group(1).strip()
-            inside = match.group(2).strip()
-            
-            if outside:
-                features.append(outside)
-            if inside:
-                features.append(inside)
-        else:
-            # 没有括号，直接添加
-            features.append(text)
-        
-        return features
-    
-    def _remove_metadata_prefix(self, feature: str) -> str:
-        """
-        移除元数据关键词前缀
-        
-        Args:
-            feature: 特征，如 "型号:v5011n1040/u"
-            
-        Returns:
-            移除前缀后的特征，如 "v5011n1040/u"
-        """
-        # 检查是否包含冒号
-        if ':' not in feature:
-            return feature
-        
-        # 分割前缀和值
-        parts = feature.split(':', 1)
-        if len(parts) != 2:
-            return feature
-        
-        prefix = parts[0].strip()
-        value = parts[1].strip()
-        
-        # 如果前缀是元数据关键词，只返回值部分
-        if prefix in self.metadata_keywords:
-            return value if value else feature
-        
-        # 否则返回原特征
-        return feature
-    
-    def _filter_and_deduplicate(self, features: List[str]) -> List[str]:
-        """
-        过滤无效特征并去重
-        
-        Args:
-            features: 特征列表
-            
-        Returns:
-            过滤后的特征列表
-        """
-        filtered = []
+        filtered_features = []
         seen = set()
         
-        for feature in features:
-            # 过滤条件
+        for feature in enhanced_features:
+            # 过滤条件：
+            # 1. 对于中文字符，长度至少为 min_feature_length_chinese
+            # 2. 对于其他字符，长度至少为 min_feature_length
+            # 3. 不是元数据关键词
+            # 4. 不是无意义的单字符
+            # 5. 未重复
+            
             has_chinese = any('\u4e00' <= char <= '\u9fff' for char in feature)
             min_length = self.min_feature_length_chinese if has_chinese else self.min_feature_length
             
             if (len(feature) >= min_length and 
+                feature not in self.metadata_keywords and
                 not self._is_meaningless_single_char(feature) and
                 feature not in seen):
-                filtered.append(feature)
+                filtered_features.append(feature)
                 seen.add(feature)
         
-        return filtered
+        return filtered_features
     
     def _smart_split_feature(self, feature: str) -> List[str]:
         """
-        智能拆分特征，识别品牌和设备类型（优化版）
-        
-        改进（2024-02-27）：
-        - 只拆分较长的特征（>4个字符）
-        - 减少冗余子特征
-        - 只保留品牌和设备类型本身
+        智能拆分特征，识别品牌和设备类型
         
         例如：
-        - "霍尼韦尔室内温传感器" -> ["霍尼韦尔", "温传感器"]
-        - "西门子ddc控制器" -> ["西门子", "控制器"]
+        - "霍尼韦尔室内温传感器" -> ["霍尼韦尔", "室内温传感器", "室内", "温传感器"]
+        - "西门子ddc控制器" -> ["西门子", "ddc控制器", "ddc", "控制器"]
         
         Args:
             feature: 待拆分的特征
@@ -401,29 +340,47 @@ class TextPreprocessor:
         Returns:
             拆分后的子特征列表
         """
-        # 如果特征太短，不拆分
-        if len(feature) <= 4:
-            return []
-        
         sub_features = []
         remaining = feature
         
-        # 1. 识别并提取品牌（只保留品牌本身）
+        # 1. 识别并提取品牌
         for brand in self.brand_keywords:
             brand_lower = brand.lower()
             if brand_lower in remaining:
+                # 提取品牌
                 sub_features.append(brand_lower)
+                # 移除品牌，保留剩余部分
                 remaining = remaining.replace(brand_lower, '', 1).strip()
                 break
         
-        # 2. 识别并提取设备类型（只保留设备类型本身）
-        if remaining and len(remaining) > 2:
+        # 2. 识别并提取设备类型
+        if remaining:
+            # 按长度从长到短排序，优先匹配较长的设备类型
             sorted_device_types = sorted(self.device_type_keywords, key=len, reverse=True)
             
             for device_type in sorted_device_types:
                 device_type_lower = device_type.lower()
                 if device_type_lower in remaining:
+                    # 提取设备类型
                     sub_features.append(device_type_lower)
+                    
+                    # 提取设备类型前面的修饰词（如"室内"、"室外"、"管道"等）
+                    idx = remaining.find(device_type_lower)
+                    if idx > 0:
+                        prefix = remaining[:idx].strip()
+                        if prefix and len(prefix) >= 2:  # 修饰词至少2个字符
+                            # 添加修饰词
+                            sub_features.append(prefix)
+                            # 添加"修饰词+设备类型"组合
+                            sub_features.append(prefix + device_type_lower)
+                    
+                    # 提取设备类型后面的内容
+                    suffix_start = idx + len(device_type_lower)
+                    if suffix_start < len(remaining):
+                        suffix = remaining[suffix_start:].strip()
+                        if suffix and len(suffix) >= 2:
+                            sub_features.append(suffix)
+                    
                     break
         
         return sub_features

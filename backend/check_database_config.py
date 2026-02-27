@@ -27,7 +27,7 @@ for config_key, config_value in rows:
         if isinstance(value, list):
             print(f"  - {config_key}: list, 长度 {len(value)}")
         elif isinstance(value, dict):
-            print(f"    类型: dict, 键数量 {len(value)}")
+            print(f"  - {config_key}: dict, 键数量 {len(value)}")
         else:
             print(f"  - {config_key}: {type(value).__name__}")
     except:

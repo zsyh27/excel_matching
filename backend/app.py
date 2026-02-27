@@ -284,8 +284,17 @@ def match_devices():
 
 @app.route('/api/devices', methods=['GET'])
 def get_devices():
-    """获取设备列表接口"""
+    """获取设备列表接口（支持分页和搜索）"""
     try:
+        # 获取查询参数
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('page_size', 20))
+        search_name = request.args.get('name', '').strip()
+        filter_brand = request.args.get('brand', '').strip()
+        min_price = request.args.get('min_price', '')
+        max_price = request.args.get('max_price', '')
+        
+        # 获取所有设备和规则
         all_devices = data_loader.get_all_devices()
         all_rules = data_loader.get_all_rules()
         
@@ -294,13 +303,59 @@ def get_devices():
         for rule in all_rules:
             device_has_rules.add(rule.target_device_id)
         
+        # 构建设备列表
         devices_list = []
         for device_id, device in all_devices.items():
             device_dict = device.to_dict()
             device_dict['display_text'] = device.get_display_text()
             device_dict['has_rules'] = device_id in device_has_rules
             devices_list.append(device_dict)
-        return jsonify({'success': True, 'devices': devices_list}), 200
+        
+        # 应用搜索过滤
+        if search_name:
+            search_lower = search_name.lower()
+            devices_list = [
+                d for d in devices_list
+                if search_lower in d['device_id'].lower()
+                or search_lower in d['brand'].lower()
+                or search_lower in d['device_name'].lower()
+                or search_lower in d['spec_model'].lower()
+            ]
+        
+        # 应用品牌过滤
+        if filter_brand:
+            devices_list = [d for d in devices_list if d['brand'] == filter_brand]
+        
+        # 应用价格范围过滤
+        if min_price:
+            try:
+                min_val = float(min_price)
+                devices_list = [d for d in devices_list if d['unit_price'] >= min_val]
+            except ValueError:
+                pass
+        
+        if max_price:
+            try:
+                max_val = float(max_price)
+                devices_list = [d for d in devices_list if d['unit_price'] <= max_val]
+            except ValueError:
+                pass
+        
+        # 计算总数
+        total = len(devices_list)
+        
+        # 应用分页
+        start_idx = (page - 1) * page_size
+        end_idx = start_idx + page_size
+        paginated_devices = devices_list[start_idx:end_idx]
+        
+        return jsonify({
+            'success': True,
+            'devices': paginated_devices,
+            'total': total,
+            'page': page,
+            'page_size': page_size
+        }), 200
     except Exception as e:
         logger.error(f"获取设备列表失败: {e}")
         return create_error_response('GET_DEVICES_ERROR', '获取设备列表失败', {'error_detail': str(e)})
@@ -333,6 +388,159 @@ def get_device_by_id(device_id):
     except Exception as e:
         logger.error(f"获取设备详情失败: {e}")
         return create_error_response('GET_DEVICE_ERROR', '获取设备详情失败', {'error_detail': str(e)})
+
+
+@app.route('/api/devices/<device_id>', methods=['PUT'])
+def update_device(device_id):
+    """更新设备接口"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return create_error_response('MISSING_DATA', '缺少请求数据'), 400
+        
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader:
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式，无法更新设备'), 400
+        
+        # 获取现有设备
+        all_devices = data_loader.get_all_devices()
+        if device_id not in all_devices:
+            return create_error_response('DEVICE_NOT_FOUND', f'设备不存在: {device_id}'), 404
+        
+        device = all_devices[device_id]
+        
+        # 更新设备字段
+        if 'brand' in data:
+            device.brand = data['brand']
+        if 'device_name' in data:
+            device.device_name = data['device_name']
+        if 'spec_model' in data:
+            device.spec_model = data['spec_model']
+        if 'detailed_params' in data:
+            device.detailed_params = data['detailed_params']
+        if 'unit_price' in data:
+            device.unit_price = float(data['unit_price'])
+        
+        # 保存到数据库
+        success = data_loader.loader.update_device(device)
+        
+        if success:
+            # 如果需要重新生成规则
+            if data.get('regenerate_rule', False):
+                from modules.rule_generator import RuleGenerator
+                config = data_loader.load_config()
+                rule_generator = RuleGenerator(
+                    preprocessor=preprocessor,
+                    default_threshold=config.get('global_config', {}).get('default_match_threshold', 5.0),
+                    config=config
+                )
+                rule = rule_generator.generate_rule(device)
+                if rule:
+                    data_loader.loader.save_rule(rule)
+                    logger.info(f"设备 {device_id} 的规则已重新生成")
+            
+            logger.info(f"设备更新成功: {device_id}")
+            return jsonify({'success': True, 'message': '设备更新成功'})
+        else:
+            return create_error_response('UPDATE_DEVICE_ERROR', '设备更新失败'), 500
+        
+    except Exception as e:
+        logger.error(f"更新设备失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('UPDATE_DEVICE_ERROR', '更新设备失败', {'error_detail': str(e)}), 500
+
+
+@app.route('/api/devices/<device_id>', methods=['DELETE'])
+def delete_device_by_id(device_id):
+    """删除设备接口"""
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader:
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式，无法删除设备'), 400
+        
+        # 检查设备是否存在
+        all_devices = data_loader.get_all_devices()
+        if device_id not in all_devices:
+            return create_error_response('DEVICE_NOT_FOUND', f'设备不存在: {device_id}'), 404
+        
+        # 删除设备（级联删除关联的规则）
+        success = data_loader.loader.delete_device(device_id)
+        
+        if success:
+            logger.info(f"设备删除成功: {device_id}")
+            return jsonify({'success': True, 'message': '设备删除成功'})
+        else:
+            return create_error_response('DELETE_DEVICE_ERROR', '设备删除失败'), 500
+        
+    except Exception as e:
+        logger.error(f"删除设备失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('DELETE_DEVICE_ERROR', '删除设备失败', {'error_detail': str(e)}), 500
+
+
+@app.route('/api/devices', methods=['POST'])
+def create_device():
+    """创建设备接口"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return create_error_response('MISSING_DATA', '缺少请求数据'), 400
+        
+        # 验证必需字段
+        required_fields = ['device_id', 'brand', 'device_name', 'spec_model', 'unit_price']
+        for field in required_fields:
+            if field not in data:
+                return create_error_response('MISSING_FIELD', f'缺少必需字段: {field}'), 400
+        
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader:
+            return create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式，无法创建设备'), 400
+        
+        # 检查设备ID是否已存在
+        all_devices = data_loader.get_all_devices()
+        if data['device_id'] in all_devices:
+            return create_error_response('DEVICE_EXISTS', f'设备ID已存在: {data["device_id"]}'), 400
+        
+        # 创建设备对象
+        from modules.data_loader import Device
+        device = Device(
+            device_id=data['device_id'],
+            brand=data['brand'],
+            device_name=data['device_name'],
+            spec_model=data['spec_model'],
+            detailed_params=data.get('detailed_params', ''),
+            unit_price=float(data['unit_price'])
+        )
+        
+        # 保存到数据库
+        success = data_loader.loader.add_device(device)
+        
+        if success:
+            # 如果需要自动生成规则
+            if data.get('auto_generate_rule', True):
+                from modules.rule_generator import RuleGenerator
+                config = data_loader.load_config()
+                rule_generator = RuleGenerator(
+                    preprocessor=preprocessor,
+                    default_threshold=config.get('global_config', {}).get('default_match_threshold', 5.0),
+                    config=config
+                )
+                rule = rule_generator.generate_rule(device)
+                if rule:
+                    data_loader.loader.save_rule(rule)
+                    logger.info(f"设备 {device.device_id} 的规则已自动生成")
+            
+            logger.info(f"设备创建成功: {device.device_id}")
+            return jsonify({'success': True, 'message': '设备创建成功', 'device_id': device.device_id})
+        else:
+            return create_error_response('CREATE_DEVICE_ERROR', '设备创建失败'), 500
+        
+    except Exception as e:
+        logger.error(f"创建设备失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('CREATE_DEVICE_ERROR', '创建设备失败', {'error_detail': str(e)}), 500
 
 
 @app.route('/api/rules/management/<rule_id>', methods=['GET'])
@@ -389,14 +597,8 @@ def get_rule_by_id(rule_id):
         # 将特征和权重转换为前端期望的格式，并添加类型信息
         features = []
         for feature, weight in target_rule.feature_weights.items():
-            # 根据特征名称推断类型
-            feature_type = 'parameter'  # 默认类型
-            if '品牌' in feature or feature == target_rule.target_device_id.split('_')[0]:
-                feature_type = 'brand'
-            elif '型号' in feature or 'model' in feature.lower():
-                feature_type = 'model'
-            elif '设备' in feature or 'device' in feature.lower():
-                feature_type = 'device_type'
+            # 根据特征名称和设备信息推断类型
+            feature_type = _infer_feature_type(feature, target_device)
             
             features.append({
                 'feature': feature,
@@ -418,6 +620,116 @@ def get_rule_by_id(rule_id):
     except Exception as e:
         logger.error(f"获取规则详情失败: {e}")
         return jsonify(create_error_response('GET_RULE_ERROR', '获取规则详情失败', {'error_detail': str(e)}))
+
+
+@app.route('/api/rules/management/<rule_id>', methods=['PUT'])
+def update_rule(rule_id):
+    """更新规则接口"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify(create_error_response('MISSING_DATA', '缺少请求数据')), 400
+        
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader:
+            return jsonify(create_error_response('NOT_DATABASE_MODE', '当前不是数据库模式，无法更新规则')), 400
+        
+        # 获取现有规则
+        all_rules = data_loader.get_all_rules()
+        target_rule = None
+        for rule in all_rules:
+            if rule.rule_id == rule_id:
+                target_rule = rule
+                break
+        
+        if not target_rule:
+            return jsonify(create_error_response('RULE_NOT_FOUND', f'规则不存在: {rule_id}')), 404
+        
+        # 更新规则数据
+        if 'match_threshold' in data:
+            target_rule.match_threshold = float(data['match_threshold'])
+        
+        if 'features' in data:
+            # 重建feature_weights字典
+            new_feature_weights = {}
+            for feature_item in data['features']:
+                feature_name = feature_item['feature']
+                feature_weight = float(feature_item['weight'])
+                new_feature_weights[feature_name] = feature_weight
+            
+            target_rule.feature_weights = new_feature_weights
+            # 同时更新auto_extracted_features列表
+            target_rule.auto_extracted_features = list(new_feature_weights.keys())
+        
+        if 'remark' in data:
+            target_rule.remark = data['remark']
+        
+        # 保存到数据库
+        success = data_loader.loader.save_rule(target_rule)
+        
+        if success:
+            # 重新加载规则到内存
+            global match_engine
+            rules = data_loader.load_rules()
+            devices = data_loader.load_devices()
+            config = data_loader.load_config()
+            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
+            
+            logger.info(f"规则更新成功: {rule_id}")
+            return jsonify({'success': True, 'message': '规则更新成功'})
+        else:
+            return jsonify(create_error_response('UPDATE_RULE_ERROR', '规则更新失败')), 500
+        
+    except Exception as e:
+        logger.error(f"更新规则失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify(create_error_response('UPDATE_RULE_ERROR', '更新规则失败', {'error_detail': str(e)})), 500
+
+
+def _infer_feature_type(feature, device=None):
+    """
+    推断特征类型
+    
+    Args:
+        feature: 特征名称
+        device: 设备对象（可选）
+        
+    Returns:
+        特征类型: 'brand', 'device_type', 'model', 'parameter'
+    """
+    feature_lower = feature.lower()
+    
+    # 加载配置
+    config = data_loader.load_config()
+    brand_keywords = config.get('brand_keywords', [])
+    device_type_keywords = config.get('device_type_keywords', [])
+    
+    # 1. 检查是否是品牌
+    if device and feature == device.brand:
+        return 'brand'
+    
+    for brand in brand_keywords:
+        if brand.lower() == feature_lower or brand.lower() in feature_lower:
+            return 'brand'
+    
+    # 2. 检查是否是设备类型
+    for device_type in device_type_keywords:
+        if device_type.lower() == feature_lower or device_type.lower() in feature_lower:
+            return 'device_type'
+    
+    # 3. 检查是否是型号
+    if device and feature == device.spec_model:
+        return 'model'
+    
+    # 包含型号特征的关键词
+    model_indicators = ['v5', 'ml', 'ddc', 'vav', 'ahu', 'fcu']
+    for indicator in model_indicators:
+        if indicator in feature_lower:
+            return 'model'
+    
+    # 4. 默认为参数
+    return 'parameter'
 
 
 @app.route('/api/rules/management/list', methods=['GET'])
@@ -1645,10 +1957,6 @@ def fix_data_consistency():
         return create_error_response('FIX_CONSISTENCY_ERROR', '修复数据一致性失败', {'error_detail': str(e)})
 
 
-if __name__ == '__main__':
-    logger.info("启动 Flask 应用...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
 
 # ==================== 规则重新生成 API ====================
 
@@ -1676,8 +1984,8 @@ def regenerate_rules():
         # 导入规则生成器
         from modules.rule_generator import RuleGenerator
         
-        # 创建规则生成器实例
-        rule_generator = RuleGenerator(config_data)
+        # 创建规则生成器实例（使用全局 preprocessor 和 config）
+        rule_generator = RuleGenerator(preprocessor, default_threshold=config_data.get('global_config', {}).get('default_match_threshold', 5.0), config=config_data)
         
         # 获取所有设备
         devices = data_loader.load_devices()
@@ -1689,15 +1997,14 @@ def regenerate_rules():
         generated_count = 0
         failed_count = 0
         
-        for device in devices:
+        for device_id, device in devices.items():
             try:
                 # 生成规则
-                rules = rule_generator.generate_rules(device)
+                rule = rule_generator.generate_rule(device)
                 
                 # 保存规则到数据库
-                if rules:
-                    for rule in rules:
-                        data_loader.loader.save_rule(rule)
+                if rule:
+                    data_loader.loader.save_rule(rule)
                     generated_count += 1
                 else:
                     failed_count += 1
@@ -1710,7 +2017,8 @@ def regenerate_rules():
         # 重新加载规则到内存
         global match_engine
         rules = data_loader.load_rules()
-        match_engine = MatchEngine(rules=rules, devices=devices, config=config_data)
+        devices_dict = devices  # devices 已经是字典格式
+        match_engine = MatchEngine(rules=rules, devices=devices_dict, config=config_data)
         
         logger.info(f"规则生成完成: 成功 {generated_count}, 失败 {failed_count}")
         
@@ -1742,3 +2050,9 @@ def get_regenerate_status():
         'progress': 100,
         'message': '规则生成已完成'
     }), 200
+
+if __name__ == '__main__':
+    logger.info("启动 Flask 应用...")
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
+

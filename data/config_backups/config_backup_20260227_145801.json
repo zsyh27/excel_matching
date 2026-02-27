@@ -177,7 +177,7 @@
   ],
   "feature_weight_config": {
     "brand_weight": 1,
-    "device_type_weight": 4,
+    "device_type_weight": 3,
     "model_weight": 1,
     "parameter_weight": 4
   },

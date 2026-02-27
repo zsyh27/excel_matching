@@ -25,34 +25,43 @@ class RuleGenerator:
     验证需求: 3.1-3.5
     """
     
-    def __init__(self, preprocessor, default_threshold: float = 5.0):
+    def __init__(self, preprocessor, default_threshold: float = 5.0, config: Dict = None):
         """
         初始化规则生成器
         
         Args:
             preprocessor: TextPreprocessor 实例
             default_threshold: 默认匹配阈值
+            config: 配置字典（可选）
         """
         self.preprocessor = preprocessor
         self.default_threshold = default_threshold
+        self.config = config or {}
         
-        # 设备类型关键词
-        self.device_type_keywords = [
+        # 从配置加载设备类型关键词
+        self.device_type_keywords = self.config.get('device_type_keywords', [
             '传感器', '控制器', 'DDC', '阀门', '执行器', '控制柜',
             '电源', '继电器', '网关', '模块', '探测器', '开关',
             '变送器', '温控器', '风阀', '水阀', '电动阀', '调节阀',
             '压力传感器', '温度传感器', '湿度传感器', 'CO2传感器',
             '流量计', '压差开关', '液位开关', '风机', '水泵',
             '采集器', '服务器', '电脑', '软件', '系统'
-        ]
+        ])
         
-        # 品牌关键词
-        self.brand_keywords = [
+        # 从配置加载品牌关键词
+        self.brand_keywords = self.config.get('brand_keywords', [
             '霍尼韦尔', '西门子', '江森自控', '施耐德', '明纬',
             '欧姆龙', 'ABB', '丹佛斯', '贝尔莫', 'Honeywell',
             'Siemens', 'Johnson', 'Schneider', 'OMRON', 'Danfoss',
             'Belimo', 'Delta', '台达', '正泰', '德力西'
-        ]
+        ])
+        
+        # 从配置加载特征权重
+        feature_weight_config = self.config.get('feature_weight_config', {})
+        self.brand_weight = feature_weight_config.get('brand_weight', 3.0)
+        self.model_weight = feature_weight_config.get('model_weight', 3.0)
+        self.device_type_weight = feature_weight_config.get('device_type_weight', 5.0)
+        self.parameter_weight = feature_weight_config.get('parameter_weight', 1.0)
     
     def extract_features(self, device: Device) -> List[str]:
         """
@@ -185,11 +194,11 @@ class RuleGenerator:
         
         验证需求: 3.2
         
-        权重分配策略（优化后）:
-        - 品牌: 3.0
-        - 型号: 3.0
-        - 设备类型关键词: 5.0 (提高以增强区分度)
-        - 其他参数: 1.0 (降低通用参数权重)
+        权重分配策略（从配置加载）:
+        - 品牌: brand_weight (默认 3.0)
+        - 型号: model_weight (默认 3.0)
+        - 设备类型关键词: device_type_weight (默认 5.0)
+        - 其他参数: parameter_weight (默认 1.0)
         
         Args:
             features: 特征列表
@@ -202,16 +211,16 @@ class RuleGenerator:
         for feature in features:
             # 检查是否是品牌
             if any(brand in feature for brand in self.brand_keywords):
-                weights[feature] = 3.0
+                weights[feature] = self.brand_weight
             # 检查是否是型号（通常包含字母和数字的组合）
             elif self._is_model_number(feature):
-                weights[feature] = 3.0
-            # 检查是否是设备类型关键词（提高权重到 5.0）
+                weights[feature] = self.model_weight
+            # 检查是否是设备类型关键词
             elif any(keyword in feature for keyword in self.device_type_keywords):
-                weights[feature] = 5.0
-            # 其他参数（通用参数降低到 1.0）
+                weights[feature] = self.device_type_weight
+            # 其他参数
             else:
-                weights[feature] = 1.0
+                weights[feature] = self.parameter_weight
         
         logger.debug(f"特征权重: {weights}")
         
@@ -227,11 +236,19 @@ class RuleGenerator:
         Returns:
             是否是型号
         """
-        # 排除常见的参数格式（数字范围+单位）
+        # 排除常见的参数格式
         common_params = [
             r'^\d+-\d+[a-z]+$',  # 如 4-20ma, 0-10v
             r'^\d+-\d+ppm$',     # 如 0-100ppm
             r'^\d+-\d+℃$',       # 如 0-50℃
+            r'^dn\d+$',          # DN通径参数，如 dn15, dn20, dn25
+            r'^g\d+/\d+"?$',     # G螺纹规格，如 g1/2", g3/4"
+            r'^r\d+/\d+"?$',     # R螺纹规格，如 r1/2"
+            r'^pt\d+/\d+"?$',    # PT螺纹规格，如 pt1/2"
+            r'^npt\d+/\d+"?$',   # NPT螺纹规格，如 npt1/2"
+            r'^\d+/\d+"?$',      # 尺寸规格，如 1/2", 3/4"
+            r'^m\d+$',           # M螺纹规格，如 m20, m30
+            r'^φ?\d+$',          # 直径参数，如 φ20, 20
         ]
         
         for param_pattern in common_params:

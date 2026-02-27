@@ -181,6 +181,9 @@ import NormalizationEditor from '../components/ConfigManagement/NormalizationEdi
 import GlobalConfigEditor from '../components/ConfigManagement/GlobalConfigEditor.vue'
 import BrandKeywordsEditor from '../components/ConfigManagement/BrandKeywordsEditor.vue'
 import DeviceTypeEditor from '../components/ConfigManagement/DeviceTypeEditor.vue'
+import FeatureWeightEditor from '../components/ConfigManagement/FeatureWeightEditor.vue'
+import AdvancedConfigEditor from '../components/ConfigManagement/AdvancedConfigEditor.vue'
+import DeviceRowRecognitionEditor from '../components/ConfigManagement/DeviceRowRecognitionEditor.vue'
 
 export default {
   name: 'ConfigManagementView',
@@ -191,7 +194,10 @@ export default {
     NormalizationEditor,
     GlobalConfigEditor,
     BrandKeywordsEditor,
-    DeviceTypeEditor
+    DeviceTypeEditor,
+    FeatureWeightEditor,
+    AdvancedConfigEditor,
+    DeviceRowRecognitionEditor
   },
   setup() {
     const activeTab = ref('ignore_keywords')
@@ -216,7 +222,7 @@ export default {
       }, 3000)
     }
 
-    // 菜单项（按照数据处理流程排序）
+    // 菜单项（按照业务流程排序）
     const menuItems = [
       { key: 'ignore_keywords', label: '删除无关关键词', icon: '🗑️' },
       { key: 'feature_split_chars', label: '处理分隔符', icon: '✂️' },
@@ -224,7 +230,10 @@ export default {
       { key: 'normalization_map', label: '归一化映射', icon: '📝' },
       { key: 'global_config', label: '全局配置', icon: '⚙️' },
       { key: 'brand_keywords', label: '品牌关键词', icon: '🏷️' },
-      { key: 'device_type_keywords', label: '设备类型', icon: '📦' }
+      { key: 'device_type_keywords', label: '设备类型', icon: '📦' },
+      { key: 'feature_weight_config', label: '特征权重', icon: '⚖️' },
+      { key: 'metadata_keywords', label: '高级配置', icon: '🔧' },
+      { key: 'device_row_recognition', label: '设备行识别', icon: '🎯' }
     ]
 
     // 当前编辑器组件
@@ -236,7 +245,10 @@ export default {
         'normalization_map': 'NormalizationEditor',
         'global_config': 'GlobalConfigEditor',
         'brand_keywords': 'BrandKeywordsEditor',
-        'device_type_keywords': 'DeviceTypeEditor'
+        'device_type_keywords': 'DeviceTypeEditor',
+        'feature_weight_config': 'FeatureWeightEditor',
+        'metadata_keywords': 'AdvancedConfigEditor',
+        'device_row_recognition': 'DeviceRowRecognitionEditor'
       }
       return editorMap[activeTab.value]
     })

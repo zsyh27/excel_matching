@@ -175,17 +175,9 @@
     "\\",
     "\n"
   ],
-  "feature_weight_config": {
-    "brand_weight": 1,
-    "device_type_weight": 4,
-    "model_weight": 1,
-    "parameter_weight": 4
-  },
   "global_config": {
-    "default_match_threshold": 5,
+    "default_match_threshold": 3,
     "fullwidth_to_halfwidth": true,
-    "min_feature_length": 2,
-    "min_feature_length_chinese": 1,
     "remove_whitespace": true,
     "unify_lowercase": true
   },
@@ -211,37 +203,6 @@
     "供货",
     "交货",
     "质保"
-  ],
-  "metadata_keywords": [
-    "型号",
-    "通径",
-    "阀体类型",
-    "适用介质",
-    "品牌",
-    "规格",
-    "参数",
-    "名称",
-    "类型",
-    "尺寸",
-    "材质",
-    "功率",
-    "电压",
-    "电流",
-    "频率",
-    "温度",
-    "压力",
-    "流量",
-    "湿度",
-    "浓度",
-    "范围",
-    "精度",
-    "输出",
-    "输入",
-    "信号",
-    "接口",
-    "安装",
-    "防护",
-    "等级"
   ],
   "normalization_map": {
     " ": "",
@@ -312,5 +273,11 @@
       "xlsm",
       "xlsx"
     ]
+  },
+  "feature_weight_config": {
+    "brand_weight": 3,
+    "model_weight": 3,
+    "device_type_weight": 5,
+    "parameter_weight": 5
   }
 }

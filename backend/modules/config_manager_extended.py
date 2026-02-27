@@ -68,12 +68,13 @@ class ConfigManagerExtended:
             # 2. 备份当前配置
             self._backup_current_config()
             
-            # 3. 保存新配置
+            # 3. 保存新配置到JSON文件
             with open(self.config_file_path, 'w', encoding='utf-8') as f:
                 json.dump(config, f, ensure_ascii=False, indent=2)
             
-            # 4. 记录到历史（如果有数据库）
+            # 4. 同步到数据库（如果有数据库）
             if self.db_manager:
+                self._sync_to_database(config)
                 self._save_to_history(config, remark)
             
             logger.info(f"配置保存成功: {remark or '无备注'}")
@@ -244,6 +245,43 @@ class ConfigManagerExtended:
                 logger.info(f"配置历史已保存: 版本 {next_version}")
         except Exception as e:
             logger.error(f"保存配置历史失败: {e}")
+    
+    def _sync_to_database(self, config: Dict):
+        """
+        同步配置到数据库的configs表
+        
+        Args:
+            config: 配置字典
+        """
+        try:
+            with self.db_manager.session_scope() as session:
+                from modules.models import Config as ConfigModel
+                
+                # 同步每个配置项
+                for config_key, config_value in config.items():
+                    # 查找现有配置
+                    existing_config = session.query(ConfigModel).filter_by(
+                        config_key=config_key
+                    ).first()
+                    
+                    # 注意：config_value列是JSON类型，SQLAlchemy会自动序列化
+                    # 不需要手动调用json.dumps
+                    if existing_config:
+                        # 更新现有配置
+                        existing_config.config_value = config_value
+                    else:
+                        # 插入新配置
+                        new_config = ConfigModel(
+                            config_key=config_key,
+                            config_value=config_value
+                        )
+                        session.add(new_config)
+                
+                session.commit()
+                logger.info(f"配置已同步到数据库: {len(config)} 个配置项")
+        except Exception as e:
+            logger.error(f"同步配置到数据库失败: {e}")
+            # 不抛出异常，因为JSON文件已经保存成功
     
     def get_history(self, limit: int = 50) -> List[Dict]:
         """

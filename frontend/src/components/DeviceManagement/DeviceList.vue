@@ -168,9 +168,9 @@ const fetchDeviceList = async () => {
     
     if (response.data.success) {
       deviceList.value = response.data.devices || []
-      pagination.total = response.data.devices ? response.data.devices.length : 0
+      pagination.total = response.data.total || 0  // 使用后端返回的总数
       
-      // 提取品牌选项
+      // 提取品牌选项（从所有设备中提取，不只是当前页）
       const brands = new Set()
       if (response.data.devices) {
         response.data.devices.forEach(device => {

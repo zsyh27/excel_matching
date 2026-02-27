@@ -84,6 +84,40 @@
           </label>
         </div>
       </div>
+
+      <div class="config-item">
+        <label class="config-label">
+          <span class="label-text">最小特征长度</span>
+          <span class="label-desc">提取特征的最小字符数（英文/数字）</span>
+        </label>
+        <div class="config-control">
+          <input 
+            v-model.number="localValue.min_feature_length" 
+            type="number" 
+            min="1"
+            max="10"
+            class="number-input"
+            @input="emitChange"
+          />
+        </div>
+      </div>
+
+      <div class="config-item">
+        <label class="config-label">
+          <span class="label-text">最小特征长度（中文）</span>
+          <span class="label-desc">提取中文特征的最小字符数</span>
+        </label>
+        <div class="config-control">
+          <input 
+            v-model.number="localValue.min_feature_length_chinese" 
+            type="number" 
+            min="1"
+            max="10"
+            class="number-input"
+            @input="emitChange"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -107,6 +141,14 @@ export default {
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
     const localValue = ref({ ...props.modelValue })
+
+    // 确保新字段有默认值
+    if (localValue.value.min_feature_length === undefined) {
+      localValue.value.min_feature_length = 2
+    }
+    if (localValue.value.min_feature_length_chinese === undefined) {
+      localValue.value.min_feature_length_chinese = 1
+    }
 
     const emitChange = () => {
       emit('update:modelValue', { ...localValue.value })

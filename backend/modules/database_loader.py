@@ -217,6 +217,75 @@ class DatabaseLoader:
             logger.error(f"删除设备失败: {e}")
             raise
     
+    def save_rule(self, rule: Rule) -> bool:
+        """
+        保存或更新规则
+        
+        Args:
+            rule: 规则实例
+            
+        Returns:
+            是否保存成功
+            
+        Raises:
+            Exception: 数据库操作失败时抛出异常
+        """
+        try:
+            with self.db_manager.session_scope() as session:
+                # 检查规则是否已存在
+                existing_rule = session.query(RuleModel).filter_by(
+                    rule_id=rule.rule_id
+                ).first()
+                
+                if existing_rule:
+                    # 更新现有规则
+                    existing_rule.target_device_id = rule.target_device_id
+                    existing_rule.auto_extracted_features = rule.auto_extracted_features
+                    existing_rule.feature_weights = rule.feature_weights
+                    existing_rule.match_threshold = rule.match_threshold
+                    existing_rule.remark = rule.remark
+                    logger.debug(f"更新规则成功: {rule.rule_id}")
+                else:
+                    # 插入新规则
+                    rule_model = self._rule_to_model(rule)
+                    session.add(rule_model)
+                    logger.debug(f"添加规则成功: {rule.rule_id}")
+                
+                return True
+        except Exception as e:
+            logger.error(f"保存规则失败: {e}")
+            raise
+    
+    def delete_rule(self, rule_id: str) -> bool:
+        """
+        删除规则
+        
+        Args:
+            rule_id: 规则ID
+            
+        Returns:
+            是否删除成功
+            
+        Raises:
+            Exception: 数据库操作失败时抛出异常
+        """
+        try:
+            with self.db_manager.session_scope() as session:
+                rule_model = session.query(RuleModel).filter_by(rule_id=rule_id).first()
+                
+                if rule_model is None:
+                    logger.warning(f"规则不存在，无法删除: {rule_id}")
+                    return False
+                
+                # 删除规则
+                session.delete(rule_model)
+                
+                logger.info(f"删除规则成功: {rule_id}")
+                return True
+        except Exception as e:
+            logger.error(f"删除规则失败: {e}")
+            raise
+    
     def _model_to_device(self, device_model: DeviceModel) -> Device:
         """
         将ORM模型转换为数据类
