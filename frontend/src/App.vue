@@ -14,6 +14,7 @@
             @select="handleMenuSelect"
           >
             <el-menu-item index="/">上传清单</el-menu-item>
+            <el-menu-item index="/device-input">设备录入</el-menu-item>
             <el-menu-item index="/database/devices">设备库管理</el-menu-item>
             <el-menu-item index="/database/statistics">统计仪表板</el-menu-item>
             <el-menu-item index="/rule-management">规则管理</el-menu-item>
@@ -46,6 +47,8 @@ watch(() => route.path, (newPath) => {
     activeMenu.value = '/database/statistics'
   } else if (newPath.startsWith('/config-management')) {
     activeMenu.value = '/config-management'
+  } else if (newPath === '/device-input') {
+    activeMenu.value = '/device-input'
   } else if (newPath === '/') {
     activeMenu.value = '/'
   }

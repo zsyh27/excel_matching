@@ -8,6 +8,7 @@ import RuleEditorView from '../views/RuleEditorView.vue'
 import MatchTesterView from '../views/MatchTesterView.vue'
 import DeviceManagementView from '../views/DeviceManagementView.vue'
 import StatisticsDashboardView from '../views/StatisticsDashboardView.vue'
+import DeviceInputView from '../views/DeviceInputView.vue'
 
 const routes = [
   {
@@ -16,6 +17,14 @@ const routes = [
     component: FileUploadView,
     meta: {
       title: '上传设备清单'
+    }
+  },
+  {
+    path: '/device-input',
+    name: 'DeviceInput',
+    component: DeviceInputView,
+    meta: {
+      title: '智能设备录入'
     }
   },
   {

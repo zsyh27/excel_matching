@@ -26,6 +26,17 @@ from modules.excel_exporter import ExcelExporter
 from modules.data_loader import DataLoader
 from modules.device_row_classifier import DeviceRowClassifier, AnalysisContext, ProbabilityLevel
 
+# 导入智能设备模块
+from modules.intelligent_device.configuration_manager import ConfigurationManager
+from modules.intelligent_device.device_description_parser import DeviceDescriptionParser
+from modules.intelligent_device.error_handler import (
+    ErrorHandler, ValidationError, ParsingError, ConfigError, DatabaseError
+)
+from modules.intelligent_device.api_models import (
+    DeviceParseRequest, DeviceParseResponse,
+    DeviceCreateRequest, DeviceCreateResponse
+)
+
 # 配置日志
 logging.basicConfig(
     level=logging.INFO,
@@ -89,8 +100,14 @@ try:
     # 9. 初始化设备行分类器
     device_row_classifier = DeviceRowClassifier(config)
     
+    # 10. 初始化智能设备录入系统组件
+    device_params_config = os.path.join(os.path.dirname(__file__), 'config', 'device_params.yaml')
+    intelligent_config_manager = ConfigurationManager(device_params_config)
+    intelligent_parser = DeviceDescriptionParser(intelligent_config_manager)
+    
     logger.info("系统组件初始化完成")
     logger.info(f"已加载 {len(devices)} 个设备，{len(rules)} 条规则")
+    logger.info("智能设备录入系统组件初始化完成")
     
 except Exception as e:
     logger.error(f"系统初始化失败: {e}")
@@ -100,6 +117,8 @@ except Exception as e:
     match_engine = None
     excel_exporter = None
     device_row_classifier = None
+    intelligent_config_manager = None
+    intelligent_parser = None
 
 
 def allowed_file(filename: str) -> bool:
@@ -120,6 +139,17 @@ def not_found(error):
     return jsonify({'success': False, 'error_code': 'NOT_FOUND', 'error_message': '请求的资源不存在'}), 404
 
 
+@app.errorhandler(405)
+def method_not_allowed(error):
+    logger.error(f"方法不允许: {error}, URL: {request.url}, Method: {request.method}")
+    return jsonify({
+        'success': False, 
+        'error_code': 'METHOD_NOT_ALLOWED', 
+        'error_message': f'该URL不支持{request.method}方法',
+        'allowed_methods': error.valid_methods if hasattr(error, 'valid_methods') else []
+    }), 405
+
+
 @app.errorhandler(500)
 def internal_error(error):
     logger.error(f"内部服务器错误: {error}")
@@ -128,7 +158,13 @@ def internal_error(error):
 
 @app.errorhandler(Exception)
 def handle_exception(error):
+    # 不要捕获HTTP异常，让Flask自己处理
+    from werkzeug.exceptions import HTTPException
+    if isinstance(error, HTTPException):
+        raise error
+    
     logger.error(f"未捕获的异常: {error}")
+    logger.error(traceback.format_exc())
     return jsonify({'success': False, 'error_code': 'UNEXPECTED_ERROR', 'error_message': str(error)}), 500
 
 
@@ -857,6 +893,97 @@ def _format_match_detail_as_text(match_detail) -> str:
     return '\n'.join(lines)
 
 
+# ============================================================================
+# 设备管理 API 端点
+# 注意：具体路径的路由必须定义在通用路由之前，以避免路由冲突
+# ============================================================================
+
+# 智能设备解析端点（必须在 /api/devices 之前定义）
+@app.route('/api/devices/parse', methods=['POST'])
+def parse_device_description():
+    """
+    设备描述解析API端点
+    
+    接受设备描述文本和价格，返回解析结果和置信度评分
+    
+    验证需求: 11.1, 11.2, 11.3
+    """
+    try:
+        # 检查组件是否初始化
+        if not intelligent_parser:
+            error_response = ErrorHandler.handle_config_error(
+                ConfigError("智能设备解析器未初始化")
+            )
+            return jsonify(error_response.to_dict()), 503
+        
+        # 获取请求数据
+        try:
+            data = request.get_json()
+        except Exception as json_error:
+            raise ValidationError('INVALID_JSON', '请求数据格式无效')
+        
+        if not data:
+            raise ValidationError('MISSING_DATA', '请求数据为空')
+        
+        # 验证必需字段
+        if 'description' not in data:
+            raise ValidationError('MISSING_DESCRIPTION', '缺少设备描述字段')
+        
+        description = data['description']
+        price = data.get('price')
+        
+        # 验证描述不为空
+        if not description or not description.strip():
+            raise ValidationError('EMPTY_DESCRIPTION', '设备描述不能为空')
+        
+        # 验证价格（如果提供）
+        if price is not None:
+            try:
+                price = float(price)
+                if price < 0:
+                    raise ValidationError('INVALID_PRICE', '价格不能为负数')
+            except (ValueError, TypeError):
+                raise ValidationError('INVALID_PRICE', '价格格式无效')
+        
+        # 执行解析
+        logger.info(f"开始解析设备描述: {description[:50]}...")
+        parse_result = intelligent_parser.parse(description)
+        
+        # 构建响应数据
+        response_data = {
+            'brand': parse_result.brand,
+            'device_type': parse_result.device_type,
+            'model': parse_result.model,
+            'key_params': parse_result.key_params,
+            'confidence_score': parse_result.confidence_score,
+            'unrecognized_text': parse_result.unrecognized_text
+        }
+        
+        # 如果提供了价格，包含在响应中
+        if price is not None:
+            response_data['price'] = price
+        
+        logger.info(f"解析完成 - 置信度: {parse_result.confidence_score:.2f}")
+        
+        return jsonify({
+            'success': True,
+            'data': response_data
+        }), 200
+        
+    except ValidationError as e:
+        error_response = ErrorHandler.handle_validation_error(e)
+        return jsonify(error_response.to_dict()), 400
+    
+    except ParsingError as e:
+        response = ErrorHandler.handle_parsing_error(e)
+        return jsonify(response), 200
+    
+    except Exception as e:
+        error_response = ErrorHandler.handle_generic_error(e)
+        return jsonify(error_response.to_dict()), 500
+
+
+# 通用设备列表端点
 @app.route('/api/devices', methods=['GET'])
 def get_devices():
     """获取设备列表接口（支持分页和搜索）"""
@@ -2635,3 +2762,336 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
 
 
+
+
+# ============================================================================
+# 智能设备录入系统 API 端点
+# ============================================================================
+
+@app.route('/api/devices/intelligent', methods=['POST'])
+def create_intelligent_device():
+    """
+    智能设备创建API端点
+    
+    支持新的字段格式（raw_description, key_params, confidence_score）
+    保留对旧字段的支持
+    
+    验证需求: 11.4, 11.5
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader:
+            raise ValidationError('NOT_DATABASE_MODE', '当前不是数据库模式，无法创建设备')
+        
+        # 获取请求数据
+        data = request.get_json()
+        if not data:
+            raise ValidationError('MISSING_DATA', '请求数据为空')
+        
+        # 验证必需字段
+        if 'raw_description' not in data:
+            raise ValidationError('MISSING_RAW_DESCRIPTION', '缺少原始描述字段')
+        
+        raw_description = data['raw_description']
+        if not raw_description or not raw_description.strip():
+            raise ValidationError('EMPTY_RAW_DESCRIPTION', '原始描述不能为空')
+        
+        # 提取字段
+        brand = data.get('brand')
+        device_type = data.get('device_type')
+        model = data.get('model')
+        key_params = data.get('key_params', {})
+        price = data.get('price')
+        confidence_score = data.get('confidence_score', 0.0)
+        
+        # 验证价格
+        if price is not None:
+            try:
+                price = float(price)
+                if price < 0:
+                    raise ValidationError('INVALID_PRICE', '价格不能为负数')
+            except (ValueError, TypeError):
+                raise ValidationError('INVALID_PRICE', '价格格式无效')
+        
+        # 验证置信度
+        try:
+            confidence_score = float(confidence_score)
+            if not (0.0 <= confidence_score <= 1.0):
+                raise ValidationError('INVALID_CONFIDENCE', '置信度必须在0.0到1.0之间')
+        except (ValueError, TypeError):
+            raise ValidationError('INVALID_CONFIDENCE', '置信度格式无效')
+        
+        # 生成设备ID（使用时间戳和品牌/类型）
+        import uuid
+        device_id = f"ID_{uuid.uuid4().hex[:8]}"
+        
+        # 创建设备对象
+        from modules.data_loader import Device
+        device = Device(
+            device_id=device_id,
+            brand=brand or '未知',
+            device_name=device_type or '未知设备',
+            spec_model=model or '',
+            detailed_params=raw_description,  # 保存原始描述到详细参数字段
+            unit_price=price or 0.0
+        )
+        
+        # 保存到数据库
+        try:
+            success = data_loader.loader.add_device(device)
+            
+            if not success:
+                raise DatabaseError("设备保存失败")
+            
+            logger.info(f"智能设备创建成功: {device_id}")
+            
+            # 返回成功响应
+            return jsonify({
+                'success': True,
+                'data': {
+                    'id': device_id,
+                    'created_at': datetime.now().isoformat()
+                }
+            }), 201
+            
+        except Exception as db_error:
+            raise DatabaseError(f"数据库操作失败: {str(db_error)}")
+    
+    except ValidationError as e:
+        error_response = ErrorHandler.handle_validation_error(e)
+        return jsonify(error_response.to_dict()), 400
+    
+    except DatabaseError as e:
+        error_response = ErrorHandler.handle_database_error(e)
+        return jsonify(error_response.to_dict()), 500
+    
+    except Exception as e:
+        error_response = ErrorHandler.handle_generic_error(e)
+        return jsonify(error_response.to_dict()), 500
+
+
+@app.route('/api/devices/<device_id>/similar', methods=['GET'])
+def get_similar_devices(device_id: str):
+    """
+    相似设备查询API端点
+    
+    查找与指定设备相似的其他设备
+    
+    验证需求: 9.7
+    
+    Args:
+        device_id: 设备ID
+        
+    Query Parameters:
+        limit: 返回结果数量限制（默认20）
+    
+    Returns:
+        JSON响应，包含相似设备列表和匹配详情
+    """
+    try:
+        # 导入匹配算法
+        from modules.intelligent_device.matching_algorithm import MatchingAlgorithm
+        
+        # 获取查询参数
+        limit = int(request.args.get('limit', 20))
+        
+        # 验证limit参数
+        if limit < 1 or limit > 100:
+            raise ValidationError('INVALID_LIMIT', 'limit参数必须在1到100之间')
+        
+        # 获取目标设备
+        target_device = None
+        
+        # 尝试从数据加载器获取设备
+        if hasattr(data_loader, 'loader') and data_loader.loader:
+            # 数据库模式
+            target_device = data_loader.loader.get_device_by_id(device_id)
+        else:
+            # JSON模式
+            all_devices = data_loader.get_all_devices()
+            target_device = all_devices.get(device_id)
+        
+        # 如果设备不存在，返回404
+        if not target_device:
+            raise ValidationError('DEVICE_NOT_FOUND', f'设备不存在: {device_id}')
+        
+        # 转换为字典格式
+        target_device_dict = target_device.to_dict() if hasattr(target_device, 'to_dict') else target_device
+        target_device_dict['device_id'] = device_id
+        
+        # 获取所有候选设备
+        if hasattr(data_loader, 'loader') and data_loader.loader:
+            # 数据库模式
+            all_devices_dict = data_loader.loader.load_devices()
+            candidates = [d.to_dict() for d in all_devices_dict.values()]
+            # 添加device_id到每个候选设备
+            for candidate in candidates:
+                if 'device_id' not in candidate:
+                    candidate['device_id'] = candidate.get('device_id', '')
+        else:
+            # JSON模式
+            all_devices_dict = data_loader.get_all_devices()
+            candidates = []
+            for dev_id, dev in all_devices_dict.items():
+                dev_dict = dev.to_dict() if hasattr(dev, 'to_dict') else dev
+                dev_dict['device_id'] = dev_id
+                candidates.append(dev_dict)
+        
+        # 初始化匹配算法
+        matching_algorithm = MatchingAlgorithm()
+        
+        # 查找相似设备
+        logger.info(f"开始查找与设备 {device_id} 相似的设备...")
+        match_results = matching_algorithm.find_similar_devices(
+            target_device=target_device_dict,
+            candidates=candidates,
+            limit=limit
+        )
+        
+        # 构建响应数据
+        similar_devices = []
+        for match_result in match_results:
+            similar_devices.append({
+                'device_id': match_result.device_id,
+                'similarity_score': match_result.similarity_score,
+                'matched_features': match_result.matched_features,
+                'device': {
+                    'brand': match_result.device.get('brand', ''),
+                    'device_name': match_result.device.get('device_name', ''),
+                    'model': match_result.device.get('model', ''),
+                    'device_type': match_result.device.get('device_type') or match_result.device.get('device_name', ''),
+                    'spec_model': match_result.device.get('spec_model', ''),
+                    'unit_price': match_result.device.get('unit_price', 0.0)
+                }
+            })
+        
+        logger.info(f"找到 {len(similar_devices)} 个相似设备")
+        
+        return jsonify({
+            'success': True,
+            'data': similar_devices
+        }), 200
+        
+    except ValidationError as e:
+        error_response = ErrorHandler.handle_validation_error(e)
+        return jsonify(error_response.to_dict()), 400
+    
+    except Exception as e:
+        logger.error(f"查找相似设备失败: {e}")
+        logger.error(traceback.format_exc())
+        error_response = ErrorHandler.handle_generic_error(e)
+        return jsonify(error_response.to_dict()), 500
+
+
+@app.route('/api/devices/batch-parse', methods=['POST'])
+def batch_parse_devices():
+    """
+    批量解析设备API端点
+    
+    从 detailed_params 字段提取信息并更新 key_params 字段
+    
+    验证需求: 10.1, 10.2, 10.3, 10.4
+    
+    Request Body:
+        {
+            "device_ids": [1, 2, 3, 4, 5],  # 可选，不提供则处理所有设备
+            "dry_run": false  # true 表示只测试不更新
+        }
+    
+    Response:
+        {
+            "success": true,
+            "data": {
+                "total": 719,
+                "processed": 719,
+                "successful": 650,
+                "failed": 69,
+                "success_rate": 0.904,
+                "failed_devices": [
+                    {"device_id": "15", "error": "无法识别设备类型"},
+                    {"device_id": "42", "error": "缺少必填参数"}
+                ],
+                "start_time": "2024-01-15T10:30:00Z",
+                "end_time": "2024-01-15T10:32:15Z",
+                "duration_seconds": 135.42
+            }
+        }
+    """
+    try:
+        # 检查组件是否初始化
+        if not intelligent_parser:
+            error_response = ErrorHandler.handle_config_error(
+                ConfigError("智能设备解析器未初始化")
+            )
+            return jsonify(error_response.to_dict()), 503
+        
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader:
+            raise ValidationError('NOT_DATABASE_MODE', '当前不是数据库模式，无法执行批量解析')
+        
+        # 获取请求数据
+        try:
+            data = request.get_json()
+        except Exception as json_error:
+            raise ValidationError('INVALID_JSON', '请求数据格式无效')
+        
+        if data is None:
+            data = {}
+        
+        # 提取参数
+        device_ids = data.get('device_ids')
+        dry_run = data.get('dry_run', False)
+        
+        # 验证device_ids参数
+        if device_ids is not None:
+            if not isinstance(device_ids, list):
+                raise ValidationError('INVALID_DEVICE_IDS', 'device_ids必须是数组')
+            
+            # 转换为字符串列表
+            device_ids = [str(device_id) for device_id in device_ids]
+        
+        # 验证dry_run参数
+        if not isinstance(dry_run, bool):
+            raise ValidationError('INVALID_DRY_RUN', 'dry_run必须是布尔值')
+        
+        # 导入批量解析服务
+        from modules.intelligent_device.batch_parser import BatchParser
+        from modules.database import DatabaseManager
+        
+        # 初始化数据库管理器
+        db_manager = DatabaseManager(Config.DATABASE_URL)
+        
+        # 初始化批量解析服务
+        batch_parser = BatchParser(
+            parser=intelligent_parser,
+            db_manager=db_manager
+        )
+        
+        # 执行批量解析
+        logger.info(f"开始批量解析 - device_ids={device_ids}, dry_run={dry_run}")
+        result = batch_parser.batch_parse(
+            device_ids=device_ids,
+            dry_run=dry_run
+        )
+        
+        # 返回结果
+        logger.info(f"批量解析完成 - 成功: {result.successful}, 失败: {result.failed}")
+        
+        return jsonify({
+            'success': True,
+            'data': result.to_dict()
+        }), 200
+        
+    except ValidationError as e:
+        error_response = ErrorHandler.handle_validation_error(e)
+        return jsonify(error_response.to_dict()), 400
+    
+    except Exception as e:
+        logger.error(f"批量解析失败: {e}")
+        logger.error(traceback.format_exc())
+        error_response = ErrorHandler.handle_generic_error(e)
+        return jsonify(error_response.to_dict()), 500
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

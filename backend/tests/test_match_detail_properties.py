@@ -8,7 +8,7 @@ Tests Properties 1, 2, and 3 from the design document
 import pytest
 from hypothesis import given, strategies as st
 from hypothesis import settings, HealthCheck
-from backend.modules.match_detail import MatchDetail, CandidateDetail, FeatureMatch
+from modules.match_detail import MatchDetail, CandidateDetail, FeatureMatch
 
 
 # ============================================================================
@@ -464,7 +464,7 @@ def test_property_12_cache_key_uniqueness(
     
     Validates: Requirements 6.1
     """
-    from backend.modules.match_detail import MatchDetailRecorder
+    from modules.match_detail import MatchDetailRecorder
     
     # 创建记录器
     config = {'max_cache_size': 1000}
@@ -538,7 +538,7 @@ def test_property_12_cache_key_uniqueness_multiple_calls(
     
     Validates: Requirements 6.1
     """
-    from backend.modules.match_detail import MatchDetailRecorder
+    from modules.match_detail import MatchDetailRecorder
     
     # 创建记录器
     config = {'max_cache_size': 1000}
@@ -624,8 +624,8 @@ def test_property_4_match_engine_candidate_sorting(features, num_rules):
     
     Validates: Requirements 3.2
     """
-    from backend.modules.match_engine import MatchEngine
-    from backend.modules.data_loader import Rule, Device
+    from modules.match_engine import MatchEngine
+    from modules.data_loader import Rule, Device
     
     # 创建测试规则和设备
     rules = []
@@ -777,8 +777,8 @@ def test_property_5_match_engine_feature_sorting(features, num_rules):
     
     Validates: Requirements 7.2
     """
-    from backend.modules.match_engine import MatchEngine
-    from backend.modules.data_loader import Rule, Device
+    from modules.match_engine import MatchEngine
+    from modules.data_loader import Rule, Device
     
     # 创建测试规则和设备
     rules = []
@@ -976,8 +976,8 @@ def test_property_6_match_engine_contribution_calculation(features, num_rules):
     
     Validates: Requirements 7.3
     """
-    from backend.modules.match_engine import MatchEngine
-    from backend.modules.data_loader import Rule, Device
+    from modules.match_engine import MatchEngine
+    from modules.data_loader import Rule, Device
     
     # 创建测试规则和设备
     rules = []

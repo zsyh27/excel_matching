@@ -5,7 +5,7 @@ Excel数据范围选择功能测试
 """
 
 import pytest
-from backend.modules.excel_parser import ExcelParser
+from modules.excel_parser import ExcelParser
 
 
 class TestColumnConversion:

@@ -1,0 +1,326 @@
+# 设备参数配置文件 - 智能设备录入系统
+
+brands:
+  西门子:
+    keywords: ["西门子", "SIEMENS", "siemens", "Siemens"]
+  霍尼韦尔:
+    keywords: ["霍尼韦尔", "HONEYWELL", "honeywell", "Honeywell"]
+  施耐德:
+    keywords: ["施耐德", "SCHNEIDER", "schneider", "Schneider"]
+  江森自控:
+    keywords: ["江森自控", "江森", "JOHNSON", "johnson", "Johnson", "JCI"]
+  贝尔莫:
+    keywords: ["贝尔莫", "BELIMO", "belimo", "Belimo"]
+  丹佛斯:
+    keywords: ["丹佛斯", "DANFOSS", "danfoss", "Danfoss"]
+  艾默生:
+    keywords: ["艾默生", "EMERSON", "emerson", "Emerson"]
+  ABB:
+    keywords: ["ABB", "abb"]
+  欧姆龙:
+    keywords: ["欧姆龙", "OMRON", "omron", "Omron"]
+  三菱:
+    keywords: ["三菱", "MITSUBISHI", "mitsubishi", "Mitsubishi"]
+  富士:
+    keywords: ["富士", "FUJI", "fuji", "Fuji"]
+  台达:
+    keywords: ["台达", "DELTA", "delta", "Delta"]
+  海林:
+    keywords: ["海林", "HAILIN", "hailin", "Hailin"]
+  和利时:
+    keywords: ["和利时", "HOLLYSYS", "hollysys", "Hollysys"]
+
+device_types:
+  CO2传感器:
+    keywords: ["CO2传感器", "二氧化碳传感器", "CO2 sensor", "co2传感器"]
+    params:
+      - name: "量程"
+        pattern: "量程[:：]?\\s*([0-9]+-[0-9]+\\s*ppm)"
+        required: true
+        data_type: "range"
+        unit: "ppm"
+      - name: "输出信号"
+        pattern: "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA])"
+        required: true
+        data_type: "string"
+        unit: "mA"
+      - name: "精度"
+        pattern: "精度[:：]?\\s*([±]?[0-9.]+\\s*%?)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  座阀:
+    keywords: ["座阀", "调节阀", "control valve", "座式调节阀"]
+    params:
+      - name: "通径"
+        pattern: "DN\\s*([0-9]+)|通径[:：]?\\s*([0-9]+)"
+        required: true
+        data_type: "number"
+        unit: "mm"
+      - name: "压力等级"
+        pattern: "PN\\s*([0-9]+)|压力[:：]?\\s*([0-9]+)"
+        required: false
+        data_type: "number"
+        unit: "bar"
+      - name: "流量系数"
+        pattern: "[Kk][Vv][Ss]?[:：]?\\s*([0-9.]+)"
+        required: false
+        data_type: "number"
+        unit: null
+  
+  温度传感器:
+    keywords: ["温度传感器", "温度探头", "temperature sensor", "温感"]
+    params:
+      - name: "量程"
+        pattern: "量程[:：]?\\s*(-?[0-9]+)\\s*[-~]\\s*(-?[0-9]+)\\s*[℃°C]"
+        required: true
+        data_type: "range"
+        unit: "℃"
+      - name: "输出信号"
+        pattern: "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA]|[0-9]+-[0-9]+\\s*[Vv]|PT[0-9]+|NTC)"
+        required: true
+        data_type: "string"
+        unit: null
+      - name: "精度"
+        pattern: "精度[:：]?\\s*([±]?[0-9.]+\\s*[℃°C]?)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  压力传感器:
+    keywords: ["压力传感器", "压力变送器", "pressure sensor", "压感"]
+    params:
+      - name: "量程"
+        pattern: "量程[:：]?\\s*([0-9.]+)\\s*[-~]\\s*([0-9.]+)\\s*([Mm][Pp][Aa]|[Bb][Aa][Rr]|[Kk][Pp][Aa])"
+        required: true
+        data_type: "range"
+        unit: null
+      - name: "输出信号"
+        pattern: "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA]|[0-9]+-[0-9]+\\s*[Vv])"
+        required: true
+        data_type: "string"
+        unit: null
+      - name: "精度"
+        pattern: "精度[:：]?\\s*([±]?[0-9.]+\\s*%)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  执行器:
+    keywords: ["执行器", "电动执行器", "actuator", "风阀执行器"]
+    params:
+      - name: "扭矩"
+        pattern: "扭矩[:：]?\\s*([0-9.]+)\\s*[Nn]·?[Mm]"
+        required: false
+        data_type: "number"
+        unit: "N·m"
+      - name: "行程时间"
+        pattern: "行程时间[:：]?\\s*([0-9.]+)\\s*[秒sS]"
+        required: false
+        data_type: "number"
+        unit: "s"
+      - name: "控制信号"
+        pattern: "控制[:：]?\\s*([0-9]+-[0-9]+\\s*[Vv]|开关量)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  湿度传感器:
+    keywords: ["湿度传感器", "湿度变送器", "humidity sensor", "湿感"]
+    params:
+      - name: "量程"
+        pattern: "量程[:：]?\\s*([0-9]+)\\s*[-~]\\s*([0-9]+)\\s*%?\\s*RH"
+        required: true
+        data_type: "range"
+        unit: "%RH"
+      - name: "输出信号"
+        pattern: "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA]|[0-9]+-[0-9]+\\s*[Vv])"
+        required: true
+        data_type: "string"
+        unit: null
+      - name: "精度"
+        pattern: "精度[:：]?\\s*([±]?[0-9.]+\\s*%)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  流量传感器:
+    keywords: ["流量传感器", "流量计", "flow sensor", "流量变送器"]
+    params:
+      - name: "量程"
+        pattern: "量程[:：]?\\s*([0-9.]+)\\s*[-~]\\s*([0-9.]+)\\s*([mM]³?/[hH]|[lL]/[sS])"
+        required: true
+        data_type: "range"
+        unit: null
+      - name: "输出信号"
+        pattern: "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA]|脉冲|[0-9]+-[0-9]+\\s*[Vv])"
+        required: true
+        data_type: "string"
+        unit: null
+      - name: "精度"
+        pattern: "精度[:：]?\\s*([±]?[0-9.]+\\s*%)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  液位传感器:
+    keywords: ["液位传感器", "液位计", "level sensor", "水位传感器"]
+    params:
+      - name: "量程"
+        pattern: "量程[:：]?\\s*([0-9.]+)\\s*[-~]\\s*([0-9.]+)\\s*([mM]|[cC][mM])"
+        required: true
+        data_type: "range"
+        unit: null
+      - name: "输出信号"
+        pattern: "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA]|[0-9]+-[0-9]+\\s*[Vv]|开关量)"
+        required: true
+        data_type: "string"
+        unit: null
+      - name: "精度"
+        pattern: "精度[:：]?\\s*([±]?[0-9.]+\\s*[mM][mM]?)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  电动阀:
+    keywords: ["电动阀", "电动球阀", "电动蝶阀", "motorized valve"]
+    params:
+      - name: "通径"
+        pattern: "DN\\s*([0-9]+)|通径[:：]?\\s*([0-9]+)"
+        required: true
+        data_type: "number"
+        unit: "mm"
+      - name: "压力等级"
+        pattern: "PN\\s*([0-9]+)|压力[:：]?\\s*([0-9]+)"
+        required: false
+        data_type: "number"
+        unit: "bar"
+      - name: "控制方式"
+        pattern: "控制[:：]?\\s*(开关型|调节型|比例调节)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  变频器:
+    keywords: ["变频器", "frequency converter", "inverter", "VFD"]
+    params:
+      - name: "功率"
+        pattern: "功率[:：]?\\s*([0-9.]+)\\s*[Kk]?[Ww]"
+        required: true
+        data_type: "number"
+        unit: "kW"
+      - name: "电压"
+        pattern: "电压[:：]?\\s*([0-9]+)\\s*[Vv]"
+        required: false
+        data_type: "number"
+        unit: "V"
+      - name: "频率范围"
+        pattern: "频率[:：]?\\s*([0-9]+)\\s*[-~]\\s*([0-9]+)\\s*[Hh][Zz]"
+        required: false
+        data_type: "range"
+        unit: "Hz"
+  
+  控制器:
+    keywords: ["控制器", "controller", "DDC", "PLC"]
+    params:
+      - name: "输入点数"
+        pattern: "输入[:：]?\\s*([0-9]+)\\s*点"
+        required: false
+        data_type: "number"
+        unit: null
+      - name: "输出点数"
+        pattern: "输出[:：]?\\s*([0-9]+)\\s*点"
+        required: false
+        data_type: "number"
+        unit: null
+      - name: "通讯协议"
+        pattern: "通讯[:：]?\\s*(Modbus|BACnet|LonWorks|RS485)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  风机盘管:
+    keywords: ["风机盘管", "风盘", "fan coil unit", "FCU"]
+    params:
+      - name: "制冷量"
+        pattern: "制冷量[:：]?\\s*([0-9.]+)\\s*[Kk]?[Ww]"
+        required: false
+        data_type: "number"
+        unit: "kW"
+      - name: "制热量"
+        pattern: "制热量[:：]?\\s*([0-9.]+)\\s*[Kk]?[Ww]"
+        required: false
+        data_type: "number"
+        unit: "kW"
+      - name: "风量"
+        pattern: "风量[:：]?\\s*([0-9.]+)\\s*[mM]³?/[hH]"
+        required: false
+        data_type: "number"
+        unit: "m³/h"
+  
+  水泵:
+    keywords: ["水泵", "pump", "循环泵", "离心泵"]
+    params:
+      - name: "流量"
+        pattern: "流量[:：]?\\s*([0-9.]+)\\s*[mM]³?/[hH]"
+        required: false
+        data_type: "number"
+        unit: "m³/h"
+      - name: "扬程"
+        pattern: "扬程[:：]?\\s*([0-9.]+)\\s*[mM]"
+        required: false
+        data_type: "number"
+        unit: "m"
+      - name: "功率"
+        pattern: "功率[:：]?\\s*([0-9.]+)\\s*[Kk]?[Ww]"
+        required: false
+        data_type: "number"
+        unit: "kW"
+  
+  差压传感器:
+    keywords: ["差压传感器", "差压变送器", "differential pressure sensor"]
+    params:
+      - name: "量程"
+        pattern: "量程[:：]?\\s*([0-9.]+)\\s*[-~]\\s*([0-9.]+)\\s*([Kk]?[Pp][Aa])"
+        required: true
+        data_type: "range"
+        unit: null
+      - name: "输出信号"
+        pattern: "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA]|[0-9]+-[0-9]+\\s*[Vv])"
+        required: true
+        data_type: "string"
+        unit: null
+      - name: "精度"
+        pattern: "精度[:：]?\\s*([±]?[0-9.]+\\s*%)"
+        required: false
+        data_type: "string"
+        unit: null
+  
+  电磁阀:
+    keywords: ["电磁阀", "solenoid valve", "二通阀", "三通阀"]
+    params:
+      - name: "通径"
+        pattern: "DN\\s*([0-9]+)|通径[:：]?\\s*([0-9]+)"
+        required: true
+        data_type: "number"
+        unit: "mm"
+      - name: "工作电压"
+        pattern: "电压[:：]?\\s*([0-9]+)\\s*[Vv]"
+        required: false
+        data_type: "number"
+        unit: "V"
+      - name: "工作压力"
+        pattern: "压力[:：]?\\s*([0-9.]+)\\s*[Mm][Pp][Aa]"
+        required: false
+        data_type: "number"
+        unit: "MPa"
+
+model_patterns:
+  - pattern: "[A-Z]{2,}[0-9]{3,}"  # 如 QAA2061
+  - pattern: "[A-Z]+-[0-9]+"       # 如 ABC-123
+  - pattern: "[A-Z]+[0-9]+[A-Z]*"  # 如 VVF53
+  - pattern: "[A-Z]{2,}[0-9]{2,}[A-Z]{1,}"  # 如 QAA2061D
+  - pattern: "[A-Z]+[0-9]+-[A-Z0-9]+"  # 如 VVF53-40
+  - pattern: "[0-9]{3,}[A-Z]{2,}"  # 如 2061QAA
+  - pattern: "[A-Z]{2,}_[0-9]+"    # 如 QAA_2061

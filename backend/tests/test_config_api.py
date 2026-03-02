@@ -6,9 +6,9 @@
 
 import pytest
 import json
-from backend.app import app
-from backend.modules.database import DatabaseManager
-from backend.modules.models import Config as ConfigModel
+from app import app
+from modules.database import DatabaseManager
+from modules.models import Config as ConfigModel
 
 
 @pytest.fixture

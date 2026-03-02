@@ -6,10 +6,10 @@
 
 import pytest
 from datetime import datetime, timedelta
-from backend.modules.match_log_analyzer import MatchLogAnalyzer, FeatureImpact, AnalysisReport
-from backend.modules.models import MatchLog
-from backend.modules.data_loader import Rule, Device
-from backend.modules.database import DatabaseManager
+from modules.match_log_analyzer import MatchLogAnalyzer, FeatureImpact, AnalysisReport
+from modules.models import MatchLog
+from modules.data_loader import Rule, Device
+from modules.database import DatabaseManager
 import tempfile
 import os
 

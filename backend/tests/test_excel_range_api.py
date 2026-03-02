@@ -7,7 +7,7 @@ Excel数据范围选择API测试
 import pytest
 import json
 import os
-from backend.app import app, excel_analysis_cache
+from app import app, excel_analysis_cache
 
 
 @pytest.fixture

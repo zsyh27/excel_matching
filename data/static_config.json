@@ -20,6 +20,7 @@
     "台达",
     "正泰",
     "德力西",
+    "测试品牌_1772461238",
     "导入测试品牌"
   ],
   "default_feature_weights": {
@@ -177,13 +178,6 @@
     "device_type_weight": 3,
     "model_weight": 1,
     "parameter_weight": 3
-  },
-  "feature_weight_strategy": {
-    "device_type_weight": 15.0,
-    "brand_weight": 10.0,
-    "model_weight": 6.0,
-    "important_param_weight": 3.0,
-    "common_param_weight": 1.0
   },
   "global_config": {
     "default_match_threshold": 5,

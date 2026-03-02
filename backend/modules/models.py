@@ -22,6 +22,11 @@ class Device(Base):
     detailed_params = Column(Text, nullable=False)
     unit_price = Column(Float, nullable=False)
     
+    # 智能设备录入系统新增字段
+    raw_description = Column(Text, nullable=True, comment='用户输入的原始设备描述文本')
+    key_params = Column(JSON, nullable=True, comment='根据设备类型提取的关键参数（JSON格式）')
+    confidence_score = Column(Float, nullable=True, index=True, comment='解析结果的置信度评分（0.0-1.0）')
+    
     # 关联规则 - 级联删除
     rules = relationship("Rule", back_populates="device", cascade="all, delete-orphan")
     
