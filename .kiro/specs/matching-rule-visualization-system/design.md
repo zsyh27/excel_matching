@@ -88,6 +88,121 @@ class MatchDetail:
     # 元数据
     timestamp: str                          # 匹配时间戳
     match_duration_ms: float                # 匹配耗时(毫秒)
+
+@dataclass
+class PreprocessResult:
+    """预处理结果(增强版)"""
+    # 基础处理阶段
+    original: str                           # 原始文本
+    cleaned: str                            # 清理后文本
+    normalized: str                         # 归一化后文本
+    features: List[str]                     # 提取的特征列表
+    
+    # 智能清理详情(新增)
+    intelligent_cleaning: IntelligentCleaningDetail  # 智能清理详情
+    
+    # 归一化详情(新增)
+    normalization_detail: NormalizationDetail        # 归一化详情
+    
+    # 特征提取详情(新增)
+    extraction_detail: ExtractionDetail              # 特征提取详情
+
+@dataclass
+class IntelligentCleaningDetail:
+    """智能清理详情"""
+    # 应用的规则
+    applied_rules: List[str]                # 应用的规则类型列表: ["truncation", "noise_pattern", "metadata_tag"]
+    
+    # 每个规则的匹配结果
+    truncation_matches: List[TruncationMatch]     # 截断分隔符匹配结果
+    noise_pattern_matches: List[NoiseMatch]       # 噪音模式匹配结果
+    metadata_tag_matches: List[MetadataMatch]     # 元数据标签匹配结果
+    
+    # 统计信息
+    original_length: int                    # 原始长度
+    cleaned_length: int                     # 清理后长度
+    deleted_length: int                     # 删除长度
+    
+    # 对比信息
+    before_text: str                        # 清理前文本
+    after_text: str                         # 清理后文本
+
+@dataclass
+class TruncationMatch:
+    """截断分隔符匹配"""
+    delimiter: str                          # 匹配的分隔符
+    position: int                           # 分隔符位置
+    deleted_text: str                       # 被删除的文本
+
+@dataclass
+class NoiseMatch:
+    """噪音模式匹配"""
+    pattern: str                            # 匹配的模式
+    matched_text: str                       # 匹配到的文本
+    position: int                           # 匹配位置
+
+@dataclass
+class MetadataMatch:
+    """元数据标签匹配"""
+    tag: str                                # 匹配的标签
+    matched_text: str                       # 匹配到的完整标签内容
+    position: int                           # 匹配位置
+
+@dataclass
+class NormalizationDetail:
+    """归一化详情"""
+    # 应用的同义词映射
+    synonym_mappings: List[MappingApplication]      # 应用的同义词映射
+    
+    # 应用的归一化映射
+    normalization_mappings: List[MappingApplication] # 应用的归一化映射
+    
+    # 应用的全局配置
+    global_configs: List[str]               # 应用的全局配置项名称
+    
+    # 对比信息
+    before_text: str                        # 归一化前文本
+    after_text: str                         # 归一化后文本
+
+@dataclass
+class MappingApplication:
+    """映射应用记录"""
+    rule_name: str                          # 规则名称或模式
+    from_text: str                          # 转换前文本
+    to_text: str                            # 转换后文本
+    position: int                           # 转换位置
+    mapping_type: str                       # 映射类型: "synonym" 或 "normalization"
+
+@dataclass
+class ExtractionDetail:
+    """特征提取详情"""
+    # 使用的配置
+    split_chars: List[str]                  # 使用的分隔符
+    identified_brands: List[str]            # 识别出的品牌关键词
+    identified_device_types: List[str]      # 识别出的设备类型关键词
+    
+    # 质量评分规则
+    quality_rules: Dict[str, Any]           # 应用的质量评分规则
+    
+    # 特征详情
+    extracted_features: List[FeatureDetail] # 提取的特征详情列表
+    filtered_features: List[FilteredFeature] # 被过滤的特征列表
+
+@dataclass
+class FeatureDetail:
+    """特征详情"""
+    feature: str                            # 特征文本
+    feature_type: str                       # 特征类型: brand/device_type/model/parameter
+    source: str                             # 来源: "brand_keywords"/"device_type_keywords"/"parameter_recognition"
+    quality_score: float                    # 质量评分
+    position: int                           # 在文本中的位置
+
+@dataclass
+class FilteredFeature:
+    """被过滤的特征"""
+    feature: str                            # 特征文本
+    filter_reason: str                      # 过滤原因: "low_quality"/"duplicate"/"invalid"
+    quality_score: float                    # 质量评分
 ```
 
 #### 1.2 CandidateDetail (Data Class)
@@ -322,9 +437,9 @@ def export_match_detail(cache_key: str):
 
 ### 3. Frontend Components
 
-#### 3.1 MatchDetailDialog.vue
+#### 3.1 MatchDetailDialog.vue (增强版 - 懒加载)
 
-匹配详情对话框主组件:
+匹配详情对话框主组件,支持标签页懒加载:
 
 ```vue
 <template>
@@ -334,24 +449,34 @@ def export_match_detail(cache_key: str):
     width="90%"
     :close-on-click-modal="false"
   >
-    <el-tabs v-model="activeTab">
-      <!-- Tab 1: 特征提取 -->
+    <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+      <!-- Tab 1: 特征提取 (默认加载) -->
       <el-tab-pane label="特征提取" name="extraction">
-        <FeatureExtractionView :preprocessing="detail.preprocessing" />
+        <FeatureExtractionView 
+          v-if="loadedTabs.extraction"
+          :preprocessing="detail.preprocessing" 
+        />
+        <el-skeleton v-else :rows="5" animated />
       </el-tab-pane>
       
-      <!-- Tab 2: 候选规则 -->
+      <!-- Tab 2: 候选规则 (懒加载) -->
       <el-tab-pane label="候选规则" name="candidates">
-        <CandidateRulesView :candidates="detail.candidates" />
+        <CandidateRulesView 
+          v-if="loadedTabs.candidates"
+          :candidates="detail.candidates" 
+        />
+        <el-skeleton v-else :rows="5" animated />
       </el-tab-pane>
       
-      <!-- Tab 3: 匹配结果 -->
+      <!-- Tab 3: 匹配结果 (懒加载) -->
       <el-tab-pane label="匹配结果" name="result">
         <MatchResultView
+          v-if="loadedTabs.result"
           :final-result="detail.final_result"
           :decision-reason="detail.decision_reason"
           :suggestions="detail.optimization_suggestions"
         />
+        <el-skeleton v-else :rows="5" animated />
       </el-tab-pane>
     </el-tabs>
     
@@ -363,7 +488,7 @@ def export_match_detail(cache_key: str):
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, reactive } from 'vue'
 import { getMatchDetail, exportMatchDetail } from '@/api/match'
 
 const props = defineProps({
@@ -378,10 +503,24 @@ const activeTab = ref('extraction')
 const detail = ref(null)
 const loading = ref(false)
 
+// 懒加载状态跟踪
+const loadedTabs = reactive({
+  extraction: false,
+  candidates: false,
+  result: false
+})
+
 watch(() => props.modelValue, async (newVal) => {
   visible.value = newVal
   if (newVal && props.cacheKey) {
+    // 重置加载状态
+    loadedTabs.extraction = false
+    loadedTabs.candidates = false
+    loadedTabs.result = false
+    
+    // 只加载基础数据和特征提取tab
     await loadDetail()
+    loadedTabs.extraction = true
   }
 })
 
@@ -401,6 +540,15 @@ async function loadDetail() {
   }
 }
 
+async function handleTabChange(tabName) {
+  // 懒加载：只在首次访问时加载
+  if (!loadedTabs[tabName]) {
+    // 模拟加载延迟（实际中数据已在detail中）
+    await new Promise(resolve => setTimeout(resolve, 100))
+    loadedTabs[tabName] = true
+  }
+}
+
 async function exportDetail() {
   try {
     await exportMatchDetail(props.cacheKey, 'json')
@@ -411,76 +559,88 @@ async function exportDetail() {
 </script>
 ```
 
-#### 3.2 FeatureExtractionView.vue
+#### 3.2 FeatureExtractionView.vue (增强版)
 
-特征提取过程展示组件:
+特征提取过程展示组件,集成智能清理、归一化和特征提取详情:
 
 ```vue
 <template>
   <div class="feature-extraction">
-    <el-steps :active="3" finish-status="success">
+    <el-steps :active="4" finish-status="success">
       <el-step title="原始文本" />
-      <el-step title="清理后" />
+      <el-step title="智能清理" />
       <el-step title="归一化" />
       <el-step title="特征提取" />
     </el-steps>
     
-    <div class="extraction-stages">
-      <div class="stage">
-        <h4>原始文本</h4>
+    <el-collapse v-model="activeStages" accordion>
+      <!-- 阶段1: 原始文本 -->
+      <el-collapse-item title="原始文本" name="original">
         <el-input
           v-model="preprocessing.original"
           type="textarea"
           :rows="3"
           readonly
         />
-      </div>
+      </el-collapse-item>
       
-      <div class="stage">
-        <h4>清理后</h4>
-        <el-input
-          v-model="preprocessing.cleaned"
-          type="textarea"
-          :rows="3"
-          readonly
+      <!-- 阶段2: 智能清理 -->
+      <el-collapse-item title="智能清理" name="cleaning">
+        <IntelligentCleaningDetailView
+          v-if="preprocessing.intelligent_cleaning"
+          :cleaning-detail="preprocessing.intelligent_cleaning"
         />
-      </div>
+        <el-empty v-else description="智能清理信息不可用" />
+      </el-collapse-item>
       
-      <div class="stage">
-        <h4>归一化后</h4>
-        <el-input
-          v-model="preprocessing.normalized"
-          type="textarea"
-          :rows="3"
-          readonly
+      <!-- 阶段3: 归一化 -->
+      <el-collapse-item title="归一化" name="normalization">
+        <NormalizationDetailView
+          v-if="preprocessing.normalization_detail"
+          :normalization-detail="preprocessing.normalization_detail"
         />
-      </div>
+        <el-empty v-else description="归一化信息不可用" />
+      </el-collapse-item>
       
-      <div class="stage">
-        <h4>提取的特征</h4>
-        <el-tag
-          v-for="feature in preprocessing.features"
-          :key="feature"
-          class="feature-tag"
-        >
-          {{ feature }}
-        </el-tag>
-        <el-empty
-          v-if="preprocessing.features.length === 0"
-          description="未提取到特征"
+      <!-- 阶段4: 特征提取 -->
+      <el-collapse-item title="特征提取" name="extraction">
+        <ExtractionDetailView
+          v-if="preprocessing.extraction_detail"
+          :extraction-detail="preprocessing.extraction_detail"
         />
-      </div>
-    </div>
+        <div v-else class="simple-features">
+          <h4>提取的特征</h4>
+          <el-tag
+            v-for="feature in preprocessing.features"
+            :key="feature"
+            class="feature-tag"
+          >
+            {{ feature }}
+          </el-tag>
+          <el-empty
+            v-if="preprocessing.features.length === 0"
+            description="未提取到特征"
+          />
+        </div>
+      </el-collapse-item>
+    </el-collapse>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import IntelligentCleaningDetailView from './IntelligentCleaningDetailView.vue'
+import NormalizationDetailView from './NormalizationDetailView.vue'
+import ExtractionDetailView from './ExtractionDetailView.vue'
+
 const props = defineProps({
   preprocessing: {
     type: Object,
     required: true
   }
 })
+
+const activeStages = ref(['extraction'])  // 默认展开特征提取阶段
 </script>
 ```
 
@@ -686,7 +846,16 @@ const props = defineProps({
 # - MatchDetail
 # - CandidateDetail
 # - FeatureMatch
-# - PreprocessResult (已存在于TextPreprocessor)
+# - PreprocessResult (增强版，包含详情字段)
+# - IntelligentCleaningDetail (新增)
+# - TruncationMatch (新增)
+# - NoiseMatch (新增)
+# - MetadataMatch (新增)
+# - NormalizationDetail (新增)
+# - MappingApplication (新增)
+# - ExtractionDetail (新增)
+# - FeatureDetail (新增)
+# - FilteredFeature (新增)
 # - MatchResult (已存在于MatchEngine)
 ```
 
@@ -712,6 +881,79 @@ export interface PreprocessResult {
   cleaned: string
   normalized: string
   features: string[]
+  // 新增详情字段
+  intelligent_cleaning?: IntelligentCleaningDetail
+  normalization_detail?: NormalizationDetail
+  extraction_detail?: ExtractionDetail
+}
+
+export interface IntelligentCleaningDetail {
+  applied_rules: string[]
+  truncation_matches: TruncationMatch[]
+  noise_pattern_matches: NoiseMatch[]
+  metadata_tag_matches: MetadataMatch[]
+  original_length: number
+  cleaned_length: number
+  deleted_length: number
+  before_text: string
+  after_text: string
+}
+
+export interface TruncationMatch {
+  delimiter: string
+  position: number
+  deleted_text: string
+}
+
+export interface NoiseMatch {
+  pattern: string
+  matched_text: string
+  position: number
+}
+
+export interface MetadataMatch {
+  tag: string
+  matched_text: string
+  position: number
+}
+
+export interface NormalizationDetail {
+  synonym_mappings: MappingApplication[]
+  normalization_mappings: MappingApplication[]
+  global_configs: string[]
+  before_text: string
+  after_text: string
+}
+
+export interface MappingApplication {
+  rule_name: string
+  from_text: string
+  to_text: string
+  position: number
+  mapping_type: 'synonym' | 'normalization'
+}
+
+export interface ExtractionDetail {
+  split_chars: string[]
+  identified_brands: string[]
+  identified_device_types: string[]
+  quality_rules: Record<string, any>
+  extracted_features: FeatureDetail[]
+  filtered_features: FilteredFeature[]
+}
+
+export interface FeatureDetail {
+  feature: string
+  feature_type: 'brand' | 'device_type' | 'model' | 'parameter'
+  source: string
+  quality_score: number
+  position: number
+}
+
+export interface FilteredFeature {
+  feature: string
+  filter_reason: 'low_quality' | 'duplicate' | 'invalid'
+  quality_score: number
 }
 
 export interface CandidateDetail {
@@ -835,6 +1077,42 @@ export interface MatchResult {
 *For any* 批量查看的设备摘要,每个设备应该包含匹配状态、得分和目标设备信息。
 
 **Validates: Requirements 10.3**
+
+### Property 14: 智能清理详情数据完整性
+
+*For any* 预处理结果中的智能清理详情(IntelligentCleaningDetail),应该包含所有核心字段:应用的规则列表、各类规则的匹配结果(截断匹配、噪音匹配、元数据匹配)、统计信息(原始长度、清理后长度、删除长度)和对比文本(清理前、清理后),且删除长度应该等于原始长度减去清理后长度。
+
+**Validates: Requirements 13.1, 13.2, 13.3, 13.4, 13.5**
+
+### Property 15: 归一化详情数据完整性
+
+*For any* 预处理结果中的归一化详情(NormalizationDetail),应该包含所有核心字段:应用的同义词映射列表、应用的归一化映射列表、应用的全局配置项列表和对比文本(归一化前、归一化后)。
+
+**Validates: Requirements 14.1, 14.2, 14.3, 14.4, 14.5**
+
+### Property 16: 特征提取详情数据完整性
+
+*For any* 预处理结果中的特征提取详情(ExtractionDetail),应该包含所有核心字段:使用的分隔符列表、识别出的品牌关键词、识别出的设备类型关键词、质量评分规则、提取的特征详情列表和被过滤的特征列表。
+
+**Validates: Requirements 15.1, 15.2, 15.3, 15.4, 15.5**
+
+### Property 17: 智能清理配置序列化往返一致性
+
+*For any* 有效的智能清理配置对象,保存到static_config.json然后重新加载应该产生等价的配置对象。
+
+**Validates: Requirements 16.2**
+
+### Property 18: 标签页懒加载行为正确性
+
+*For any* 匹配详情对话框,在初始打开时应该只加载特征提取标签页的数据,当用户点击其他标签页时才加载对应的数据,且已加载的标签页数据应该被缓存不重复加载。
+
+**Validates: Requirements 17.1, 17.2, 17.3, 17.5**
+
+### Property 19: 标签页加载状态正确性
+
+*For any* 标签页的加载过程,在数据加载期间loading状态应该为true,加载完成后loading状态应该为false。
+
+**Validates: Requirements 17.4**
 
 ## Error Handling
 
@@ -1163,6 +1441,546 @@ const matchDetailArbitrary = (): fc.Arbitrary<MatchDetail> => {
 - 分享匹配详情链接
 - 添加评论和标注
 - 团队协作分析问题
+
+### 6. 新增前端组件
+
+#### 6.1 IntelligentCleaningDetailView.vue
+
+智能清理详情展示组件(作为FeatureExtractionView的子组件):
+
+```vue
+<template>
+  <div class="intelligent-cleaning-detail">
+    <h4>智能清理详情</h4>
+    
+    <!-- 应用的规则 -->
+    <div class="applied-rules">
+      <el-tag
+        v-for="rule in cleaningDetail.applied_rules"
+        :key="rule"
+        type="success"
+        class="rule-tag"
+      >
+        {{ getRuleLabel(rule) }}
+      </el-tag>
+      <el-tag v-if="cleaningDetail.applied_rules.length === 0" type="info">
+        未应用任何清理规则
+      </el-tag>
+    </div>
+    
+    <!-- 统计信息 -->
+    <div class="statistics">
+      <el-descriptions :column="3" border size="small">
+        <el-descriptions-item label="原始长度">
+          {{ cleaningDetail.original_length }}
+        </el-descriptions-item>
+        <el-descriptions-item label="清理后长度">
+          {{ cleaningDetail.cleaned_length }}
+        </el-descriptions-item>
+        <el-descriptions-item label="删除长度">
+          <el-tag type="warning">{{ cleaningDetail.deleted_length }}</el-tag>
+        </el-descriptions-item>
+      </el-descriptions>
+    </div>
+    
+    <!-- 截断分隔符匹配 -->
+    <div v-if="cleaningDetail.truncation_matches.length > 0" class="matches-section">
+      <h5>截断分隔符匹配</h5>
+      <el-table :data="cleaningDetail.truncation_matches" size="small">
+        <el-table-column prop="delimiter" label="分隔符" width="120" />
+        <el-table-column prop="position" label="位置" width="80" />
+        <el-table-column prop="deleted_text" label="删除的文本" show-overflow-tooltip />
+      </el-table>
+    </div>
+    
+    <!-- 噪音模式匹配 -->
+    <div v-if="cleaningDetail.noise_pattern_matches.length > 0" class="matches-section">
+      <h5>噪音段落匹配</h5>
+      <el-table :data="cleaningDetail.noise_pattern_matches" size="small">
+        <el-table-column prop="pattern" label="模式" width="200" show-overflow-tooltip />
+        <el-table-column prop="position" label="位置" width="80" />
+        <el-table-column prop="matched_text" label="匹配的文本" show-overflow-tooltip />
+      </el-table>
+    </div>
+    
+    <!-- 元数据标签匹配 -->
+    <div v-if="cleaningDetail.metadata_tag_matches.length > 0" class="matches-section">
+      <h5>元数据标签匹配</h5>
+      <el-table :data="cleaningDetail.metadata_tag_matches" size="small">
+        <el-table-column prop="tag" label="标签" width="120" />
+        <el-table-column prop="position" label="位置" width="80" />
+        <el-table-column prop="matched_text" label="匹配的内容" show-overflow-tooltip />
+      </el-table>
+    </div>
+    
+    <!-- 文本对比 -->
+    <div class="text-comparison">
+      <h5>文本对比</h5>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <div class="comparison-box">
+            <div class="comparison-label">清理前</div>
+            <el-input
+              v-model="cleaningDetail.before_text"
+              type="textarea"
+              :rows="4"
+              readonly
+            />
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="comparison-box">
+            <div class="comparison-label">清理后</div>
+            <el-input
+              v-model="cleaningDetail.after_text"
+              type="textarea"
+              :rows="4"
+              readonly
+            />
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+  </div>
+</template>
+
+<script setup>
+const props = defineProps({
+  cleaningDetail: {
+    type: Object,
+    required: true
+  }
+})
+
+function getRuleLabel(rule) {
+  const labels = {
+    truncation: '截断分隔符',
+    noise_pattern: '噪音段落',
+    metadata_tag: '元数据标签'
+  }
+  return labels[rule] || rule
+}
+</script>
+```
+
+#### 6.2 NormalizationDetailView.vue
+
+归一化详情展示组件(作为FeatureExtractionView的子组件):
+
+```vue
+<template>
+  <div class="normalization-detail">
+    <h4>归一化详情</h4>
+    
+    <!-- 同义词映射 -->
+    <div v-if="normalizationDetail.synonym_mappings.length > 0" class="mappings-section">
+      <h5>同义词映射 ({{ normalizationDetail.synonym_mappings.length }})</h5>
+      <el-table :data="normalizationDetail.synonym_mappings" size="small">
+        <el-table-column prop="rule_name" label="规则" width="150" />
+        <el-table-column prop="from_text" label="转换前" width="150" />
+        <el-table-column label="→" width="50" align="center">
+          <template>→</template>
+        </el-table-column>
+        <el-table-column prop="to_text" label="转换后" width="150" />
+        <el-table-column prop="position" label="位置" width="80" />
+      </el-table>
+    </div>
+    
+    <!-- 归一化映射 -->
+    <div v-if="normalizationDetail.normalization_mappings.length > 0" class="mappings-section">
+      <h5>归一化映射 ({{ normalizationDetail.normalization_mappings.length }})</h5>
+      <el-table :data="normalizationDetail.normalization_mappings" size="small">
+        <el-table-column prop="rule_name" label="规则" width="150" />
+        <el-table-column prop="from_text" label="转换前" width="150" />
+        <el-table-column label="→" width="50" align="center">
+          <template>→</template>
+        </el-table-column>
+        <el-table-column prop="to_text" label="转换后" width="150" />
+        <el-table-column prop="position" label="位置" width="80" />
+      </el-table>
+    </div>
+    
+    <!-- 全局配置 -->
+    <div v-if="normalizationDetail.global_configs.length > 0" class="global-configs">
+      <h5>应用的全局配置</h5>
+      <el-tag
+        v-for="config in normalizationDetail.global_configs"
+        :key="config"
+        type="primary"
+        class="config-tag"
+      >
+        {{ config }}
+      </el-tag>
+    </div>
+    
+    <!-- 文本对比 -->
+    <div class="text-comparison">
+      <h5>文本对比</h5>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <div class="comparison-box">
+            <div class="comparison-label">归一化前</div>
+            <el-input
+              v-model="normalizationDetail.before_text"
+              type="textarea"
+              :rows="4"
+              readonly
+            />
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="comparison-box">
+            <div class="comparison-label">归一化后</div>
+            <el-input
+              v-model="normalizationDetail.after_text"
+              type="textarea"
+              :rows="4"
+              readonly
+            />
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+  </div>
+</template>
+
+<script setup>
+const props = defineProps({
+  normalizationDetail: {
+    type: Object,
+    required: true
+  }
+})
+</script>
+```
+
+#### 6.3 ExtractionDetailView.vue
+
+特征提取配置详情展示组件(作为FeatureExtractionView的子组件):
+
+```vue
+<template>
+  <div class="extraction-detail">
+    <h4>特征提取配置</h4>
+    
+    <!-- 使用的分隔符 -->
+    <div class="config-section">
+      <h5>使用的分隔符</h5>
+      <el-tag
+        v-for="char in extractionDetail.split_chars"
+        :key="char"
+        class="split-char-tag"
+      >
+        {{ char }}
+      </el-tag>
+    </div>
+    
+    <!-- 识别的品牌 -->
+    <div v-if="extractionDetail.identified_brands.length > 0" class="config-section">
+      <h5>识别的品牌关键词</h5>
+      <el-tag
+        v-for="brand in extractionDetail.identified_brands"
+        :key="brand"
+        type="success"
+        class="keyword-tag"
+      >
+        {{ brand }}
+      </el-tag>
+    </div>
+    
+    <!-- 识别的设备类型 -->
+    <div v-if="extractionDetail.identified_device_types.length > 0" class="config-section">
+      <h5>识别的设备类型关键词</h5>
+      <el-tag
+        v-for="type in extractionDetail.identified_device_types"
+        :key="type"
+        type="primary"
+        class="keyword-tag"
+      >
+        {{ type }}
+      </el-tag>
+    </div>
+    
+    <!-- 提取的特征详情 -->
+    <div class="features-section">
+      <h5>提取的特征详情 ({{ extractionDetail.extracted_features.length }})</h5>
+      <el-table :data="extractionDetail.extracted_features" size="small">
+        <el-table-column prop="feature" label="特征" />
+        <el-table-column prop="feature_type" label="类型" width="100">
+          <template #default="{ row }">
+            <el-tag :type="getFeatureTypeColor(row.feature_type)" size="small">
+              {{ getFeatureTypeLabel(row.feature_type) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="source" label="来源" width="150">
+          <template #default="{ row }">
+            {{ getSourceLabel(row.source) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="quality_score" label="质量评分" width="100">
+          <template #default="{ row }">
+            <el-tag :type="getQualityScoreColor(row.quality_score)" size="small">
+              {{ row.quality_score.toFixed(2) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="position" label="位置" width="80" />
+      </el-table>
+    </div>
+    
+    <!-- 被过滤的特征 -->
+    <div v-if="extractionDetail.filtered_features.length > 0" class="filtered-section">
+      <h5>被过滤的特征 ({{ extractionDetail.filtered_features.length }})</h5>
+      <el-table :data="extractionDetail.filtered_features" size="small">
+        <el-table-column prop="feature" label="特征" />
+        <el-table-column prop="filter_reason" label="过滤原因" width="150">
+          <template #default="{ row }">
+            {{ getFilterReasonLabel(row.filter_reason) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="quality_score" label="质量评分" width="100">
+          <template #default="{ row }">
+            <el-tag type="danger" size="small">
+              {{ row.quality_score.toFixed(2) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </div>
+</template>
+
+<script setup>
+const props = defineProps({
+  extractionDetail: {
+    type: Object,
+    required: true
+  }
+})
+
+function getFeatureTypeColor(type) {
+  const colors = {
+    brand: 'success',
+    device_type: 'primary',
+    model: 'warning',
+    parameter: 'info'
+  }
+  return colors[type] || 'info'
+}
+
+function getFeatureTypeLabel(type) {
+  const labels = {
+    brand: '品牌',
+    device_type: '设备类型',
+    model: '型号',
+    parameter: '参数'
+  }
+  return labels[type] || type
+}
+
+function getSourceLabel(source) {
+  const labels = {
+    brand_keywords: '品牌关键词库',
+    device_type_keywords: '设备类型关键词库',
+    parameter_recognition: '参数识别'
+  }
+  return labels[source] || source
+}
+
+function getQualityScoreColor(score) {
+  if (score >= 0.8) return 'success'
+  if (score >= 0.5) return 'warning'
+  return 'danger'
+}
+
+function getFilterReasonLabel(reason) {
+  const labels = {
+    low_quality: '质量评分低',
+    duplicate: '重复特征',
+    invalid: '无效特征'
+  }
+  return labels[reason] || reason
+}
+</script>
+```
+
+#### 6.4 IntelligentCleaningConfigEditor.vue
+
+智能清理配置编辑组件(添加到ConfigManagementView):
+
+```vue
+<template>
+  <div class="intelligent-cleaning-config">
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <span>智能清理配置</span>
+          <el-tooltip content="智能清理用于删除设备描述中的无效数据和噪音文本，与'删除无关关键词'不同，智能清理基于结构化规则识别无效内容">
+            <el-icon><QuestionFilled /></el-icon>
+          </el-tooltip>
+        </div>
+      </template>
+      
+      <!-- 截断分隔符 -->
+      <div class="config-section">
+        <h4>截断分隔符</h4>
+        <p class="description">当遇到这些分隔符时，删除分隔符及其后的所有内容</p>
+        <el-tag
+          v-for="(delimiter, index) in config.truncation_delimiters"
+          :key="index"
+          closable
+          @close="removeDelimiter(index)"
+          class="config-tag"
+        >
+          {{ delimiter }}
+        </el-tag>
+        <el-input
+          v-model="newDelimiter"
+          placeholder="添加新分隔符"
+          style="width: 200px"
+          @keyup.enter="addDelimiter"
+        >
+          <template #append>
+            <el-button @click="addDelimiter">添加</el-button>
+          </template>
+        </el-input>
+      </div>
+      
+      <!-- 噪音段落模式 -->
+      <div class="config-section">
+        <h4>噪音段落模式</h4>
+        <p class="description">匹配这些正则表达式的段落将被删除</p>
+        <el-tag
+          v-for="(pattern, index) in config.noise_patterns"
+          :key="index"
+          closable
+          @close="removePattern(index)"
+          class="config-tag"
+        >
+          {{ pattern }}
+        </el-tag>
+        <el-input
+          v-model="newPattern"
+          placeholder="添加新模式(正则表达式)"
+          style="width: 300px"
+          @keyup.enter="addPattern"
+        >
+          <template #append>
+            <el-button @click="addPattern">添加</el-button>
+          </template>
+        </el-input>
+      </div>
+      
+      <!-- 元数据标签 -->
+      <div class="config-section">
+        <h4>元数据标签</h4>
+        <p class="description">这些HTML标签及其内容将被删除</p>
+        <el-tag
+          v-for="(tag, index) in config.metadata_tags"
+          :key="index"
+          closable
+          @close="removeTag(index)"
+          class="config-tag"
+        >
+          {{ tag }}
+        </el-tag>
+        <el-input
+          v-model="newTag"
+          placeholder="添加新标签"
+          style="width: 200px"
+          @keyup.enter="addTag"
+        >
+          <template #append>
+            <el-button @click="addTag">添加</el-button>
+          </template>
+        </el-input>
+      </div>
+      
+      <div class="actions">
+        <el-button type="primary" @click="saveConfig">保存配置</el-button>
+        <el-button @click="resetConfig">重置</el-button>
+      </div>
+    </el-card>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive } from 'vue'
+import { ElMessage } from 'element-plus'
+import { QuestionFilled } from '@element-plus/icons-vue'
+import { saveIntelligentCleaningConfig, getIntelligentCleaningConfig } from '@/api/config'
+
+const config = reactive({
+  truncation_delimiters: [],
+  noise_patterns: [],
+  metadata_tags: []
+})
+
+const newDelimiter = ref('')
+const newPattern = ref('')
+const newTag = ref('')
+
+async function loadConfig() {
+  try {
+    const response = await getIntelligentCleaningConfig()
+    Object.assign(config, response.data.config)
+  } catch (error) {
+    ElMessage.error('加载配置失败')
+  }
+}
+
+function addDelimiter() {
+  if (newDelimiter.value.trim()) {
+    config.truncation_delimiters.push(newDelimiter.value.trim())
+    newDelimiter.value = ''
+  }
+}
+
+function removeDelimiter(index) {
+  config.truncation_delimiters.splice(index, 1)
+}
+
+function addPattern() {
+  if (newPattern.value.trim()) {
+    config.noise_patterns.push(newPattern.value.trim())
+    newPattern.value = ''
+  }
+}
+
+function removePattern(index) {
+  config.noise_patterns.splice(index, 1)
+}
+
+function addTag() {
+  if (newTag.value.trim()) {
+    config.metadata_tags.push(newTag.value.trim())
+    newTag.value = ''
+  }
+}
+
+function removeTag(index) {
+  config.metadata_tags.splice(index, 1)
+}
+
+async function saveConfig() {
+  try {
+    await saveIntelligentCleaningConfig(config)
+    ElMessage.success('配置保存成功')
+  } catch (error) {
+    ElMessage.error('配置保存失败')
+  }
+}
+
+async function resetConfig() {
+  await loadConfig()
+  ElMessage.info('配置已重置')
+}
+
+// 初始化加载
+loadConfig()
+</script>
+```
 
 ## References
 

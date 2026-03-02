@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试新标签页导航</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      background-color: #409eff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #66b1ff;
+    }
+    .info {
+      background-color: #f0f9ff;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #409eff;
+    }
+    .code {
+      background-color: #f5f5f5;
+      padding: 10px;
+      margin: 10px 0;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>测试新标签页导航功能</h1>
+  
+  <div class="test-section">
+    <h2>测试1: 直接打开匹配详情页面</h2>
+    <div class="info">
+      点击下面的按钮，应该在新标签页打开匹配详情页面
+    </div>
+    <button onclick="testDirectNavigation()">在新标签页打开测试详情页</button>
+  </div>
+
+  <div class="test-section">
+    <h2>测试2: 模拟从ResultTable点击详情</h2>
+    <div class="info">
+      这个测试模拟了ResultTable组件中的handleViewDetail方法
+    </div>
+    <button onclick="testSimulatedClick()">模拟点击详情按钮</button>
+  </div>
+
+  <div class="test-section">
+    <h2>测试3: 检查路由配置</h2>
+    <div class="info">
+      检查路由是否正确配置
+    </div>
+    <button onclick="checkRouterConfig()">检查路由配置</button>
+    <div id="router-info" class="code"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>测试4: 检查ResultTable组件</h2>
+    <div class="info">
+      检查ResultTable.vue是否还引用了MatchDetailDialog
+    </div>
+    <button onclick="checkResultTableComponent()">检查组件代码</button>
+    <div id="component-info" class="code"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>调试信息</h2>
+    <div class="info">
+      当前页面URL: <span id="current-url"></span><br>
+      前端服务器: <span id="frontend-server"></span>
+    </div>
+  </div>
+
+  <script>
+    // 显示当前URL信息
+    document.getElementById('current-url').textContent = window.location.href;
+    document.getElementById('frontend-server').textContent = window.location.origin;
+
+    // 测试1: 直接导航
+    function testDirectNavigation() {
+      const testCacheKey = 'test-cache-key-12345';
+      const url = `/match-detail/${testCacheKey}`;
+      console.log('打开URL:', url);
+      window.open(url, '_blank');
+    }
+
+    // 测试2: 模拟点击
+    function testSimulatedClick() {
+      // 模拟ResultTable中的handleViewDetail方法
+      const mockRow = {
+        detail_cache_key: 'mock-cache-key-67890',
+        device_description: '测试设备'
+      };
+      
+      console.log('模拟点击详情，缓存键:', mockRow.detail_cache_key);
+      
+      // 这里模拟router.resolve的行为
+      const url = `/match-detail/${mockRow.detail_cache_key}`;
+      console.log('生成的URL:', url);
+      window.open(url, '_blank');
+    }
+
+    // 测试3: 检查路由配置
+    async function checkRouterConfig() {
+      const infoDiv = document.getElementById('router-info');
+      infoDiv.textContent = '正在检查路由配置...';
+      
+      try {
+        // 尝试获取router配置文件
+        const response = await fetch('/src/router/index.js');
+        const routerCode = await response.text();
+        
+        // 检查是否包含MatchDetail路由
+        const hasMatchDetailRoute = routerCode.includes("path: '/match-detail/:cacheKey'");
+        const hasMatchDetailName = routerCode.includes("name: 'MatchDetail'");
+        const hasMatchDetailComponent = routerCode.includes("component: () => import('../views/MatchDetailView.vue')");
+        
+        let result = '路由配置检查结果:\n';
+        result += `✓ 路由路径配置: ${hasMatchDetailRoute ? '已配置' : '未找到'}\n`;
+        result += `✓ 路由名称配置: ${hasMatchDetailName ? '已配置' : '未找到'}\n`;
+        result += `✓ 组件导入配置: ${hasMatchDetailComponent ? '已配置' : '未找到'}\n`;
+        
+        if (hasMatchDetailRoute && hasMatchDetailName && hasMatchDetailComponent) {
+          result += '\n✅ 路由配置正确！';
+        } else {
+          result += '\n❌ 路由配置有问题！';
+        }
+        
+        infoDiv.textContent = result;
+      } catch (error) {
+        infoDiv.textContent = '检查失败: ' + error.message;
+      }
+    }
+
+    // 测试4: 检查ResultTable组件
+    async function checkResultTableComponent() {
+      const infoDiv = document.getElementById('component-info');
+      infoDiv.textContent = '正在检查ResultTable组件...';
+      
+      try {
+        const response = await fetch('/src/components/ResultTable.vue');
+        const componentCode = await response.text();
+        
+        // 检查是否还有MatchDetailDialog的引用
+        const hasDialogImport = componentCode.includes("import MatchDetailDialog from");
+        const hasDialogComponent = componentCode.includes("<MatchDetailDialog");
+        const hasShowDetailDialog = componentCode.includes("showDetailDialog");
+        const hasRouterImport = componentCode.includes("import { useRouter }") || 
+                                componentCode.includes("import {useRouter}");
+        const hasWindowOpen = componentCode.includes("window.open");
+        
+        let result = 'ResultTable组件检查结果:\n';
+        result += `${hasDialogImport ? '❌' : '✓'} MatchDetailDialog导入: ${hasDialogImport ? '仍存在（应删除）' : '已删除'}\n`;
+        result += `${hasDialogComponent ? '❌' : '✓'} MatchDetailDialog组件: ${hasDialogComponent ? '仍存在（应删除）' : '已删除'}\n`;
+        result += `${hasShowDetailDialog ? '❌' : '✓'} showDetailDialog变量: ${hasShowDetailDialog ? '仍存在（应删除）' : '已删除'}\n`;
+        result += `${hasRouterImport ? '✓' : '❌'} useRouter导入: ${hasRouterImport ? '已添加' : '未找到'}\n`;
+        result += `${hasWindowOpen ? '✓' : '❌'} window.open调用: ${hasWindowOpen ? '已添加' : '未找到'}\n`;
+        
+        if (!hasDialogImport && !hasDialogComponent && !hasShowDetailDialog && 
+            hasRouterImport && hasWindowOpen) {
+          result += '\n✅ 组件代码正确！';
+        } else {
+          result += '\n❌ 组件代码有问题！';
+        }
+        
+        infoDiv.textContent = result;
+      } catch (error) {
+        infoDiv.textContent = '检查失败: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>

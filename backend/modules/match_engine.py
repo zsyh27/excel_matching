@@ -5,6 +5,7 @@
 """
 
 import logging
+import traceback
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
 
@@ -65,7 +66,7 @@ class MatchEngine:
     4. 选择权重得分最高的规则对应的设备
     """
     
-    def __init__(self, rules: List, devices: Dict, config: Dict, match_logger=None):
+    def __init__(self, rules: List, devices: Dict, config: Dict, match_logger=None, detail_recorder=None):
         """
         初始化匹配引擎
         
@@ -74,12 +75,24 @@ class MatchEngine:
             devices: 设备字典（Dict[str, Device]）
             config: 配置字典
             match_logger: 匹配日志记录器（可选）
+            detail_recorder: 匹配详情记录器（可选）
         """
         self.rules = rules
         self.devices = devices
         self.config = config
         self.match_logger = match_logger
         self.default_match_threshold = config.get('global_config', {}).get('default_match_threshold', 5.0)
+        
+        # 初始化详情记录器（如果未提供则创建新实例）
+        if detail_recorder is None:
+            from modules.match_detail import MatchDetailRecorder
+            self.detail_recorder = MatchDetailRecorder(config)
+        else:
+            self.detail_recorder = detail_recorder
+        
+        # 初始化文本预处理器（用于详情记录）
+        from modules.text_preprocessor import TextPreprocessor
+        self.text_preprocessor = TextPreprocessor(config)
         
         # 从配置加载设备类型关键词（用于必需特征检查）
         self.device_type_keywords = config.get('device_type_keywords', [
@@ -93,7 +106,7 @@ class MatchEngine:
         
         logger.info(f"匹配引擎初始化完成，加载 {len(rules)} 条规则，{len(devices)} 个设备")
     
-    def match(self, features: List[str], input_description: str = "") -> MatchResult:
+    def match(self, features: List[str], input_description: str = "", record_detail: bool = True) -> Tuple[MatchResult, Optional[str]]:
         """
         匹配设备描述特征
         
@@ -102,10 +115,35 @@ class MatchEngine:
         Args:
             features: 从设备描述中提取的特征列表
             input_description: 原始输入描述（用于日志记录）
+            record_detail: 是否记录匹配详情（默认True）
             
         Returns:
-            MatchResult: 标准化的匹配结果
+            (MatchResult, cache_key): 匹配结果和详情缓存键（如果record_detail=False则cache_key为None）
         """
+        import time
+        start_time = time.time()
+        
+        # 初始化缓存键
+        cache_key = None
+        
+        # 准备预处理结果（用于详情记录）
+        preprocessing_result = None
+        if record_detail:
+            # 使用TextPreprocessor获取完整的预处理结果
+            try:
+                preprocess_obj = self.text_preprocessor.preprocess(input_description, mode='matching')
+                # 使用PreprocessResult的to_dict()方法，确保包含所有详情字段
+                preprocessing_result = preprocess_obj.to_dict()
+            except Exception as e:
+                logger.error(f"预处理失败: {e}")
+                # 降级为简化版本
+                preprocessing_result = {
+                    'original': input_description,
+                    'cleaned': input_description,
+                    'normalized': input_description,
+                    'features': features
+                }
+        
         if not features:
             result = MatchResult(
                 device_id=None,
@@ -117,11 +155,38 @@ class MatchEngine:
                 match_threshold=self.default_match_threshold
             )
             self._log_match(input_description, features, result)
-            return result
+            
+            # 记录详情
+            if record_detail:
+                try:
+                    candidates = []
+                    match_duration_ms = (time.time() - start_time) * 1000
+                    cache_key = self.detail_recorder.record_match(
+                        original_text=input_description,
+                        preprocessing_result=preprocessing_result,
+                        candidates=candidates,
+                        final_result=result.to_dict(),
+                        selected_candidate_id=None,
+                        match_duration_ms=match_duration_ms
+                    )
+                except Exception as e:
+                    logger.error(f"记录匹配详情失败: {e}")
+                    cache_key = None
+            
+            return result, cache_key
         
         # 检查是否包含必需特征（设备类型关键词）- 仅记录警告，不阻止匹配
         if not self._has_required_features(features):
             logger.warning(f"输入特征缺少设备类型关键词，匹配准确性可能降低: {features}")
+        
+        # 评估所有候选规则（用于详情记录）
+        all_candidates = []
+        if record_detail:
+            try:
+                all_candidates = self._evaluate_all_candidates(features, preprocessing_result)
+            except Exception as e:
+                logger.error(f"评估候选规则失败: {e}")
+                all_candidates = []
         
         # 第一轮匹配：使用每条规则自己的 match_threshold
         candidates = []
@@ -142,7 +207,25 @@ class MatchEngine:
         if candidates:
             result = self.select_best_match(candidates)
             self._log_match(input_description, features, result)
-            return result
+            
+            # 记录详情
+            if record_detail:
+                try:
+                    match_duration_ms = (time.time() - start_time) * 1000
+                    selected_candidate_id = candidates[0].rule_id if candidates else None
+                    cache_key = self.detail_recorder.record_match(
+                        original_text=input_description,
+                        preprocessing_result=preprocessing_result,
+                        candidates=all_candidates,
+                        final_result=result.to_dict(),
+                        selected_candidate_id=selected_candidate_id,
+                        match_duration_ms=match_duration_ms
+                    )
+                except Exception as e:
+                    logger.error(f"记录匹配详情失败: {e}")
+                    cache_key = None
+            
+            return result, cache_key
         
         # 第二轮匹配：使用 default_match_threshold 兜底
         # 需求 4.6: 当没有规则的权重得分达到其 match_threshold 时，与 default_match_threshold 比较
@@ -166,7 +249,25 @@ class MatchEngine:
             # 更新匹配原因，说明使用了兜底机制
             result.match_reason = f"使用兜底阈值 {self.default_match_threshold} 匹配成功，" + result.match_reason
             self._log_match(input_description, features, result)
-            return result
+            
+            # 记录详情
+            if record_detail:
+                try:
+                    match_duration_ms = (time.time() - start_time) * 1000
+                    selected_candidate_id = default_candidates[0].rule_id if default_candidates else None
+                    cache_key = self.detail_recorder.record_match(
+                        original_text=input_description,
+                        preprocessing_result=preprocessing_result,
+                        candidates=all_candidates,
+                        final_result=result.to_dict(),
+                        selected_candidate_id=selected_candidate_id,
+                        match_duration_ms=match_duration_ms
+                    )
+                except Exception as e:
+                    logger.error(f"记录匹配详情失败: {e}")
+                    cache_key = None
+            
+            return result, cache_key
         
         # 需求 4.7: 当没有规则达到 default_match_threshold 时，标记为需要人工匹配
         # 找出最高得分用于提示
@@ -186,16 +287,34 @@ class MatchEngine:
             match_threshold=self.default_match_threshold
         )
         self._log_match(input_description, features, result)
-        return result
+        
+        # 记录详情
+        if record_detail:
+            try:
+                match_duration_ms = (time.time() - start_time) * 1000
+                cache_key = self.detail_recorder.record_match(
+                    original_text=input_description,
+                    preprocessing_result=preprocessing_result,
+                    candidates=all_candidates,
+                    final_result=result.to_dict(),
+                    selected_candidate_id=None,
+                    match_duration_ms=match_duration_ms
+                )
+            except Exception as e:
+                logger.error(f"记录匹配详情失败: {e}")
+                cache_key = None
+        
+        return result, cache_key
     
     def calculate_weight_score(self, features: List[str], rule) -> Tuple[float, List[str]]:
         """
-        计算权重得分
+        计算权重得分（支持同义词扩展）
         
         验证需求: 4.1, 4.2, 4.3
         
         算法：
         - 对于每个 Excel 特征，如果它在规则的 auto_extracted_features 中
+        - 或者它的同义词在规则特征中
         - 将对应的权重值累加到总得分
         
         Args:
@@ -211,16 +330,56 @@ class MatchEngine:
         # 将规则特征转换为集合以提高查找效率
         rule_features_set = set(rule.auto_extracted_features)
         
+        # 获取同义词映射配置
+        synonym_map = self.config.get('synonym_map', {})
+        
         # 需求 4.1: 从预处理后的文本中提取特征
         # 需求 4.2: 将提取的特征与规则表中每条规则的 auto_extracted_features 进行比较
         for feature in features:
+            # 直接匹配
             if feature in rule_features_set:
                 # 需求 4.3: 当特征匹配时，将 feature_weights 中对应的权重值加到权重得分
                 weight = rule.feature_weights.get(feature, 1.0)  # 默认权重为 1.0
                 weight_score += weight
                 matched_features.append(feature)
+            else:
+                # 同义词扩展匹配
+                # 检查当前特征是否有同义词在规则特征中
+                matched_synonym = self._find_synonym_match(feature, rule_features_set, synonym_map)
+                if matched_synonym:
+                    # 使用规则特征的权重
+                    weight = rule.feature_weights.get(matched_synonym, 1.0)
+                    weight_score += weight
+                    # 记录匹配的规则特征（而不是输入特征）
+                    matched_features.append(matched_synonym)
         
         return weight_score, matched_features
+    
+    def _find_synonym_match(self, feature: str, rule_features: set, synonym_map: Dict[str, str]) -> Optional[str]:
+        """
+        查找特征的同义词是否在规则特征中
+        
+        Args:
+            feature: 输入特征
+            rule_features: 规则特征集合
+            synonym_map: 同义词映射字典
+            
+        Returns:
+            匹配的规则特征，如果没有匹配返回 None
+        """
+        # 检查特征是否是同义词映射的键（原词）
+        if feature in synonym_map:
+            synonym = synonym_map[feature]
+            if synonym in rule_features:
+                return synonym
+        
+        # 检查特征是否是同义词映射的值（目标词）
+        # 反向查找：如果输入是目标词，查找是否有原词在规则中
+        for original, target in synonym_map.items():
+            if feature == target and original in rule_features:
+                return original
+        
+        return None
     
     def select_best_match(self, candidates: List[MatchCandidate]) -> MatchResult:
         """
@@ -346,3 +505,176 @@ class MatchEngine:
                 )
             except Exception as e:
                 logger.error(f"记录匹配日志时出错: {e}")
+    
+    def _evaluate_all_candidates(self, features: List[str], preprocessing_result: Dict = None) -> List:
+        """
+        评估所有候选规则并返回详细信息
+        
+        Args:
+            features: 提取的特征列表
+            preprocessing_result: 预处理结果（可选，用于详情记录）
+        
+        Returns:
+            按得分排序的候选规则详情列表（List[CandidateDetail]）
+        """
+        from modules.match_detail import CandidateDetail, FeatureMatch
+        
+        candidates = []
+        
+        # 验证输入
+        if not features:
+            logger.warning("特征列表为空，无法评估候选规则")
+            return candidates
+        
+        if not self.rules:
+            logger.warning("规则列表为空，无法评估候选规则")
+            return candidates
+        
+        for rule in self.rules:
+            try:
+                # 计算权重得分和匹配特征
+                weight_score, matched_feature_names = self.calculate_weight_score(features, rule)
+                
+                # 获取设备信息
+                device = self.devices.get(rule.target_device_id)
+                if device is None:
+                    # 设备不存在，记录警告并跳过此规则
+                    logger.warning(f"规则 {rule.rule_id} 引用的设备 {rule.target_device_id} 不存在，跳过")
+                    continue
+                
+                # 构建设备信息字典
+                try:
+                    device_info = {
+                        'device_id': device.device_id,
+                        'brand': device.brand if hasattr(device, 'brand') else '未知',
+                        'device_name': device.device_name if hasattr(device, 'device_name') else '未知',
+                        'spec_model': device.spec_model if hasattr(device, 'spec_model') else '',
+                        'unit_price': device.unit_price if hasattr(device, 'unit_price') else 0.0
+                    }
+                except Exception as device_error:
+                    logger.error(f"获取设备 {rule.target_device_id} 信息失败: {device_error}")
+                    # 使用默认值
+                    device_info = {
+                        'device_id': rule.target_device_id,
+                        'brand': '未知',
+                        'device_name': '设备信息缺失',
+                        'spec_model': '',
+                        'unit_price': 0.0
+                    }
+                
+                # 确定使用的阈值类型
+                threshold_type = "rule"
+                match_threshold = rule.match_threshold
+                is_qualified = weight_score >= match_threshold
+                
+                # 如果不满足规则阈值，检查是否满足默认阈值
+                if not is_qualified and weight_score >= self.default_match_threshold:
+                    threshold_type = "default"
+                    match_threshold = self.default_match_threshold
+                    is_qualified = True
+                
+                # 构建匹配特征详情列表
+                matched_features = []
+                score_breakdown = {}
+                
+                for feature_name in matched_feature_names:
+                    try:
+                        weight = rule.feature_weights.get(feature_name, 1.0)
+                        # 确定特征类型（简化版本，可以后续优化）
+                        feature_type = self._classify_feature_type(feature_name)
+                        
+                        # 计算贡献百分比（避免除零）
+                        contribution_percentage = (weight / weight_score * 100) if weight_score > 0 else 0
+                        
+                        matched_features.append(FeatureMatch(
+                            feature=feature_name,
+                            weight=weight,
+                            feature_type=feature_type,
+                            contribution_percentage=contribution_percentage
+                        ))
+                        
+                        score_breakdown[feature_name] = weight
+                    except Exception as feature_error:
+                        logger.error(f"处理特征 {feature_name} 失败: {feature_error}")
+                        continue
+                
+                # 按权重排序匹配特征
+                matched_features.sort(key=lambda f: f.weight, reverse=True)
+                
+                # 找出未匹配的特征
+                rule_features_set = set(rule.auto_extracted_features) if hasattr(rule, 'auto_extracted_features') else set()
+                matched_features_set = set(matched_feature_names)
+                unmatched_features = list(rule_features_set - matched_features_set)
+                
+                # 计算最大可能得分
+                try:
+                    total_possible_score = sum(
+                        rule.feature_weights.get(f, 1.0) 
+                        for f in rule.auto_extracted_features
+                    ) if hasattr(rule, 'auto_extracted_features') else 0.0
+                except Exception as score_error:
+                    logger.error(f"计算规则 {rule.rule_id} 最大可能得分失败: {score_error}")
+                    total_possible_score = weight_score
+                
+                # 创建候选详情对象
+                candidate = CandidateDetail(
+                    rule_id=rule.rule_id,
+                    target_device_id=rule.target_device_id,
+                    device_info=device_info,
+                    weight_score=weight_score,
+                    match_threshold=match_threshold,
+                    threshold_type=threshold_type,
+                    is_qualified=is_qualified,
+                    matched_features=matched_features,
+                    unmatched_features=unmatched_features,
+                    score_breakdown=score_breakdown,
+                    total_possible_score=total_possible_score
+                )
+                
+                candidates.append(candidate)
+                
+            except Exception as rule_error:
+                logger.error(f"评估规则 {rule.rule_id} 失败: {rule_error}")
+                logger.error(traceback.format_exc())
+                continue
+        
+        # 按得分排序（从高到低）
+        try:
+            candidates.sort(key=lambda c: c.weight_score, reverse=True)
+        except Exception as sort_error:
+            logger.error(f"候选规则排序失败: {sort_error}")
+        
+        return candidates
+    
+    def _classify_feature_type(self, feature: str) -> str:
+        """
+        分类特征类型
+        
+        Args:
+            feature: 特征名称
+        
+        Returns:
+            特征类型: brand/device_type/model/parameter
+        """
+        # 从配置获取品牌和设备类型关键词
+        brand_keywords = self.config.get('brand_keywords', [])
+        device_type_keywords = self.config.get('device_type_keywords', [])
+        
+        # 检查是否是品牌
+        for brand in brand_keywords:
+            if brand.lower() in feature.lower():
+                return 'brand'
+        
+        # 检查是否是设备类型
+        for device_type in device_type_keywords:
+            if device_type in feature:
+                return 'device_type'
+        
+        # 检查是否包含型号特征（包含字母和数字）
+        has_letter = any(c.isalpha() for c in feature)
+        has_digit = any(c.isdigit() for c in feature)
+        if has_letter and has_digit:
+            return 'model'
+        
+        # 默认为参数
+        return 'parameter'

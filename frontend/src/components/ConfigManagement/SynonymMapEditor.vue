@@ -3,8 +3,19 @@
     <div class="editor-header">
       <h2>同义词映射</h2>
       <p class="description">
-        将不同的词汇映射到统一的标准词，提高匹配的一致性。例如："温度传感器" → "温传感器"
+        配置同义词映射，用于匹配阶段的同义词扩展。系统在匹配时会自动识别同义词，提高召回率。
       </p>
+      <div class="info-box">
+        <div class="info-title">💡 工作原理</div>
+        <ul class="info-list">
+          <li><strong>预处理阶段</strong>：保留原始词汇，不进行同义词替换</li>
+          <li><strong>匹配阶段</strong>：使用同义词扩展进行模糊匹配，支持双向匹配</li>
+          <li><strong>示例</strong>：Excel输入"阀"可以匹配规则中的"阀门"，反之亦然</li>
+        </ul>
+        <div class="info-note">
+          <strong>优势</strong>：保留原始信息，灵活的匹配策略，提高召回率而不丢失信息
+        </div>
+      </div>
     </div>
 
     <div class="editor-body">
@@ -123,10 +134,46 @@ export default {
 }
 
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.info-box {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f0f9ff;
+  border-left: 4px solid #2196f3;
+  border-radius: 4px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  margin: 10px 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.info-list li {
+  margin: 5px 0;
+}
+
+.info-note {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #e3f2fd;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #1565c0;
 }
 
 .toolbar {

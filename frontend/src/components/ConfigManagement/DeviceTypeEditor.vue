@@ -3,8 +3,20 @@
     <div class="editor-header">
       <h2>设备类型关键词</h2>
       <p class="description">
-        定义设备类型关键词，用于智能识别和拆分设备描述中的设备类型信息。
+        定义设备类型关键词，用于智能识别和拆分设备描述中的设备类型信息，这是匹配的核心特征。
       </p>
+      <div class="info-box">
+        <div class="info-title">⚙️ 核心作用</div>
+        <ul class="info-list">
+          <li><strong>特征识别</strong>：自动识别文本中的设备类型，作为独立特征提取</li>
+          <li><strong>质量评分</strong>：包含设备类型的特征获得更高的质量评分（+15分）</li>
+          <li><strong>单字保护</strong>：设备类型关键词中的单字（如"阀"）不会因长度过短被过滤</li>
+          <li><strong>匹配权重</strong>：设备类型特征具有最高权重（权重系数×4），是匹配的关键</li>
+        </ul>
+        <div class="info-note">
+          <strong>重要性</strong>：设备类型是匹配算法的核心依据，建议包含所有常见设备类型及其简称
+        </div>
+      </div>
     </div>
 
     <div class="editor-body">
@@ -98,10 +110,46 @@ export default {
 }
 
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.info-box {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+  border-radius: 4px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f57c00;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  margin: 10px 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.info-list li {
+  margin: 5px 0;
+}
+
+.info-note {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #ffe0b2;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #e65100;
 }
 
 .toolbar {

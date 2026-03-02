@@ -44,16 +44,44 @@
         </el-row>
       </div>
 
+      <!-- 批量操作工具栏 -->
+      <div v-if="hasResults && selectedRows.length > 0" class="batch-toolbar">
+        <span class="batch-info">已选择 {{ selectedRows.length }} 个设备</span>
+        <el-button
+          type="primary"
+          size="small"
+          @click="handleBatchViewDetail"
+        >
+          批量查看详情
+        </el-button>
+        <el-button
+          size="small"
+          @click="clearSelection"
+        >
+          取消选择
+        </el-button>
+      </div>
+
       <!-- 结果表格 -->
       <el-table
         v-if="hasResults"
+        ref="resultTableRef"
         :data="displayRows"
         stripe
         border
         style="width: 100%"
         :row-class-name="getRowClassName"
         max-height="600"
+        @selection-change="handleSelectionChange"
       >
+        <!-- 复选框列 -->
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+          :selectable="isRowSelectable"
+        />
+
         <!-- 原始行号 -->
         <el-table-column
           prop="row_number"
@@ -138,6 +166,27 @@
             </span>
           </template>
         </el-table-column>
+
+        <!-- 操作 -->
+        <el-table-column
+          label="操作"
+          width="120"
+          align="center"
+          fixed="right"
+        >
+          <template #default="scope">
+            <el-button
+              v-if="scope.row.row_type === 'device' && scope.row.detail_cache_key"
+              type="primary"
+              size="small"
+              link
+              @click="handleViewDetail(scope.row)"
+            >
+              查看详情
+            </el-button>
+            <span v-else class="non-device-text">-</span>
+          </template>
+        </el-table-column>
       </el-table>
 
       <!-- 空状态 -->
@@ -147,14 +196,24 @@
         :image-size="150"
       />
     </el-card>
+
+    <!-- 批量查看详情对话框 -->
+    <BatchMatchDetailView
+      v-model="showBatchDetailView"
+      :device-items="batchCacheKeys"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElNotification } from 'element-plus'
 import api from '../api/index.js'
 import ExportButton from './ExportButton.vue'
+import BatchMatchDetailView from './MatchDetail/BatchMatchDetailView.vue'
+
+const router = useRouter()
 
 // 定义 props
 const props = defineProps({
@@ -184,6 +243,14 @@ const statistics = ref({
   unmatched: 0,
   accuracy_rate: 0
 })
+
+// 批量选择状态
+const selectedRows = ref([])
+const resultTableRef = ref(null)
+
+// 批量查看详情状态
+const showBatchDetailView = ref(false)
+const batchCacheKeys = ref([])
 
 // 计算属性
 const hasResults = computed(() => displayRows.value.length > 0)
@@ -370,6 +437,81 @@ const reset = () => {
   }
 }
 
+/**
+ * 查看匹配详情
+ * 在新标签页打开
+ * 验证需求: Requirements 1.1, 1.2
+ */
+const handleViewDetail = (row) => {
+  if (!row.detail_cache_key) {
+    ElMessage.warning('该设备没有详情信息')
+    return
+  }
+  
+  // 在新标签页打开匹配详情页面
+  const routeData = router.resolve({
+    name: 'MatchDetail',
+    params: { cacheKey: row.detail_cache_key }
+  })
+  window.open(routeData.href, '_blank')
+}
+
+/**
+ * 判断行是否可选择
+ * 只有设备行且有详情缓存键的行才可选择
+ * 验证需求: Requirements 10.1
+ */
+const isRowSelectable = (row) => {
+  return row.row_type === 'device' && !!row.detail_cache_key
+}
+
+/**
+ * 处理表格选择变化
+ * 验证需求: Requirements 10.1
+ */
+const handleSelectionChange = (selection) => {
+  selectedRows.value = selection
+}
+
+/**
+ * 清除选择
+ * 验证需求: Requirements 10.1
+ */
+const clearSelection = () => {
+  if (resultTableRef.value) {
+    resultTableRef.value.clearSelection()
+  }
+  selectedRows.value = []
+}
+
+/**
+ * 批量查看详情
+ * 验证需求: Requirements 10.1, 10.2
+ */
+const handleBatchViewDetail = () => {
+  if (selectedRows.value.length === 0) {
+    ElMessage.warning('请先选择要查看的设备')
+    return
+  }
+  
+  // 收集所有选中行的缓存键
+  batchCacheKeys.value = selectedRows.value
+    .filter(row => row.detail_cache_key)
+    .map(row => ({
+      cacheKey: row.detail_cache_key,
+      rowNumber: row.row_number,
+      deviceDescription: row.device_description,
+      matchResult: row.match_result
+    }))
+  
+  if (batchCacheKeys.value.length === 0) {
+    ElMessage.warning('选中的设备没有详情信息')
+    return
+  }
+  
+  showBatchDetailView.value = true
+}
+
 // 暴露方法给父组件
 defineExpose({
   reset
@@ -401,6 +543,25 @@ defineExpose({
   padding: 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 8px;
+}
+
+/* 批量操作工具栏样式 */
+.batch-toolbar {
+  margin-bottom: 15px;
+  padding: 12px 16px;
+  background: #ecf5ff;
+  border: 1px solid #b3d8ff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.batch-info {
+  font-size: 14px;
+  color: #409eff;
+  font-weight: 500;
+  flex: 1;
 }
 
 .stat-item {

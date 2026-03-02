@@ -84,7 +84,7 @@ class TestMatchLoggingIntegration:
         input_description = "温度传感器，0-50℃，4-20mA"
         features = ['温度传感器', '0-50℃', '4-20mA']
         
-        result = self.match_engine.match(features, input_description=input_description)
+        result, cache_key = self.match_engine.match(features, input_description=input_description)
         
         # 验证匹配成功
         assert result.match_status == 'success'
@@ -109,7 +109,7 @@ class TestMatchLoggingIntegration:
         input_description = "未知设备"
         features = ['未知设备']
         
-        result = self.match_engine.match(features, input_description=input_description)
+        result, cache_key = self.match_engine.match(features, input_description=input_description)
         
         # 验证匹配失败
         assert result.match_status == 'failed'
@@ -136,7 +136,7 @@ class TestMatchLoggingIntegration:
         ]
         
         for input_desc, features in test_cases:
-            self.match_engine.match(features, input_description=input_desc)
+            self.match_engine.match(features, input_description=input_desc, record_detail=False)
         
         # 验证所有匹配都已记录
         logs_result = self.match_logger.query_logs()

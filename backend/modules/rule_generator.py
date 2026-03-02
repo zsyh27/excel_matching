@@ -67,10 +67,10 @@ class RuleGenerator:
         """
         从设备信息中提取特征
         
-        改进的提取策略：
-        1. 品牌和设备名称直接作为特征（不拆分）
-        2. 规格型号使用"+"拆分
-        3. 详细参数先按行拆分，再处理键值对和括号
+        统一的提取策略（2024-03-01修复）：
+        1. 所有字段都使用 preprocess() 方法，确保与匹配阶段一致
+        2. 使用 mode='device' 确保设备库数据的特殊处理（如保留温度单位）
+        3. 拼接所有字段为一个文本，统一处理
         
         验证需求: 3.1
         
@@ -80,125 +80,77 @@ class RuleGenerator:
         Returns:
             特征列表
         """
-        features = []
+        # 拼接所有字段为一个文本，使用"+"作为分隔符
+        # 这样可以确保与Excel输入使用相同的预处理逻辑
+        text_parts = []
         
-        # 1. 品牌（直接使用，不拆分）
+        # 1. 品牌
         if device.brand:
-            # 归一化品牌名称（不拆分）
-            normalized_brand = self.preprocessor.normalize_text(device.brand)
-            if normalized_brand:
-                features.append(normalized_brand)
+            text_parts.append(device.brand)
         
-        # 2. 设备名称（直接使用，不拆分）
+        # 2. 设备名称
         if device.device_name:
-            # 归一化设备名称（不拆分）
-            normalized_name = self.preprocessor.normalize_text(device.device_name)
-            if normalized_name:
-                features.append(normalized_name)
+            text_parts.append(device.device_name)
         
-        # 3. 规格型号（使用"+"拆分）
+        # 3. 规格型号（已经用"+"分隔）
         if device.spec_model:
-            # 规格型号用"+"分隔多个部分
-            # 例如：二通+DN15+水+V5011N1040/U+V5011系列
-            spec_parts = device.spec_model.split('+')
-            for part in spec_parts:
-                part = part.strip()
-                if part:
-                    # 归一化每个部分，但不使用预处理器的特征拆分
-                    # 只进行归一化处理
-                    normalized_part = self.preprocessor.normalize_text(part)
-                    if normalized_part and len(normalized_part) >= 1:
-                        # 对中文字符放宽长度限制
-                        has_chinese = any('\u4e00' <= char <= '\u9fff' for char in normalized_part)
-                        min_length = 1 if has_chinese else 2
-                        if len(normalized_part) >= min_length:
-                            features.append(normalized_part)
+            text_parts.append(device.spec_model)
         
-        # 4. 详细参数（结构化解析）
+        # 4. 详细参数
         if device.detailed_params:
-            param_features = self._parse_detailed_params(device.detailed_params)
-            features.extend(param_features)
-        
-        # 5. 去重并保持顺序
-        unique_features = []
-        seen = set()
-        for feature in features:
-            if feature and feature not in seen:
-                unique_features.append(feature)
-                seen.add(feature)
-        
-        logger.debug(f"设备 {device.device_id} 提取特征: {unique_features}")
-        
-        return unique_features
-    
-    def _parse_detailed_params(self, detailed_params: str) -> List[str]:
-        """
-        解析详细参数，提取特征
-        
-        处理逻辑：
-        1. 按行拆分（处理\\n和真正的换行符）
-        2. 识别键值对格式（键：值）
-        3. 只提取值部分，忽略键（字段名）
-        4. 处理括号内容，分别提取
-        
-        Args:
-            detailed_params: 详细参数文本
+            # 处理转义的换行符
+            detailed_params = device.detailed_params
+            if '\\n' in detailed_params:
+                detailed_params = detailed_params.replace('\\n', '\n')
             
-        Returns:
-            特征列表
-        """
-        features = []
-        
-        # 处理转义的换行符（数据库中可能存储为字面的\n）
-        # 先尝试替换字面的\n
-        if '\\n' in detailed_params:
-            detailed_params = detailed_params.replace('\\n', '\n')
-        
-        # 按行拆分
-        lines = detailed_params.split('\n')
-        
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-            
-            # 检查是否是键值对格式（包含冒号）
-            if '：' in line or ':' in line:
-                # 拆分键值对，只取第一个冒号
-                if '：' in line:
-                    parts = line.split('：', 1)
-                else:
-                    parts = line.split(':', 1)
+            # 按行拆分，只提取值部分
+            lines = detailed_params.split('\n')
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
                 
-                if len(parts) == 2:
-                    key, value = parts
-                    key = key.strip()
-                    value = value.strip()
+                # 检查是否是键值对格式（包含冒号）
+                if '：' in line or ':' in line:
+                    # 拆分键值对，只取第一个冒号
+                    if '：' in line:
+                        parts = line.split('：', 1)
+                    else:
+                        parts = line.split(':', 1)
                     
-                    # 只处理值部分，完全忽略键（字段名）
-                    if value:
-                        # 使用预处理器处理值
-                        # 预处理器会自动处理括号和拆分
-                        value_result = self.preprocessor.preprocess(value)
-                        features.extend(value_result.features)
-            else:
-                # 不是键值对格式，直接处理
-                line_result = self.preprocessor.preprocess(line)
-                features.extend(line_result.features)
+                    if len(parts) == 2:
+                        key, value = parts
+                        value = value.strip()
+                        # 只添加值部分，忽略键（字段名）
+                        if value:
+                            text_parts.append(value)
+                else:
+                    # 不是键值对格式，直接添加
+                    text_parts.append(line)
         
-        return features
+        # 拼接所有部分
+        combined_text = '+'.join(text_parts)
+        
+        # 使用预处理器统一处理（mode='device'）
+        # 这确保了与匹配阶段使用相同的特征提取逻辑
+        result = self.preprocessor.preprocess(combined_text, mode='device')
+        
+        logger.debug(f"设备 {device.device_id} 提取特征: {result.features}")
+        
+        return result.features
     
     def assign_weights(self, features: List[str]) -> Dict[str, float]:
         """
-        为特征分配权重
+        为特征分配权重（智能权重分配）
         
         验证需求: 3.2
         
-        权重分配策略（从配置加载）:
-        - 品牌: brand_weight (默认 3.0)
-        - 型号: model_weight (默认 3.0)
-        - 设备类型关键词: device_type_weight (默认 5.0)
-        - 其他参数: parameter_weight (默认 1.0)
+        智能权重分配策略：
+        1. 设备类型关键词：最高权重（默认 15-20）
+        2. 品牌关键词：高权重（默认 8-12）
+        3. 型号特征：中等权重（默认 5-8）
+        4. 重要参数（带单位的数值范围）：中等权重（默认 2-4）
+        5. 通用参数（通讯方式、精度等）：低权重（默认 0.5-1）
         
         Args:
             features: 特征列表
@@ -208,23 +160,151 @@ class RuleGenerator:
         """
         weights = {}
         
+        # 获取特征权重策略配置
+        weight_strategy = self.config.get('feature_weight_strategy', {})
+        
         for feature in features:
-            # 检查是否是品牌
-            if any(brand in feature for brand in self.brand_keywords):
-                weights[feature] = self.brand_weight
-            # 检查是否是型号（通常包含字母和数字的组合）
-            elif self._is_model_number(feature):
-                weights[feature] = self.model_weight
-            # 检查是否是设备类型关键词
-            elif any(keyword in feature for keyword in self.device_type_keywords):
-                weights[feature] = self.device_type_weight
-            # 其他参数
-            else:
-                weights[feature] = self.parameter_weight
+            # 使用智能权重分配方法
+            weight = self._assign_feature_weight(feature, weight_strategy)
+            weights[feature] = weight
         
         logger.debug(f"特征权重: {weights}")
         
         return weights
+    
+    def _assign_feature_weight(self, feature: str, strategy: Dict) -> float:
+        """
+        为单个特征分配权重（智能算法）
+        
+        Args:
+            feature: 特征字符串
+            strategy: 权重策略配置
+            
+        Returns:
+            特征权重
+        """
+        feature_lower = feature.lower()
+        
+        # 1. 设备类型关键词：最高权重
+        if self._is_device_type_keyword(feature_lower):
+            return strategy.get('device_type_weight', 15.0)
+        
+        # 2. 品牌关键词：高权重
+        if self._is_brand_keyword(feature_lower):
+            return strategy.get('brand_weight', 10.0)
+        
+        # 3. 型号特征：中等权重
+        if self._is_model_feature(feature_lower):
+            return strategy.get('model_weight', 6.0)
+        
+        # 4. 重要参数（带单位的数值范围）：中等权重
+        if self._is_important_parameter(feature_lower):
+            return strategy.get('important_param_weight', 3.0)
+        
+        # 5. 通用参数：低权重
+        return strategy.get('common_param_weight', 1.0)
+    
+    def _is_device_type_keyword(self, feature: str) -> bool:
+        """
+        判断是否是设备类型关键词
+        
+        Args:
+            feature: 特征字符串（小写）
+            
+        Returns:
+            是否是设备类型关键词
+        """
+        # 检查是否包含设备类型关键词
+        for keyword in self.device_type_keywords:
+            if keyword.lower() in feature:
+                return True
+        return False
+    
+    def _is_brand_keyword(self, feature: str) -> bool:
+        """
+        判断是否是品牌关键词
+        
+        Args:
+            feature: 特征字符串（小写）
+            
+        Returns:
+            是否是品牌关键词
+        """
+        # 检查是否包含品牌关键词
+        for brand in self.brand_keywords:
+            if brand.lower() in feature:
+                return True
+        return False
+    
+    def _is_model_feature(self, feature: str) -> bool:
+        """
+        判断是否是型号特征
+        
+        型号特征通常包含字母和数字的组合，例如：
+        - QAA2061
+        - V5011N1040
+        - ML6420A3018
+        - HSCM-R100U
+        
+        Args:
+            feature: 特征字符串（小写）
+            
+        Returns:
+            是否是型号特征
+        """
+        return self._is_model_number(feature)
+    
+    def _is_important_parameter(self, feature: str) -> bool:
+        """
+        判断是否是重要参数
+        
+        重要参数通常是带单位的数值范围，例如：
+        - 0-2000ppm（量程）
+        - 4-20ma（输出信号）
+        - 0-10v（输出信号）
+        - dn15（通径）
+        - 0-50（温度范围）
+        - 0-2000（数值范围，即使没有单位）
+        
+        Args:
+            feature: 特征字符串（小写）
+            
+        Returns:
+            是否是重要参数
+        """
+        # 模式1: 数值范围 + 单位
+        range_with_unit_patterns = [
+            r'\d+-\d+(?:ppm|ma|v|pa|c|f|kg|mm|cm|m)',  # 如 0-2000ppm, 4-20ma
+            r'dn\d+',  # 通径，如 dn15, dn20
+            r'g\d+/\d+',  # G螺纹规格
+            r'r\d+/\d+',  # R螺纹规格
+            r'pt\d+/\d+',  # PT螺纹规格
+            r'npt\d+/\d+',  # NPT螺纹规格
+        ]
+        
+        for pattern in range_with_unit_patterns:
+            if re.search(pattern, feature):
+                return True
+        
+        # 模式2: 单个数值 + 单位（如果数值较大，可能是重要参数）
+        # 例如: 2000ppm, 100ma
+        single_value_pattern = r'\d{2,}(?:ppm|ma|v|pa|c|f|kg|mm|cm|m)'
+        if re.search(single_value_pattern, feature):
+            return True
+        
+        # 模式3: 纯数值范围（没有单位，但可能是重要参数）
+        # 例如: 0-2000, 4-20, 0-100
+        # 只有当数值范围较大时才认为是重要参数
+        pure_range_pattern = r'^(\d+)-(\d+)$'
+        match = re.match(pure_range_pattern, feature)
+        if match:
+            start = int(match.group(1))
+            end = int(match.group(2))
+            # 如果范围跨度大于10，认为是重要参数
+            if end - start > 10:
+                return True
+        
+        return False
     
     def _is_model_number(self, text: str) -> bool:
         """

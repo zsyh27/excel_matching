@@ -1,0 +1,409 @@
+{
+  "brand_keywords": [
+    "霍尼韦尔",
+    "西门子",
+    "江森自控",
+    "施耐德",
+    "明纬",
+    "欧姆龙",
+    "ABB",
+    "丹佛斯",
+    "贝尔莫",
+    "Honeywell",
+    "Siemens",
+    "Johnson",
+    "Schneider",
+    "OMRON",
+    "Danfoss",
+    "Belimo",
+    "Delta",
+    "台达",
+    "正泰",
+    "德力西",
+    "导入测试品牌"
+  ],
+  "default_feature_weights": {
+    "brand": 0.3,
+    "detailed_params": 0.2,
+    "device_name": 0.3,
+    "spec_model": 0.2
+  },
+  "default_match_threshold": {
+    "value": 0.6
+  },
+  "device_row_recognition": {
+    "industry_keywords": {
+      "brands": [
+        "霍尼韦尔",
+        "西门子",
+        "江森自控",
+        "施耐德",
+        "明纬",
+        "欧姆龙",
+        "ABB",
+        "丹佛斯",
+        "贝尔莫",
+        "Honeywell",
+        "Siemens",
+        "Johnson",
+        "Schneider",
+        "OMRON",
+        "Danfoss",
+        "Belimo",
+        "Delta",
+        "台达",
+        "正泰",
+        "德力西"
+      ],
+      "device_types": [
+        "传感器",
+        "控制器",
+        "DDC",
+        "阀门",
+        "执行器",
+        "控制柜",
+        "电源",
+        "继电器",
+        "网关",
+        "模块",
+        "探测器",
+        "开关",
+        "变送器",
+        "温控器",
+        "风阀",
+        "水阀",
+        "电动阀",
+        "调节阀",
+        "压力传感器",
+        "温度传感器",
+        "湿度传感器",
+        "CO2传感器",
+        "流量计",
+        "压差开关",
+        "液位开关",
+        "风机",
+        "水泵"
+      ],
+      "model_patterns": [
+        "[A-Z]{2,}-[A-Z0-9]+",
+        "[A-Z]+\\d{3,}",
+        "\\d{4}[A-Z]+",
+        "[A-Z]+-\\d+"
+      ],
+      "parameters": [
+        "PPM",
+        "ppm",
+        "℃",
+        "摄氏度",
+        "Pa",
+        "pa",
+        "%RH",
+        "%rh",
+        "m/s",
+        "MPa",
+        "mA",
+        "4-20mA",
+        "0-10V",
+        "2-10V",
+        "AC220V",
+        "DC24V",
+        "DN",
+        "dn",
+        "AI",
+        "AO",
+        "DI",
+        "DO",
+        "点位",
+        "通道",
+        "路",
+        "个",
+        "V",
+        "A",
+        "W",
+        "Hz",
+        "kW",
+        "kg",
+        "mm",
+        "cm",
+        "m"
+      ]
+    },
+    "probability_thresholds": {
+      "high": 50,
+      "medium": 30
+    },
+    "scoring_weights": {
+      "data_type": 0.3,
+      "industry": 0.35,
+      "structure": 0.35
+    }
+  },
+  "device_type_keywords": [
+    "传感器",
+    "控制器",
+    "DDC",
+    "阀门",
+    "执行器",
+    "控制柜",
+    "电源",
+    "继电器",
+    "网关",
+    "模块",
+    "探测器",
+    "开关",
+    "变送器",
+    "温控器",
+    "风阀",
+    "水阀",
+    "电动阀",
+    "调节阀",
+    "座阀",
+    "球阀",
+    "蝶阀",
+    "流量计",
+    "压差开关",
+    "液位开关",
+    "风机",
+    "水泵"
+  ],
+  "feature_split_chars": [
+    "+",
+    "|"
+  ],
+  "feature_weight_config": {
+    "brand_weight": 1,
+    "device_type_weight": 4,
+    "model_weight": 1,
+    "parameter_weight": 4
+  },
+  "global_config": {
+    "default_match_threshold": 5,
+    "fullwidth_to_halfwidth": true,
+    "min_feature_length": 1,
+    "min_feature_length_chinese": 1,
+    "remove_whitespace": true,
+    "unify_lowercase": true
+  },
+  "ignore_keywords": [
+    "施工要求",
+    "验收",
+    "图纸",
+    "规范",
+    "清单",
+    "调试",
+    "安装",
+    "含税",
+    "不含税",
+    "备注",
+    "说明",
+    "要求",
+    "标准",
+    "国标",
+    "进口",
+    "国产",
+    "品牌",
+    "厂家",
+    "供货",
+    "交货",
+    "质保"
+  ],
+  "intelligent_extraction": {
+    "complex_parameter_decomposition": {
+      "enabled": true,
+      "patterns": [
+        {
+          "description": "提取精度、温度、湿度、量程中的数值（归一化后的格式）",
+          "name": "精度规格",
+          "pattern": "±(\\d+)%?@(\\d+)c\\.?(\\d+)%?rh\\((\\d+)[-~](\\d+)"
+        }
+      ]
+    },
+    "enabled": true,
+    "feature_quality_scoring": {
+      "enabled": true,
+      "min_quality_score": 50,
+      "scoring_rules": {
+        "appropriate_length": 5,
+        "has_number": 10,
+        "has_unit": 10,
+        "in_device_keywords": 15,
+        "is_common_word": -20,
+        "is_metadata_label": -30,
+        "is_pure_number": -15,
+        "is_pure_punctuation": -30,
+        "is_technical_term": 20,
+        "too_short": -20
+      }
+    },
+    "metadata_label_patterns": [
+      "\\d+\\.?名称[:：]",
+      "\\d+\\.?规格[:：]",
+      "\\d+\\.?型号[:：]",
+      "\\d+\\.?参数[:：]",
+      "型号[:：]",
+      "量程[:：]?",
+      "输出信号[:：]?",
+      "精度[:：]?",
+      "品牌[:：]?",
+      "通径[:：]?",
+      "压力[:：]?",
+      "温度[:：]?",
+      "功率[:：]?"
+    ],
+    "technical_term_expansion": {
+      "0-10V": [
+        "0-10V",
+        "电压输出"
+      ],
+      "4-20mA": [
+        "4-20mA",
+        "电流输出"
+      ],
+      "485通讯": [
+        "RS485",
+        "485"
+      ],
+      "CO2": [
+        "CO2",
+        "二氧化碳",
+        "co2"
+      ],
+      "DDC": [
+        "DDC",
+        "直接数字控制器"
+      ]
+    },
+    "text_cleaning": {
+      "enabled": true,
+      "noise_section_patterns": [
+        {
+          "description": "删除按照图纸规范的描述",
+          "pattern": "按照.*?(?:图纸|规范|清单).*?(?:要求|配置)"
+        },
+        {
+          "description": "删除验收相关描述",
+          "pattern": "(?:达到|满足|通过).*?验收"
+        },
+        {
+          "description": "删除采购运输相关描述",
+          "pattern": "(?:采购|运输|保管|转运).*?(?:施工|验收)"
+        }
+      ],
+      "truncate_delimiters": [
+        {
+          "description": "在施工要求处截断",
+          "pattern": "\\d+\\.?施工要求[:：]"
+        },
+        {
+          "description": "在数字序列处截断",
+          "pattern": ",个,\\d+,\\d+,"
+        },
+        {
+          "description": "在采购说明处截断",
+          "pattern": "含该项施工内容"
+        }
+      ]
+    }
+  },
+  "metadata_keywords": [
+    "型号",
+    "通径",
+    "阀体类型",
+    "适用介质",
+    "品牌",
+    "规格",
+    "参数",
+    "名称",
+    "类型",
+    "尺寸",
+    "材质",
+    "功率",
+    "电压",
+    "电流",
+    "频率",
+    "温度",
+    "压力",
+    "流量",
+    "湿度",
+    "浓度",
+    "范围",
+    "精度",
+    "输出",
+    "输入",
+    "信号",
+    "接口",
+    "安装",
+    "防护",
+    "等级"
+  ],
+  "normalization_map": {
+    " ": "",
+    "%RH": "%rh",
+    "DN": "dn",
+    "IP": "ip",
+    "Nm": "nm",
+    "PN": "pn",
+    "PPM": "ppm",
+    "Pa": "pa",
+    "RH": "%rh",
+    "VAC": "V",
+    "VDC": "V",
+    "Vac": "V",
+    "Vdc": "V",
+    "mA DC": "mA",
+    "mADC": "mA",
+    "ppm": "ppm",
+    "~": "-",
+    "°C": "",
+    "—": "-",
+    "℃": "",
+    "公斤": "kg",
+    "到": "-",
+    "千克": "kg",
+    "厘米": "cm",
+    "帕": "pa",
+    "扭矩": "nm",
+    "毫米": "mm",
+    "牛米": "nm",
+    "相对湿度": "%rh",
+    "米": "m",
+    "米/秒": "m/s",
+    "米每秒": "m/s",
+    "至": "-",
+    "～": "-"
+  },
+  "performance_config": {
+    "match_timeout_seconds": 10,
+    "max_rows_per_file": 10000,
+    "parse_timeout_seconds": 5
+  },
+  "python_test_config": {
+    "test_enabled": false,
+    "test_value": 456
+  },
+  "synonym_map": {
+    "CO": "一氧化碳",
+    "CO2": "二氧化碳",
+    "压力传感器": "压传感器",
+    "室内温度传感器": "室内温传感器",
+    "室外温度传感器": "室外温传感器",
+    "水管温度传感器": "水管温传感器",
+    "温度传感器": "温传感器",
+    "温湿度传感器": "温湿传感器",
+    "湿度传感器": "湿传感器",
+    "管道温度传感器": "管道温传感器",
+    "风管温度传感器": "风管温传感器"
+  },
+  "system_version": {
+    "version": "1.0.0"
+  },
+  "ui_config": {
+    "default_export_format": "xlsx",
+    "max_file_size_mb": 10,
+    "supported_formats": [
+      "xls",
+      "xlsm",
+      "xlsx"
+    ]
+  }
+}

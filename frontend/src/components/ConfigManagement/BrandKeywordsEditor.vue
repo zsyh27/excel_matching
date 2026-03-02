@@ -3,8 +3,19 @@
     <div class="editor-header">
       <h2>品牌关键词</h2>
       <p class="description">
-        定义品牌关键词，用于智能识别和拆分设备描述中的品牌信息。
+        定义品牌关键词，用于智能识别和拆分设备描述中的品牌信息，提高特征质量评分。
       </p>
+      <div class="info-box">
+        <div class="info-title">🏷️ 作用说明</div>
+        <ul class="info-list">
+          <li><strong>特征识别</strong>：自动识别文本中的品牌词，作为独立特征提取</li>
+          <li><strong>质量评分</strong>：包含品牌关键词的特征获得更高的质量评分（+15分）</li>
+          <li><strong>智能拆分</strong>：从复合描述中拆分出品牌信息（如"霍尼韦尔温度传感器"）</li>
+        </ul>
+        <div class="info-note">
+          <strong>匹配权重</strong>：品牌特征在匹配时具有较高权重，有助于提高匹配准确性
+        </div>
+      </div>
     </div>
 
     <div class="editor-body">
@@ -98,10 +109,46 @@ export default {
 }
 
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.info-box {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  border-radius: 4px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  margin: 10px 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.info-list li {
+  margin: 5px 0;
+}
+
+.info-note {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #bbdefb;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #0d47a1;
 }
 
 .toolbar {

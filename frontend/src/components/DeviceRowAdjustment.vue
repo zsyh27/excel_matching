@@ -696,20 +696,26 @@ defineExpose({
 .stat-item {
   text-align: center;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.95);
   border-radius: 6px;
 }
 
 .stat-item.high {
-  border-left: 4px solid #409eff;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #409eff;
 }
 
 .stat-item.medium {
-  border-left: 4px solid #e6a23c;
+  background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+  border: 2px solid #e6a23c;
 }
 
 .stat-item.low {
-  border-left: 4px solid #909399;
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  border: 2px solid #909399;
+}
+
+.stat-item:not(.high):not(.medium):not(.low) {
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .stat-label {

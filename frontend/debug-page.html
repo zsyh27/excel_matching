@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>调试页面空白问题</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #409eff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #66b1ff;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .error {
+      color: #f56c6c;
+    }
+    .success {
+      color: #67c23a;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 调试页面空白问题</h1>
+  
+  <div class="section">
+    <h3>步骤 1: 测试后端 API</h3>
+    <p>测试 /api/excel/preview 端点是否正常工作</p>
+    <button onclick="testBackendAPI()">测试后端 API</button>
+  </div>
+
+  <div class="section">
+    <h3>步骤 2: 测试前端 API 客户端</h3>
+    <p>测试前端的 API 调用是否正常</p>
+    <button onclick="testFrontendAPI()">测试前端 API 客户端</button>
+  </div>
+
+  <div class="section">
+    <h3>步骤 3: 检查浏览器控制台</h3>
+    <p>打开浏览器开发者工具（F12），查看 Console 和 Network 标签页</p>
+    <button onclick="openDevTools()">查看控制台日志</button>
+  </div>
+
+  <div class="section">
+    <h3>步骤 4: 清除缓存并重新加载</h3>
+    <p>清除浏览器缓存，然后重新访问页面</p>
+    <button onclick="clearCacheAndReload()">清除缓存并重新加载</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const fileId = '1b2eecc1-669c-4350-b792-02bacebca707';
+    const resultDiv = document.getElementById('result');
+
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+      resultDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+    }
+
+    async function testBackendAPI() {
+      log('开始测试后端 API...');
+      try {
+        const response = await fetch('http://localhost:5000/api/excel/preview', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            file_id: fileId,
+            sheet_index: 0
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        log('✅ 后端 API 响应成功', 'success');
+        log('响应数据: ' + JSON.stringify(data, null, 2));
+        
+        if (data.data && data.data.sheets) {
+          log(`✅ 找到 ${data.data.sheets.length} 个工作表`, 'success');
+          log(`✅ 预览数据行数: ${data.data.preview_data.length}`, 'success');
+        }
+      } catch (error) {
+        log('❌ 后端 API 调用失败: ' + error.message, 'error');
+        log('错误详情: ' + error.stack, 'error');
+      }
+    }
+
+    async function testFrontendAPI() {
+      log('开始测试前端 API 客户端...');
+      log('注意：这个测试需要前端应用正在运行');
+      
+      // 模拟前端 API 调用
+      try {
+        const response = await fetch('http://localhost:5000/api/excel/preview', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            file_id: fileId,
+            sheet_index: 0
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          log('✅ 前端 API 客户端工作正常', 'success');
+        } else {
+          log('❌ API 返回失败: ' + (data.error_message || '未知错误'), 'error');
+        }
+      } catch (error) {
+        log('❌ 前端 API 调用失败: ' + error.message, 'error');
+      }
+    }
+
+    function openDevTools() {
+      log('请按 F12 打开开发者工具');
+      log('然后访问: http://localhost:3000/data-range-selection/' + fileId);
+      log('查看 Console 标签页的错误信息');
+      log('查看 Network 标签页的网络请求');
+      console.log('=== 调试信息 ===');
+      console.log('文件ID:', fileId);
+      console.log('后端地址:', 'http://localhost:5000');
+      console.log('前端地址:', 'http://localhost:3000');
+    }
+
+    function clearCacheAndReload() {
+      log('正在清除缓存...');
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => {
+            caches.delete(name);
+          });
+          log('✅ 缓存已清除', 'success');
+          log('请手动刷新页面（Ctrl+Shift+R 或 Cmd+Shift+R）');
+        });
+      } else {
+        log('⚠️ 浏览器不支持 Cache API');
+        log('请手动清除缓存：Ctrl+Shift+Delete');
+      }
+    }
+
+    // 页面加载时自动运行测试
+    window.onload = function() {
+      log('=== 调试工具已加载 ===');
+      log('文件ID: ' + fileId);
+      log('点击上面的按钮开始测试');
+    };
+  </script>
+</body>
+</html>

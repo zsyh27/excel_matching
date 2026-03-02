@@ -5,6 +5,17 @@
       <p class="description">
         在预处理的第一步，删除这些与设备匹配无关的关键词，提高匹配准确性。
       </p>
+      <div class="info-box">
+        <div class="info-title">📋 使用场景</div>
+        <ul class="info-list">
+          <li><strong>施工要求</strong>：如"施工要求"、"验收"、"调试"等</li>
+          <li><strong>商务信息</strong>：如"含税"、"不含税"、"质保"等</li>
+          <li><strong>通用描述</strong>：如"品牌"、"厂家"、"国标"等</li>
+        </ul>
+        <div class="info-note">
+          <strong>处理时机</strong>：在智能清理之后、归一化之前执行，确保这些关键词不会影响特征提取
+        </div>
+      </div>
     </div>
 
     <div class="editor-body">
@@ -102,10 +113,46 @@ export default {
 }
 
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.info-box {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #fff8e1;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f57c00;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  margin: 10px 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.info-list li {
+  margin: 5px 0;
+}
+
+.info-note {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #fff3e0;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #e65100;
 }
 
 .toolbar {

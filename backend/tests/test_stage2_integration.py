@@ -153,7 +153,7 @@ class TestStage2Integration:
             print(f"提取特征: {preprocess_result.features}")
             
             # 匹配
-            match_result = self.match_engine.match(preprocess_result.features)
+            match_result, cache_key = self.match_engine.match(preprocess_result.features, record_detail=False)
             
             print(f"匹配状态: {match_result.match_status}")
             if match_result.match_status == 'success':
@@ -192,7 +192,7 @@ class TestStage2Integration:
         
         for description, expected_type in test_dataset:
             preprocess_result = self.preprocessor.preprocess(description)
-            match_result = self.match_engine.match(preprocess_result.features)
+            match_result, cache_key = self.match_engine.match(preprocess_result.features, record_detail=False)
             
             if match_result.match_status == 'success':
                 successful_matches += 1
@@ -356,7 +356,7 @@ class TestStage2Integration:
         start_time = time.time()
         for description in test_descriptions:
             preprocess_result = self.preprocessor.preprocess(description)
-            self.match_engine.match(preprocess_result.features)
+            self.match_engine.match(preprocess_result.features, record_detail=False)
         end_time = time.time()
         
         elapsed_time = end_time - start_time

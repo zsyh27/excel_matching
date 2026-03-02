@@ -60,6 +60,9 @@ class ConfigManagerExtended:
             (是否成功, 消息)
         """
         try:
+            # 0. 处理转义字符(新增)
+            config = self._process_escape_sequences(config)
+            
             # 1. 验证配置
             is_valid, errors = self.validate_config(config)
             if not is_valid:
@@ -83,6 +86,41 @@ class ConfigManagerExtended:
         except Exception as e:
             logger.error(f"保存配置失败: {e}")
             return False, f"保存配置失败: {str(e)}"
+    
+    def _process_escape_sequences(self, config: Dict) -> Dict:
+        """
+        处理配置中的转义字符
+        
+        特别处理 feature_split_chars 中的转义序列:
+        - "\\n" → 换行符
+        - "\\t" → 制表符
+        - "\\r" → 回车符
+        
+        Args:
+            config: 配置字典
+            
+        Returns:
+            处理后的配置字典
+        """
+        if 'feature_split_chars' in config and isinstance(config['feature_split_chars'], list):
+            processed_chars = []
+            for char in config['feature_split_chars']:
+                if isinstance(char, str):
+                    # 处理转义序列
+                    if char == '\\n':
+                        processed_chars.append('\n')
+                    elif char == '\\t':
+                        processed_chars.append('\t')
+                    elif char == '\\r':
+                        processed_chars.append('\r')
+                    else:
+                        processed_chars.append(char)
+                else:
+                    processed_chars.append(char)
+            
+            config['feature_split_chars'] = processed_chars
+        
+        return config
     
     def validate_config(self, config: Dict) -> Tuple[bool, List[str]]:
         """

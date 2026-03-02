@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试错误处理 - 数据范围选择</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .test-card {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 4px solid #409eff;
+    }
+    .test-link {
+      display: block;
+      padding: 10px 15px;
+      margin: 10px 0;
+      background: #409eff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .test-link:hover {
+      background: #66b1ff;
+    }
+    .test-link.error {
+      background: #f56c6c;
+    }
+    .test-link.error:hover {
+      background: #f78989;
+    }
+    .description {
+      color: #666;
+      margin: 10px 0;
+      line-height: 1.6;
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 10px;
+      margin: 15px 0;
+      color: #856404;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-card">
+    <h1>🧪 数据范围选择 - 错误处理测试</h1>
+    
+    <div class="note">
+      <strong>测试目的：</strong>验证页面在各种错误情况下是否能正确显示错误信息，而不是空白页面。
+    </div>
+
+    <div class="test-section">
+      <h3>测试 1: 无效的文件ID（文件不存在）</h3>
+      <p class="description">
+        使用一个不存在的文件ID访问页面，应该显示友好的错误页面，包含"重试"和"返回上传页面"按钮。
+      </p>
+      <a href="http://localhost:3001/data-range-selection/invalid-file-id-12345?filename=test.xlsx" 
+         class="test-link error" 
+         target="_blank">
+        测试无效文件ID
+      </a>
+    </div>
+
+    <div class="test-section">
+      <h3>测试 2: 空文件ID</h3>
+      <p class="description">
+        不提供文件ID参数，应该显示"缺少文件ID"的错误提示。
+      </p>
+      <a href="http://localhost:3001/data-range-selection/?filename=test.xlsx" 
+         class="test-link error" 
+         target="_blank">
+        测试空文件ID
+      </a>
+    </div>
+
+    <div class="test-section">
+      <h3>测试 3: 过期的文件ID</h3>
+      <p class="description">
+        使用之前上传但已过期的文件ID，应该显示文件不存在或已过期的错误信息。
+      </p>
+      <a href="http://localhost:3001/data-range-selection/6ae378ee-66f7-4148-86fb-a4e940f167b9?filename=test.xlsx" 
+         class="test-link error" 
+         target="_blank">
+        测试过期文件ID
+      </a>
+    </div>
+
+    <div class="test-section">
+      <h3>测试 4: 正常流程（需要先上传文件）</h3>
+      <p class="description">
+        先上传一个Excel文件，然后点击"选择数据范围"按钮，应该正常显示数据预览和范围选择界面。
+      </p>
+      <a href="http://localhost:3001/" 
+         class="test-link" 
+         target="_blank">
+        前往上传页面
+      </a>
+    </div>
+
+    <div class="note">
+      <strong>预期结果：</strong>
+      <ul>
+        <li>✅ 错误情况下不应该显示空白页面</li>
+        <li>✅ 应该显示清晰的错误信息</li>
+        <li>✅ 提供"重试"和"返回上传页面"的操作按钮</li>
+        <li>✅ 正常情况下显示完整的数据预览和范围选择界面</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

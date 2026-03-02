@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试匹配详情API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      background-color: #409eff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #66b1ff;
+    }
+    .info {
+      background-color: #f0f9ff;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #409eff;
+    }
+    .success {
+      background-color: #f0f9ff;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #67c23a;
+      color: #67c23a;
+    }
+    .error {
+      background-color: #fef0f0;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #f56c6c;
+      color: #f56c6c;
+    }
+    .code {
+      background-color: #f5f5f5;
+      padding: 10px;
+      margin: 10px 0;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    input {
+      padding: 8px;
+      width: 400px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>测试匹配详情API</h1>
+  
+  <div class="test-section">
+    <h2>步骤1: 执行匹配获取缓存键</h2>
+    <div class="info">
+      首先需要执行一次匹配操作来获取缓存键
+    </div>
+    <input type="text" id="testInput" placeholder="输入设备描述，例如：西门子 DDC控制器 RWD68" value="西门子 DDC控制器 RWD68">
+    <button onclick="testMatch()">执行匹配</button>
+    <div id="matchResult" class="code"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>步骤2: 使用缓存键获取详情</h2>
+    <div class="info">
+      使用上面获取的缓存键来测试详情API
+    </div>
+    <input type="text" id="cacheKeyInput" placeholder="输入缓存键">
+    <button onclick="testGetDetail()">获取详情</button>
+    <div id="detailResult" class="code"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>步骤3: 测试新标签页打开</h2>
+    <div class="info">
+      测试在新标签页打开匹配详情页面
+    </div>
+    <input type="text" id="cacheKeyInput2" placeholder="输入缓存键">
+    <button onclick="openInNewTab()">在新标签页打开</button>
+  </div>
+
+  <script>
+    // 测试匹配
+    async function testMatch() {
+      const input = document.getElementById('testInput').value;
+      const resultDiv = document.getElementById('matchResult');
+      
+      if (!input) {
+        resultDiv.innerHTML = '<div class="error">请输入设备描述</div>';
+        return;
+      }
+      
+      resultDiv.innerHTML = '正在执行匹配...';
+      
+      try {
+        const response = await fetch('/api/match', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            rows: [{
+              row_number: 1,
+              raw_data: input,
+              row_type: 'device'
+            }]
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.matched_rows && data.matched_rows.length > 0) {
+          const row = data.matched_rows[0];
+          const cacheKey = row.detail_cache_key;
+          
+          if (cacheKey) {
+            // 自动填充到详情测试输入框
+            document.getElementById('cacheKeyInput').value = cacheKey;
+            document.getElementById('cacheKeyInput2').value = cacheKey;
+            
+            resultDiv.innerHTML = `
+              <div class="success">✅ 匹配成功！</div>
+              <strong>缓存键:</strong> ${cacheKey}<br>
+              <strong>匹配状态:</strong> ${row.match_result?.match_status || 'N/A'}<br>
+              <strong>匹配设备:</strong> ${row.match_result?.matched_device_text || 'N/A'}<br>
+              <strong>匹配得分:</strong> ${row.match_result?.match_score || 'N/A'}<br>
+              <br>
+              <div class="info">缓存键已自动填充到下方输入框</div>
+            `;
+          } else {
+            resultDiv.innerHTML = '<div class="error">❌ 匹配成功但没有返回缓存键</div>';
+          }
+        } else {
+          resultDiv.innerHTML = `<div class="error">❌ 匹配失败: ${data.error_message || '未知错误'}</div>`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<div class="error">❌ 请求失败: ${error.message}</div>`;
+        console.error('匹配失败:', error);
+      }
+    }
+    
+    // 测试获取详情
+    async function testGetDetail() {
+      const cacheKey = document.getElementById('cacheKeyInput').value;
+      const resultDiv = document.getElementById('detailResult');
+      
+      if (!cacheKey) {
+        resultDiv.innerHTML = '<div class="error">请输入缓存键</div>';
+        return;
+      }
+      
+      resultDiv.innerHTML = '正在获取详情...';
+      
+      try {
+        const response = await fetch(`/api/match/detail/${cacheKey}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          const detail = data.detail;
+          
+          resultDiv.innerHTML = `
+            <div class="success">✅ 获取详情成功！</div>
+            <strong>原始文本:</strong> ${detail.original_text || 'N/A'}<br>
+            <strong>匹配状态:</strong> ${detail.final_result?.match_status || 'N/A'}<br>
+            <strong>匹配设备:</strong> ${detail.final_result?.matched_device_text || 'N/A'}<br>
+            <strong>候选规则数量:</strong> ${detail.candidates?.length || 0}<br>
+            <strong>预处理结果:</strong> ${detail.preprocessing ? '存在' : '不存在'}<br>
+            ${detail.preprocessing ? `
+              <strong>- 智能清理:</strong> ${detail.preprocessing.intelligent_cleaning ? '存在' : '不存在'}<br>
+              <strong>- 归一化:</strong> ${detail.preprocessing.normalization_detail ? '存在' : '不存在'}<br>
+              <strong>- 特征提取:</strong> ${detail.preprocessing.extraction_detail ? '存在' : '不存在'}<br>
+            ` : ''}
+            <br>
+            <strong>完整数据:</strong>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        } else {
+          resultDiv.innerHTML = `<div class="error">❌ 获取详情失败: ${data.error_message || '未知错误'}</div>`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<div class="error">❌ 请求失败: ${error.message}</div>`;
+        console.error('获取详情失败:', error);
+      }
+    }
+    
+    // 在新标签页打开
+    function openInNewTab() {
+      const cacheKey = document.getElementById('cacheKeyInput2').value;
+      
+      if (!cacheKey) {
+        alert('请输入缓存键');
+        return;
+      }
+      
+      const url = `/match-detail/${cacheKey}`;
+      console.log('打开URL:', url);
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>

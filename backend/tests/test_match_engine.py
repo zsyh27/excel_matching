@@ -93,19 +93,20 @@ class TestMatchEngine:
         """测试成功匹配 - 高权重得分"""
         # 特征包含品牌和型号，应该匹配成功
         features = ["霍尼韦尔", "co传感器", "hscm-r100u", "0-100ppm"]
-        result = match_engine.match(features)
+        result, cache_key = match_engine.match(features)
         
         assert result.match_status == "success"
         assert result.device_id == "SENSOR001"
         assert result.unit_price == 766.14
         assert result.match_score >= 3.0
         assert "霍尼韦尔" in result.matched_device_text
+        assert cache_key is not None  # 默认应该记录详情
     
     def test_successful_match_with_threshold(self, match_engine):
         """测试成功匹配 - 刚好达到阈值"""
         # 包含品牌和型号，权重为3+3=6，超过阈值5
         features = ["霍尼韦尔", "hscm-r100u"]
-        result = match_engine.match(features)
+        result, cache_key = match_engine.match(features)
         
         assert result.match_status == "success"
         assert result.device_id == "SENSOR001"
@@ -115,7 +116,7 @@ class TestMatchEngine:
         """测试最佳匹配选择 - 多个规则匹配时选择得分最高的"""
         # 包含两个设备都有的特征，但霍尼韦尔的得分更高
         features = ["霍尼韦尔", "hscm-r100u", "4-20ma"]
-        result = match_engine.match(features)
+        result, cache_key = match_engine.match(features)
         
         assert result.match_status == "success"
         assert result.device_id == "SENSOR001"  # 霍尼韦尔得分 3+3+2=8
@@ -130,7 +131,7 @@ class TestMatchEngine:
         original_threshold = match_engine.rules[0].match_threshold
         match_engine.rules[0].match_threshold = 10.0  # 设置为10，使得6分不满足
         
-        result = match_engine.match(features)
+        result, cache_key = match_engine.match(features)
         
         # 应该匹配成功（使用兜底阈值5.0）
         assert result.match_status == "success"
@@ -144,7 +145,7 @@ class TestMatchEngine:
         """测试匹配失败 - 得分低于所有阈值"""
         # 不存在的特征
         features = ["不存在的特征"]
-        result = match_engine.match(features)
+        result, cache_key = match_engine.match(features)
         
         assert result.match_status == "failed"
         assert result.device_id is None
@@ -155,7 +156,7 @@ class TestMatchEngine:
     def test_empty_features(self, match_engine):
         """测试空特征列表"""
         features = []
-        result = match_engine.match(features)
+        result, cache_key = match_engine.match(features)
         
         assert result.match_status == "failed"
         assert result.device_id is None
@@ -205,7 +206,7 @@ class TestMatchEngine:
         match_engine.rules.append(bad_rule)
         
         features = ["测试特征"]
-        result = match_engine.match(features)
+        result, cache_key = match_engine.match(features)
         
         assert result.match_status == "failed"
         assert "不存在" in result.match_reason
@@ -234,7 +235,7 @@ class TestMatchEngineIntegration:
         # 测试用例1: 标准格式的CO传感器描述
         text1 = "CO浓度探测器，霍尼韦尔，0~100PPM，4~20mA"
         result1 = preprocessor.preprocess(text1)
-        match_result1 = match_engine.match(result1.features)
+        match_result1, cache_key1 = match_engine.match(result1.features)
         
         assert match_result1.match_status == "success"
         assert "霍尼韦尔" in match_result1.matched_device_text
@@ -242,7 +243,7 @@ class TestMatchEngineIntegration:
         # 测试用例2: 非标准格式的温度传感器描述
         text2 = "西门子 温度传感器 QAA2061 0-50℃"
         result2 = preprocessor.preprocess(text2)
-        match_result2 = match_engine.match(result2.features)
+        match_result2, cache_key2 = match_engine.match(result2.features)
         
         assert match_result2.match_status == "success"
         assert "西门子" in match_result2.matched_device_text

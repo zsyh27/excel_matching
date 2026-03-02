@@ -3,8 +3,19 @@
     <div class="editor-header">
       <h2>归一化映射</h2>
       <p class="description">
-        将各种格式的字符统一转换为标准格式，例如：单位符号、特殊字符等。
+        将各种格式的字符统一转换为标准格式，在预处理阶段应用。这是特征提取前的关键步骤。
       </p>
+      <div class="info-box">
+        <div class="info-title">🔄 典型应用</div>
+        <ul class="info-list">
+          <li><strong>单位统一</strong>：℃ → (空)、°C → (空)、Pa → pa</li>
+          <li><strong>符号标准化</strong>：~ → -、± → (空)、— → -</li>
+          <li><strong>格式转换</strong>：全角 → 半角、大写 → 小写</li>
+        </ul>
+        <div class="info-note">
+          <strong>处理时机</strong>：在删除无关关键词之后、特征拆分之前执行，确保文本格式统一
+        </div>
+      </div>
     </div>
 
     <div class="editor-body">
@@ -122,10 +133,46 @@ export default {
 }
 
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.info-box {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f3e5f5;
+  border-left: 4px solid #9c27b0;
+  border-radius: 4px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #7b1fa2;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  margin: 10px 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.info-list li {
+  margin: 5px 0;
+}
+
+.info-note {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #e1bee7;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #6a1b9a;
 }
 
 .toolbar {

@@ -89,7 +89,7 @@ describe('ConfigManagementView', () => {
 
     it('displays navigation menu', () => {
       const navItems = wrapper.findAll('.nav-item')
-      expect(navItems.length).toBe(7)
+      expect(navItems.length).toBe(10) // 更新为10个菜单项：基础7个 + 特征权重 + 高级配置 + 设备行识别
     })
 
     it('displays action buttons', () => {
@@ -196,7 +196,14 @@ describe('ConfigManagementView', () => {
     it('resets configuration with confirmation', async () => {
       global.confirm.mockReturnValue(true)
 
-      wrapper.vm.config.ignore_keywords = ['修改后']
+      // 等待配置加载完成
+      await flushPromises()
+      
+      // 保存原始配置的引用
+      const originalIgnoreKeywords = [...mockConfig.ignore_keywords]
+      
+      // 修改配置
+      wrapper.vm.config.ignore_keywords = ['新关键词']
       wrapper.vm.hasChanges = true
       await wrapper.vm.$nextTick()
 
@@ -204,7 +211,8 @@ describe('ConfigManagementView', () => {
       await resetButton.trigger('click')
       await wrapper.vm.$nextTick()
 
-      expect(wrapper.vm.config.ignore_keywords).toEqual(['测试1', '测试2'])
+      // 应该重置为原始配置（mockConfig中的值）
+      expect(wrapper.vm.config.ignore_keywords).toEqual(originalIgnoreKeywords)
       expect(wrapper.vm.hasChanges).toBe(false)
     })
 

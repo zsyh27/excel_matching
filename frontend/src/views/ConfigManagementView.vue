@@ -62,7 +62,9 @@
           <component 
             :is="currentEditor" 
             v-model="config[activeTab]"
+            :full-config="config"
             @change="handleConfigChange"
+            @update-ignore-keywords="handleUpdateIgnoreKeywords"
           />
         </div>
 
@@ -184,6 +186,7 @@ import DeviceTypeEditor from '../components/ConfigManagement/DeviceTypeEditor.vu
 import FeatureWeightEditor from '../components/ConfigManagement/FeatureWeightEditor.vue'
 import AdvancedConfigEditor from '../components/ConfigManagement/AdvancedConfigEditor.vue'
 import DeviceRowRecognitionEditor from '../components/ConfigManagement/DeviceRowRecognitionEditor.vue'
+import IntelligentCleaningEditor from '../components/ConfigManagement/IntelligentCleaningEditor.vue'
 
 export default {
   name: 'ConfigManagementView',
@@ -197,10 +200,11 @@ export default {
     DeviceTypeEditor,
     FeatureWeightEditor,
     AdvancedConfigEditor,
-    DeviceRowRecognitionEditor
+    DeviceRowRecognitionEditor,
+    IntelligentCleaningEditor
   },
   setup() {
-    const activeTab = ref('ignore_keywords')
+    const activeTab = ref('device_row_recognition')
     const config = ref({})
     const originalConfig = ref({})
     const hasChanges = ref(false)
@@ -224,22 +228,28 @@ export default {
 
     // 菜单项（按照业务流程排序）
     const menuItems = [
-      { key: 'ignore_keywords', label: '删除无关关键词', icon: '🗑️' },
+      // 1. 数据导入阶段
+      { key: 'device_row_recognition', label: '设备行识别', icon: '🎯' },
+      
+      // 2. 特征提取配置阶段
+      { key: 'intelligent_extraction', label: '智能清理', icon: '🧹' },
       { key: 'feature_split_chars', label: '处理分隔符', icon: '✂️' },
-      { key: 'synonym_map', label: '同义词映射', icon: '🔄' },
       { key: 'normalization_map', label: '归一化映射', icon: '📝' },
-      { key: 'global_config', label: '全局配置', icon: '⚙️' },
+      { key: 'metadata_keywords', label: '高级配置', icon: '🔧' },
+      
+      // 3. 匹配配置阶段
+      { key: 'synonym_map', label: '同义词映射', icon: '🔄' },
       { key: 'brand_keywords', label: '品牌关键词', icon: '🏷️' },
       { key: 'device_type_keywords', label: '设备类型', icon: '📦' },
       { key: 'feature_weight_config', label: '特征权重', icon: '⚖️' },
-      { key: 'metadata_keywords', label: '高级配置', icon: '🔧' },
-      { key: 'device_row_recognition', label: '设备行识别', icon: '🎯' }
+      
+      // 4. 全局配置
+      { key: 'global_config', label: '全局配置', icon: '⚙️' }
     ]
 
     // 当前编辑器组件
     const currentEditor = computed(() => {
       const editorMap = {
-        'ignore_keywords': 'IgnoreKeywordsEditor',
         'feature_split_chars': 'SplitCharsEditor',
         'synonym_map': 'SynonymMapEditor',
         'normalization_map': 'NormalizationEditor',
@@ -248,7 +258,8 @@ export default {
         'device_type_keywords': 'DeviceTypeEditor',
         'feature_weight_config': 'FeatureWeightEditor',
         'metadata_keywords': 'AdvancedConfigEditor',
-        'device_row_recognition': 'DeviceRowRecognitionEditor'
+        'device_row_recognition': 'DeviceRowRecognitionEditor',
+        'intelligent_extraction': 'IntelligentCleaningEditor'
       }
       return editorMap[activeTab.value]
     })
@@ -289,6 +300,12 @@ export default {
     // 配置变更处理
     const handleConfigChange = () => {
       hasChanges.value = JSON.stringify(config.value) !== JSON.stringify(originalConfig.value)
+    }
+    
+    // 处理 ignore_keywords 更新
+    const handleUpdateIgnoreKeywords = (keywords) => {
+      config.value.ignore_keywords = keywords
+      handleConfigChange()
     }
 
     // 测试文本变更处理（防抖）
@@ -507,6 +524,7 @@ export default {
       regenerating,
       message,
       handleConfigChange,
+      handleUpdateIgnoreKeywords,
       handleTestTextChange,
       handleSave,
       handleReset,

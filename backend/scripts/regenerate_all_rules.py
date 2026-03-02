@@ -8,7 +8,12 @@
 
 import json
 import sys
+import os
 import time
+
+# 添加backend目录到路径
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from config import Config
 from modules.data_loader import DataLoader
 from modules.text_preprocessor import TextPreprocessor

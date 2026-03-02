@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试导入问题</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .code {
+      background-color: #f5f5f5;
+      padding: 10px;
+      margin: 10px 0;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .error {
+      color: #f56c6c;
+      background-color: #fef0f0;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #f56c6c;
+    }
+    .success {
+      color: #67c23a;
+      background-color: #f0f9ff;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #67c23a;
+    }
+  </style>
+</head>
+<body>
+  <h1>导入问题诊断</h1>
+  
+  <div class="section">
+    <h2>问题说明</h2>
+    <p>MatchDetailView.vue 中使用了命名导入：</p>
+    <div class="code">import { getMatchDetail } from '../api/match'</div>
+    
+    <p>但 match.js 使用的是默认导出：</p>
+    <div class="code">export default {
+  getMatchDetail(cacheKey, options = {}) { ... }
+}</div>
+    
+    <p>这会导致 getMatchDetail 为 undefined。</p>
+  </div>
+  
+  <div class="section">
+    <h2>解决方案</h2>
+    <p>方案1: 修改 MatchDetailView.vue 使用默认导入（已采用）：</p>
+    <div class="code">import matchApi from '../api/match'
+// 然后使用
+matchApi.getMatchDetail(cacheKey)</div>
+    
+    <p>方案2: 修改 match.js 使用命名导出：</p>
+    <div class="code">export const getMatchDetail = (cacheKey, options = {}) => { ... }
+export const exportMatchDetail = (cacheKey, format = 'json', options = {}) => { ... }</div>
+  </div>
+  
+  <div class="section">
+    <h2>验证步骤</h2>
+    <ol>
+      <li>确认前端服务器已重启</li>
+      <li>清除浏览器缓存（Ctrl+Shift+R）</li>
+      <li>打开浏览器开发者工具（F12）</li>
+      <li>切换到 Console 标签</li>
+      <li>访问匹配详情页面</li>
+      <li>查看控制台输出的调试信息</li>
+    </ol>
+    
+    <p>应该看到类似以下的日志：</p>
+    <div class="code">[MatchDetailView] 开始加载详情
+[MatchDetailView] 缓存键: xxx-xxx-xxx
+[MatchDetailView] 调用API...
+[MatchDetailView] API响应: {...}
+[MatchDetailView] 响应数据: {...}
+[MatchDetailView] 详情数据: {...}
+[MatchDetailView] detail.value已设置: {...}
+[MatchDetailView] 加载完成</div>
+  </div>
+  
+  <div class="section">
+    <h2>常见错误</h2>
+    
+    <h3>错误1: getMatchDetail is not a function</h3>
+    <div class="error">TypeError: getMatchDetail is not a function</div>
+    <p>原因：导入方式错误</p>
+    <p>解决：使用默认导入 import matchApi from '../api/match'</p>
+    
+    <h3>错误2: Cannot read property 'data' of undefined</h3>
+    <div class="error">TypeError: Cannot read property 'data' of undefined</div>
+    <p>原因：API调用失败或返回undefined</p>
+    <p>解决：检查后端服务器是否运行，检查缓存键是否有效</p>
+    
+    <h3>错误3: 页面一直显示加载中</h3>
+    <p>原因：loading状态没有正确更新</p>
+    <p>解决：检查控制台是否有JavaScript错误</p>
+  </div>
+  
+  <div class="section">
+    <h2>快速测试</h2>
+    <p>在浏览器控制台中运行以下代码测试API：</p>
+    <div class="code">// 测试API调用
+fetch('/api/match', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    rows: [{
+      row_number: 1,
+      raw_data: '西门子 DDC控制器 RWD68',
+      row_type: 'device'
+    }]
+  })
+})
+.then(r => r.json())
+.then(data => {
+  console.log('匹配结果:', data);
+  if (data.success && data.matched_rows[0].detail_cache_key) {
+    const cacheKey = data.matched_rows[0].detail_cache_key;
+    console.log('缓存键:', cacheKey);
+    
+    // 测试获取详情
+    return fetch(`/api/match/detail/${cacheKey}`);
+  }
+})
+.then(r => r.json())
+.then(data => {
+  console.log('详情数据:', data);
+})
+.catch(err => console.error('错误:', err));</div>
+  </div>
+</body>
+</html>

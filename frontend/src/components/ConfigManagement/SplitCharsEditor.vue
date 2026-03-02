@@ -5,6 +5,29 @@
       <p class="description">
         定义用于拆分特征的分隔符。这些字符将被用来分割设备描述文本。
       </p>
+      <el-alert
+        type="info"
+        :closable="false"
+        show-icon
+        class="config-explanation"
+      >
+        <template #title>
+          <strong>配置说明</strong>
+        </template>
+        <div class="explanation-content">
+          <p><strong>第一个分隔符</strong>是"标准分隔符"（当前：<code>{{ standardSeparator }}</code>）</p>
+          <ul>
+            <li>在智能清理阶段，常见分隔符（逗号、空格、制表符等）会自动转换为标准分隔符</li>
+            <li>您<strong>不需要</strong>手动添加这些常见分隔符到列表中</li>
+          </ul>
+          <p><strong>其他分隔符</strong>用于特征提取时的文本拆分</p>
+          <ul>
+            <li>如果您的设备描述使用了特殊分隔符（如 <code>|</code>、<code>/</code>），可以添加到列表中</li>
+            <li>系统会按照这些分隔符拆分文本，提取独立的特征</li>
+          </ul>
+          <p class="tip">💡 <strong>建议：</strong>大多数情况下，只需保留默认的 <code>+</code> 作为标准分隔符即可</p>
+        </div>
+      </el-alert>
     </div>
 
     <div class="editor-body">
@@ -40,7 +63,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 export default {
   name: 'SplitCharsEditor',
@@ -54,6 +77,11 @@ export default {
   setup(props, { emit }) {
     const localValue = ref([...props.modelValue])
     const newChar = ref('')
+
+    // 计算标准分隔符（第一个分隔符）
+    const standardSeparator = computed(() => {
+      return localValue.value.length > 0 ? localValue.value[0] : '未设置'
+    })
 
     // 显示字符（特殊字符显示名称）
     const displayChar = (char) => {
@@ -101,6 +129,7 @@ export default {
     return {
       localValue,
       newChar,
+      standardSeparator,
       displayChar,
       getCharCode,
       addChar,
@@ -122,10 +151,49 @@ export default {
 }
 
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.config-explanation {
+  margin-bottom: 20px;
+}
+
+.explanation-content {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.explanation-content p {
+  margin: 8px 0;
+}
+
+.explanation-content ul {
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+.explanation-content li {
+  margin: 4px 0;
+}
+
+.explanation-content code {
+  background-color: #f5f7fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #e6a23c;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.explanation-content .tip {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: #f0f9ff;
+  border-left: 3px solid #409eff;
+  border-radius: 4px;
 }
 
 .toolbar {

@@ -89,31 +89,38 @@
         <!-- 匹配设备 -->
         <el-table-column
           label="匹配设备"
-          min-width="300"
+          min-width="350"
         >
           <template #default="scope">
-            <!-- 匹配成功 -->
-            <div v-if="scope.row.match_result && scope.row.match_result.match_status === 'success'">
-              <div class="matched-device-text">
-                {{ scope.row.match_result.matched_device_text }}
-              </div>
-              <div class="match-info">
-                <el-tag size="small" type="success">
-                  匹配成功 (得分: {{ scope.row.match_result.match_score }})
-                </el-tag>
-              </div>
-            </div>
-
-            <!-- 匹配失败 - 显示下拉选择器 -->
-            <div v-else>
-              <el-select
-                v-model="scope.row.selected_device_id"
-                placeholder="待人工匹配"
-                filterable
-                clearable
-                @change="handleManualSelect(scope.row)"
-                style="width: 100%"
+            <!-- 使用下拉框展示候选设备 -->
+            <el-select
+              v-model="scope.row.selected_device_id"
+              placeholder="请选择设备"
+              filterable
+              clearable
+              @change="handleDeviceSelect(scope.row)"
+              style="width: 100%"
+            >
+              <!-- 如果有候选设备，显示候选列表 -->
+              <el-option
+                v-for="candidate in scope.row.candidates || []"
+                :key="candidate.device_id"
+                :label="candidate.matched_device_text"
+                :value="candidate.device_id"
               >
+                <div class="device-option">
+                  <div class="device-option-main">
+                    {{ candidate.brand }} {{ candidate.device_name }}
+                    <el-tag v-if="candidate.match_score === scope.row.match_result?.match_score" size="small" type="success" style="margin-left: 8px">最佳</el-tag>
+                  </div>
+                  <div class="device-option-sub">
+                    {{ candidate.spec_model }} | ¥{{ candidate.unit_price.toFixed(2) }} | 得分: {{ candidate.match_score.toFixed(1) }}
+                  </div>
+                </div>
+              </el-option>
+              
+              <!-- 如果没有候选设备，显示所有设备库 -->
+              <template v-if="!scope.row.candidates || scope.row.candidates.length === 0">
                 <el-option
                   v-for="device in allDevices"
                   :key="device.device_id"
@@ -122,15 +129,23 @@
                 >
                   <div class="device-option">
                     <div class="device-option-main">{{ device.brand }} {{ device.device_name }}</div>
-                    <div class="device-option-sub">{{ device.spec_model }}</div>
+                    <div class="device-option-sub">{{ device.spec_model }} | ¥{{ device.unit_price.toFixed(2) }}</div>
                   </div>
                 </el-option>
-              </el-select>
-              <div v-if="!scope.row.selected_device_id" class="match-info">
-                <el-tag size="small" type="warning">
-                  待人工匹配
-                </el-tag>
-              </div>
+              </template>
+            </el-select>
+            
+            <!-- 匹配状态标签 -->
+            <div class="match-info">
+              <el-tag v-if="scope.row.match_result?.match_status === 'success'" size="small" type="success">
+                匹配成功
+              </el-tag>
+              <el-tag v-else-if="scope.row.selected_device_id" size="small" type="info">
+                手动选择
+              </el-tag>
+              <el-tag v-else size="small" type="warning">
+                待选择
+              </el-tag>
             </div>
           </template>
         </el-table-column>
@@ -147,6 +162,27 @@
             </span>
           </template>
         </el-table-column>
+
+        <!-- 操作列 - 新增查看详情按钮 -->
+        <el-table-column
+          label="操作"
+          width="120"
+          align="center"
+          fixed="right"
+        >
+          <template #default="scope">
+            <el-button
+              v-if="scope.row.detail_cache_key"
+              type="primary"
+              size="small"
+              link
+              @click="showMatchDetail(scope.row.detail_cache_key)"
+            >
+              查看详情
+            </el-button>
+            <span v-else class="no-detail-text">-</span>
+          </template>
+        </el-table-column>
       </el-table>
 
       <!-- 空状态 -->
@@ -156,6 +192,7 @@
         :image-size="150"
       />
     </el-card>
+
   </div>
 </template>
 
@@ -188,6 +225,8 @@ const statistics = ref({
   unmatched: 0,
   accuracy_rate: 0
 })
+
+// 不再需要对话框状态，改用新标签页打开
 
 // 计算属性
 const hasResults = computed(() => displayRows.value.length > 0)
@@ -258,7 +297,10 @@ const matchDevices = async (deviceRows) => {
     // 更新显示数据
     displayRows.value = response.data.matched_rows.map(row => ({
       ...row,
-      selected_device_id: null,
+      // 初始化 selected_device_id：如果匹配成功，使用匹配的设备ID；否则为 null
+      selected_device_id: row.match_result?.match_status === 'success' 
+        ? row.match_result.device_id 
+        : null,
       unit_price: row.match_result?.unit_price || 0.00
     }))
 
@@ -282,9 +324,9 @@ const matchDevices = async (deviceRows) => {
 }
 
 /**
- * 手动选择设备后的处理
+ * 处理设备选择（包括候选设备和手动选择）
  */
-const handleManualSelect = (row) => {
+const handleDeviceSelect = (row) => {
   if (!row.selected_device_id) {
     // 清除选择
     row.unit_price = 0.00
@@ -294,17 +336,46 @@ const handleManualSelect = (row) => {
       row.match_result.unit_price = 0.00
       row.match_result.match_status = 'failed'
     }
+    updateStatistics()
     return
   }
 
-  // 查找选中的设备
-  const selectedDevice = allDevices.value.find(d => d.device_id === row.selected_device_id)
+  // 查找选中的设备（先从候选列表查找，再从所有设备查找）
+  let selectedDevice = null
+  
+  // 1. 从候选列表查找
+  if (row.candidates && row.candidates.length > 0) {
+    selectedDevice = row.candidates.find(c => c.device_id === row.selected_device_id)
+    if (selectedDevice) {
+      // 使用候选设备的信息
+      row.unit_price = selectedDevice.unit_price
+
+      if (!row.match_result) {
+        row.match_result = {}
+      }
+      
+      row.match_result.device_id = selectedDevice.device_id
+      row.match_result.matched_device_text = selectedDevice.matched_device_text
+      row.match_result.unit_price = selectedDevice.unit_price
+      row.match_result.match_status = 'success'
+      row.match_result.match_score = selectedDevice.match_score
+      row.match_result.match_reason = selectedDevice.match_score === row.candidates[0]?.match_score 
+        ? '自动匹配（最佳）' 
+        : `用户选择（得分: ${selectedDevice.match_score.toFixed(1)}）`
+
+      updateStatistics()
+      
+      ElMessage.success(`已选择: ${selectedDevice.brand} ${selectedDevice.device_name}`)
+      return
+    }
+  }
+  
+  // 2. 从所有设备库查找（手动选择）
+  selectedDevice = allDevices.value.find(d => d.device_id === row.selected_device_id)
   
   if (selectedDevice) {
-    // 更新单价
     row.unit_price = selectedDevice.unit_price
 
-    // 更新匹配结果
     if (!row.match_result) {
       row.match_result = {}
     }
@@ -314,9 +385,8 @@ const handleManualSelect = (row) => {
     row.match_result.unit_price = selectedDevice.unit_price
     row.match_result.match_status = 'success'
     row.match_result.match_score = 0
-    row.match_result.match_reason = '人工选择'
+    row.match_result.match_reason = '手动选择'
 
-    // 更新统计信息
     updateStatistics()
 
     ElMessage.success(`已选择设备: ${selectedDevice.brand} ${selectedDevice.device_name}`)
@@ -359,6 +429,23 @@ const getRowClassName = ({ row }) => {
     return 'unmatched-row'
   }
   return ''
+}
+
+/**
+ * 显示匹配详情 - 在新标签页打开
+ */
+const showMatchDetail = (cacheKey) => {
+  if (!cacheKey) {
+    ElMessage.warning('该设备没有详情信息')
+    return
+  }
+  
+  // 在新标签页打开匹配详情页面
+  const routeData = router.resolve({
+    name: 'MatchDetail',
+    params: { cacheKey: cacheKey }
+  })
+  window.open(routeData.href, '_blank')
 }
 
 /**
@@ -418,7 +505,6 @@ const handleExportError = (error) => {
 .stat-item {
   text-align: center;
   padding: 15px;
-  background: rgba(255, 255, 255, 0.95);
   border-radius: 6px;
   transition: transform 0.2s;
 }
@@ -428,15 +514,22 @@ const handleExportError = (error) => {
 }
 
 .stat-item.success {
-  border-left: 4px solid #67c23a;
+  background: linear-gradient(135deg, #f0f9ff 0%, #c6f6d5 100%);
+  border: 2px solid #67c23a;
 }
 
 .stat-item.warning {
-  border-left: 4px solid #e6a23c;
+  background: linear-gradient(135deg, #fff9c4 0%, #ffe082 100%);
+  border: 2px solid #e6a23c;
 }
 
 .stat-item.info {
-  border-left: 4px solid #409eff;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #409eff;
+}
+
+.stat-item:not(.success):not(.warning):not(.info) {
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .stat-label {
@@ -485,11 +578,24 @@ const handleExportError = (error) => {
   font-size: 14px;
   color: #303133;
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .device-option-sub {
   font-size: 12px;
   color: #909399;
   margin-top: 2px;
+}
+
+/* 匹配信息样式 */
+.match-info {
+  margin-top: 5px;
+}
+
+/* 操作列样式 */
+.no-detail-text {
+  color: #c0c4cc;
+  font-size: 14px;
 }
 </style>

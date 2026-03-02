@@ -47,3 +47,8 @@ docs/*_DRAFT.md
 
 # Archive directory
 .archive/
+
+# Playwright
+frontend/playwright-report/
+frontend/test-results/
+frontend/.playwright/

@@ -119,8 +119,25 @@
           show-icon
         >
           <template #default>
-            <div>文件ID: {{ uploadedFile.excel_id }}</div>
-            <div>正在跳转到设备行调整页面...</div>
+            <div class="upload-success-content">
+              <div class="file-id-info">文件ID: {{ uploadedFile.excel_id }}</div>
+              <div class="action-prompt">请选择下一步操作：</div>
+              <div class="action-buttons">
+                <el-button 
+                  type="primary" 
+                  @click="goToRangeSelection"
+                  :loading="navigating"
+                >
+                  选择数据范围
+                </el-button>
+                <el-button 
+                  @click="skipRangeSelection"
+                  :loading="skipping"
+                >
+                  跳过范围选择（使用默认范围）
+                </el-button>
+              </div>
+            </div>
           </template>
         </el-alert>
       </div>
@@ -133,6 +150,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElNotification } from 'element-plus'
 import { UploadFilled, Collection, DataAnalysis, Setting, Tools } from '@element-plus/icons-vue'
+import { parseExcelRange } from '@/api/excel'
 
 const router = useRouter()
 
@@ -150,6 +168,8 @@ const uploadProgress = ref(0)
 const uploadStatus = ref('')
 const progressText = ref('')
 const uploadedFile = ref(null)
+const navigating = ref(false)
+const skipping = ref(false)
 
 // 上传接口地址
 const uploadAction = '/api/excel/analyze'
@@ -215,12 +235,23 @@ const handleUploadSuccess = async (response, file) => {
       throw new Error(response.error || '上传失败')
     }
 
+    // 清除之前的范围选择（如果有旧的excel_id）
+    // 遍历sessionStorage，清除所有以excel_range_开头的键
+    const keysToRemove = []
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i)
+      if (key && key.startsWith('excel_range_')) {
+        keysToRemove.push(key)
+      }
+    }
+    keysToRemove.forEach(key => sessionStorage.removeItem(key))
+
     // 显示上传成功通知
     ElNotification({
-      title: '分析完成',
-      message: `文件 "${response.filename}" 分析完成，共识别 ${response.statistics.high_probability} 个高概率设备行`,
+      title: '上传成功',
+      message: `文件 "${response.filename}" 上传成功，请选择下一步操作`,
       type: 'success',
-      duration: 2000
+      duration: 3000
     })
 
     // 保存上传文件信息
@@ -229,29 +260,82 @@ const handleUploadSuccess = async (response, file) => {
       filename: response.filename
     }
 
-    // 将分析结果保存到 sessionStorage，供调整页面使用
-    sessionStorage.setItem(`analysis_${response.excel_id}`, JSON.stringify({
-      filename: response.filename,
-      analysis_results: response.analysis_results,
-      statistics: response.statistics
-    }))
-
     // 更新进度状态
     uploading.value = false
     uploadProgress.value = 100
     uploadStatus.value = 'success'
-    progressText.value = '分析完成，正在跳转...'
-
-    // 延迟跳转到设备行调整页面
-    setTimeout(() => {
-      router.push({
-        name: 'DeviceRowAdjustment',
-        params: { excelId: response.excel_id }
-      })
-    }, 1500)
+    progressText.value = '上传完成，请选择下一步操作'
 
   } catch (error) {
     handleError('上传处理失败', error)
+  }
+}
+
+/**
+ * 跳转到数据范围选择页面
+ */
+const goToRangeSelection = () => {
+  if (!uploadedFile.value) return
+  
+  navigating.value = true
+  router.push({
+    name: 'DataRangeSelection',
+    params: { excelId: uploadedFile.value.excel_id },
+    query: { filename: uploadedFile.value.filename }
+  })
+}
+
+/**
+ * 跳过范围选择，使用默认范围直接跳转到设备行识别
+ */
+const skipRangeSelection = async () => {
+  if (!uploadedFile.value) return
+  
+  try {
+    skipping.value = true
+    
+    // 调用parseExcelRange API使用默认范围
+    const response = await parseExcelRange(uploadedFile.value.excel_id, {
+      sheet_index: 0,
+      start_row: 1,
+      end_row: null,
+      start_col: 1,
+      end_col: null
+    })
+    
+    if (response.data.success) {
+      // 保存默认范围到sessionStorage
+      const defaultRange = {
+        sheetIndex: 0,
+        startRow: 1,
+        endRow: null,
+        startCol: 'A',
+        endCol: null
+      }
+      sessionStorage.setItem(`excel_range_${uploadedFile.value.excel_id}`, JSON.stringify(defaultRange))
+      
+      // 保存分析结果到sessionStorage
+      const analysisData = {
+        filename: response.data.filename,
+        analysis_results: response.data.analysis_results,
+        statistics: response.data.statistics
+      }
+      sessionStorage.setItem(`analysis_${uploadedFile.value.excel_id}`, JSON.stringify(analysisData))
+      
+      ElMessage.success('使用默认范围解析成功')
+      
+      // 直接跳转到设备行识别页面
+      router.push({
+        name: 'DeviceRowAdjustment',
+        params: { excelId: uploadedFile.value.excel_id }
+      })
+    } else {
+      throw new Error(response.data.error || '解析失败')
+    }
+  } catch (error) {
+    ElMessage.error('解析失败: ' + (error.response?.data?.error_message || error.message))
+  } finally {
+    skipping.value = false
   }
 }
 
@@ -450,5 +534,33 @@ const handleError = (title, error) => {
   margin-top: 8px;
   font-size: 13px;
   line-height: 1.6;
+}
+
+.upload-success-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-id-info {
+  font-size: 13px;
+  color: #606266;
+}
+
+.action-prompt {
+  font-size: 14px;
+  font-weight: 500;
+  color: #303133;
+  margin-top: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.action-buttons .el-button {
+  flex: 1;
 }
 </style>

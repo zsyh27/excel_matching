@@ -152,28 +152,73 @@ def upload_file():
             return create_error_response('INVALID_FORMAT', '不支持的文件格式，请上传 xls、xlsm 或 xlsx 格式的文件')
         
         file_id = str(uuid.uuid4())
+        # Extract file extension before secure_filename to handle non-ASCII filenames
+        if '.' in file.filename:
+            file_ext = file.filename.rsplit('.', 1)[1].lower()
+        else:
+            return create_error_response('INVALID_FORMAT', '文件名必须包含扩展名')
+        
         original_filename = secure_filename(file.filename)
-        file_ext = original_filename.rsplit('.', 1)[1].lower()
+        # If secure_filename removes all characters, use a default name
+        if not original_filename or original_filename == file_ext:
+            original_filename = f"uploaded_file.{file_ext}"
+        
         saved_filename = f"{file_id}.{file_ext}"
         file_path = os.path.join(Config.UPLOAD_FOLDER, saved_filename)
         file.save(file_path)
         
-        logger.info(f"文件上传成功: {original_filename}")
-        return jsonify({'success': True, 'file_id': file_id, 'filename': original_filename, 'format': file_ext}), 200
+        logger.info(f"文件上传成功: {file.filename}")
+        return jsonify({'success': True, 'file_id': file_id, 'filename': file.filename, 'format': file_ext}), 200
     except Exception as e:
         logger.error(f"文件上传失败: {e}")
         return create_error_response('UPLOAD_ERROR', '文件上传失败', {'error_detail': str(e)})
 
 
-@app.route('/api/parse', methods=['POST'])
-def parse_file():
-    """文件解析接口"""
+@app.route('/api/excel/preview', methods=['POST'])
+def preview_excel():
+    """
+    Excel预览接口
+    
+    验证需求: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7
+    
+    Request:
+        {
+            "file_id": "uuid-xxx",
+            "sheet_index": 0  # 可选，默认0
+        }
+    
+    Response:
+        {
+            "success": true,
+            "data": {
+                "sheets": [
+                    {
+                        "index": 0,
+                        "name": "Sheet1",
+                        "rows": 100,
+                        "cols": 20
+                    }
+                ],
+                "preview_data": [
+                    ["序号", "设备名称", "型号", ...],
+                    ["1", "DDC控制器", "ML-5000", ...],
+                    ...
+                ],
+                "total_rows": 100,
+                "total_cols": 20,
+                "column_letters": ["A", "B", "C", ...]
+            }
+        }
+    """
     try:
         data = request.get_json()
         if not data or 'file_id' not in data:
             return create_error_response('MISSING_FILE_ID', '请求中缺少 file_id 参数')
         
         file_id = data['file_id']
+        sheet_index = data.get('sheet_index', 0)
+        
+        # 查找文件
         file_path = None
         for ext in Config.ALLOWED_EXTENSIONS:
             temp_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}.{ext}")
@@ -184,22 +229,217 @@ def parse_file():
         if not file_path:
             return create_error_response('FILE_NOT_FOUND', '文件不存在或已被删除')
         
-        parse_result = excel_parser.parse_file(file_path)
+        # 获取预览数据
+        preview_data = excel_parser.get_preview(file_path, sheet_index=sheet_index)
+        
+        return jsonify({'success': True, 'data': preview_data}), 200
+        
+    except ValueError as e:
+        # 处理格式错误、工作表索引无效等
+        logger.error(f"预览参数错误: {e}")
+        return create_error_response('INVALID_PARAMETER', str(e))
+    except Exception as e:
+        logger.error(f"Excel预览失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('PREVIEW_ERROR', 'Excel 文件预览失败', {'error_detail': str(e)})
+
+
+@app.route('/api/excel/parse_range', methods=['POST'])
+def parse_excel_range():
+    """
+    Excel范围解析接口
+    
+    验证需求: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8
+    
+    Request:
+        {
+            "file_id": "uuid-xxx",
+            "sheet_index": 0,      # 可选，默认0
+            "start_row": 2,        # 可选，默认1
+            "end_row": 50,         # 可选，默认null（到最后）
+            "start_col": 1,        # 可选，默认1
+            "end_col": 10          # 可选，默认null（到最后）
+        }
+    
+    Response:
+        {
+            "success": true,
+            "file_id": "uuid-xxx",
+            "parse_result": {
+                "rows": [...],
+                "total_rows": 49,
+                "filtered_rows": 5,
+                "format": "xlsx"
+            }
+        }
+    """
+    try:
+        data = request.get_json()
+        if not data or 'file_id' not in data:
+            return create_error_response('MISSING_FILE_ID', '请求中缺少 file_id 参数')
+        
+        file_id = data['file_id']
+        sheet_index = data.get('sheet_index', 0)
+        start_row = data.get('start_row', 1)
+        end_row = data.get('end_row', None)
+        start_col = data.get('start_col', 1)
+        end_col = data.get('end_col', None)
+        
+        # 查找文件
+        file_path = None
+        original_filename = None
+        for ext in Config.ALLOWED_EXTENSIONS:
+            temp_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}.{ext}")
+            if os.path.exists(temp_path):
+                file_path = temp_path
+                # 尝试从缓存中获取原始文件名
+                if file_id in excel_analysis_cache:
+                    original_filename = excel_analysis_cache[file_id].get('filename')
+                break
+        
+        if not file_path:
+            return create_error_response('FILE_NOT_FOUND', '文件不存在或已被删除')
+        
+        # 解析指定范围
+        parse_result = excel_parser.parse_range(
+            file_path,
+            sheet_index=sheet_index,
+            start_row=start_row,
+            end_row=end_row,
+            start_col=start_col,
+            end_col=end_col
+        )
+        
+        # 进行设备行识别分析
+        # 创建分析上下文
+        context = AnalysisContext(
+            all_rows=parse_result.rows,  # 第一个必需参数
+            header_row_index=None,
+            column_headers=[],
+            device_row_indices=[]
+        )
+        
+        # 第一遍：识别表头
+        for idx, row in enumerate(parse_result.rows):
+            if device_row_classifier.is_header_row(row):
+                context.header_row_index = idx
+                context.column_headers = row.raw_data
+                logger.info(f"识别到表头行: 第{row.row_number}行")
+                break
+        
+        # 第二遍：分析所有行
+        analysis_results = []
+        for row in parse_result.rows:
+            result = device_row_classifier.analyze_row(row, context)
+            analysis_results.append(result)
+            
+            # 更新上下文：记录高概率设备行的索引
+            if result.probability_level == ProbabilityLevel.HIGH:
+                context.device_row_indices.append(row.row_number - 1)
+        
+        # 缓存解析结果和分析结果
+        excel_analysis_cache[file_id] = {
+            'filename': original_filename or f"{file_id}.{parse_result.format}",
+            'file_path': file_path,
+            'parse_result': parse_result,
+            'analysis_results': analysis_results,  # 保存分析结果
+            'manual_adjustments': {}
+        }
+        
+        # 计算统计信息
+        statistics = {
+            'high_probability': sum(1 for r in analysis_results if r.probability_level == ProbabilityLevel.HIGH),
+            'medium_probability': sum(1 for r in analysis_results if r.probability_level == ProbabilityLevel.MEDIUM),
+            'low_probability': sum(1 for r in analysis_results if r.probability_level == ProbabilityLevel.LOW)
+        }
+        
+        logger.info(f"范围解析成功: file_id={file_id}, 行={start_row}-{end_row}, 列={start_col}-{end_col}")
+        logger.info(f"设备行识别完成: 高概率={statistics['high_probability']}, 中概率={statistics['medium_probability']}, 低概率={statistics['low_probability']}")
+        
+        # 构建返回的分析结果（包含 row_content）
+        # 注意：使用枚举索引而不是 row_number，因为 parse_result.rows 只包含选定范围内的行
+        analysis_results_with_content = [
+            {
+                **r.to_dict(),
+                'row_content': parse_result.rows[idx].raw_data
+            }
+            for idx, r in enumerate(analysis_results)
+        ]
+        
+        # 返回解析结果和分析结果
+        return jsonify({
+            'success': True,
+            'file_id': file_id,
+            'parse_result': parse_result.to_dict(),
+            'analysis_results': analysis_results_with_content,
+            'statistics': statistics,
+            'filename': original_filename or f"{file_id}.{parse_result.format}"
+        }), 200
+        
+    except ValueError as e:
+        # 处理范围参数错误
+        logger.error(f"范围参数错误: {e}")
+        return create_error_response('INVALID_RANGE', str(e))
+    except Exception as e:
+        logger.error(f"范围解析失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('PARSE_RANGE_ERROR', 'Excel 范围解析失败', {'error_detail': str(e)})
+
+
+@app.route('/api/parse', methods=['POST'])
+def parse_file():
+    """
+    文件解析接口（向后兼容）
+    
+    内部使用 parse_range 实现，使用默认范围（全部数据）
+    """
+    try:
+        data = request.get_json()
+        if not data or 'file_id' not in data:
+            return create_error_response('MISSING_FILE_ID', '请求中缺少 file_id 参数')
+        
+        file_id = data['file_id']
+        
+        # 查找文件
+        file_path = None
+        for ext in Config.ALLOWED_EXTENSIONS:
+            temp_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}.{ext}")
+            if os.path.exists(temp_path):
+                file_path = temp_path
+                break
+        
+        if not file_path:
+            return create_error_response('FILE_NOT_FOUND', '文件不存在或已被删除')
+        
+        # 使用 parse_range 解析全部数据（默认范围）
+        parse_result = excel_parser.parse_range(
+            file_path,
+            sheet_index=0,
+            start_row=1,
+            end_row=None,
+            start_col=1,
+            end_col=None
+        )
+        
         return jsonify({'success': True, 'file_id': file_id, 'parse_result': parse_result.to_dict()}), 200
     except Exception as e:
         logger.error(f"文件解析失败: {e}")
+        logger.error(traceback.format_exc())
         return create_error_response('PARSE_ERROR', 'Excel 文件解析失败', {'error_detail': str(e)})
 
 
 @app.route('/api/match', methods=['POST'])
 def match_devices():
-    """设备匹配接口"""
+    """设备匹配接口（增强版）"""
     try:
         data = request.get_json()
         if not data or 'rows' not in data:
             return create_error_response('MISSING_ROWS', '请求中缺少 rows 参数')
         
         rows = data['rows']
+        # 获取record_detail参数（默认True）
+        record_detail = data.get('record_detail', True)
+        
         matched_rows = []
         total_devices = matched_count = unmatched_count = 0
         
@@ -211,30 +451,73 @@ def match_devices():
                 # 如果已经有预处理特征，直接使用；否则从 raw_data 中提取
                 if 'preprocessed_features' in row and row['preprocessed_features']:
                     features = row['preprocessed_features']
+                    # 构建原始描述用于详情记录 - 使用 | 分隔符保持原始格式
+                    if 'device_description' in row:
+                        original_description = row['device_description']
+                    elif 'raw_data' in row:
+                        raw_data = row['raw_data']
+                        if isinstance(raw_data, list):
+                            # 使用 | 连接,保持Excel原始格式
+                            original_description = ' | '.join(str(cell) for cell in raw_data if cell)
+                        else:
+                            original_description = str(raw_data)
+                    else:
+                        original_description = ''
                 elif 'raw_data' in row:
                     # 从 raw_data 中提取设备描述并预处理
                     raw_data = row['raw_data']
                     if isinstance(raw_data, list):
-                        # 将列表数据合并为字符串（用逗号分隔，因为逗号是配置的分隔符）
-                        device_description = ','.join(str(cell) for cell in raw_data if cell)
+                        # 使用 | 连接,保持Excel原始格式
+                        original_description = ' | '.join(str(cell) for cell in raw_data if cell)
                     else:
-                        device_description = str(raw_data)
+                        original_description = str(raw_data)
                     
                     # 使用预处理器完整处理（包括归一化和特征提取）
-                    preprocess_result = preprocessor.preprocess(device_description)
+                    preprocess_result = preprocessor.preprocess(original_description)
                     features = preprocess_result.features
                 else:
                     # 没有可用的数据
                     logger.warning(f"行 {row.get('row_number')} 缺少数据")
                     features = []
+                    original_description = ''
                 
-                # 执行匹配
-                match_result = match_engine.match(features)
+                # 执行匹配（传递record_detail参数和原始描述）
+                match_result, cache_key = match_engine.match(
+                    features=features,
+                    input_description=original_description,
+                    record_detail=record_detail
+                )
                 
                 if match_result.match_status == 'success':
                     matched_count += 1
                 else:
                     unmatched_count += 1
+                
+                # 获取候选设备列表（前20个）
+                candidates_list = []
+                if features:
+                    try:
+                        # 使用 _evaluate_all_candidates 获取所有候选
+                        all_candidates = match_engine._evaluate_all_candidates(features)
+                        
+                        # 取前20个候选
+                        top_candidates = all_candidates[:20]
+                        
+                        # 转换为前端需要的格式
+                        for candidate in top_candidates:
+                            device_info = candidate.device_info
+                            candidates_list.append({
+                                'device_id': candidate.target_device_id,
+                                'matched_device_text': f"{device_info.get('brand', '')} {device_info.get('device_name', '')} - {device_info.get('spec_model', '')}".strip(),
+                                'unit_price': device_info.get('unit_price', 0.0),
+                                'match_score': candidate.weight_score,
+                                'brand': device_info.get('brand', ''),
+                                'device_name': device_info.get('device_name', ''),
+                                'spec_model': device_info.get('spec_model', '')
+                            })
+                    except Exception as e:
+                        logger.error(f"获取候选设备失败: {e}")
+                        candidates_list = []
                 
                 # 构建设备描述（用于前端显示）
                 if 'device_description' in row:
@@ -248,12 +531,20 @@ def match_devices():
                 else:
                     device_description = ''
                 
-                matched_rows.append({
+                # 构建匹配行数据，添加detail_cache_key和candidates字段
+                matched_row = {
                     'row_number': row.get('row_number'),
                     'row_type': 'device',
                     'device_description': device_description,
-                    'match_result': match_result.to_dict()
-                })
+                    'match_result': match_result.to_dict(),
+                    'candidates': candidates_list  # 添加候选设备列表
+                }
+                
+                # 如果有缓存键，添加到响应中
+                if cache_key:
+                    matched_row['detail_cache_key'] = cache_key
+                
+                matched_rows.append(matched_row)
             else:
                 matched_rows.append({
                     'row_number': row.get('row_number'),
@@ -280,6 +571,290 @@ def match_devices():
         logger.error(f"设备匹配失败: {e}")
         logger.error(traceback.format_exc())
         return create_error_response('MATCH_ERROR', '设备匹配过程中发生错误', {'error_detail': str(e)})
+
+
+@app.route('/api/match/detail/<cache_key>', methods=['GET'])
+def get_match_detail(cache_key: str):
+    """
+    获取匹配详情接口
+    
+    Args:
+        cache_key: 匹配详情的缓存键
+    
+    Returns:
+        JSON响应，包含完整的匹配详情
+    
+    验证需求: Requirements 1.2, 1.3, 6.5
+    """
+    try:
+        # 验证cache_key格式（应该是UUID格式）
+        if not cache_key or len(cache_key) < 10:
+            logger.warning(f"无效的缓存键格式: {cache_key}")
+            return jsonify({
+                'success': False,
+                'error_code': 'INVALID_CACHE_KEY',
+                'error_message': '无效的缓存键格式'
+            }), 400
+        
+        # 检查match_engine和detail_recorder是否可用
+        if not match_engine or not hasattr(match_engine, 'detail_recorder'):
+            logger.error("匹配引擎或详情记录器未初始化")
+            return jsonify({
+                'success': False,
+                'error_code': 'SERVICE_UNAVAILABLE',
+                'error_message': '匹配详情服务暂时不可用，请稍后重试'
+            }), 503
+        
+        # 从detail_recorder获取匹配详情
+        match_detail = match_engine.detail_recorder.get_detail(cache_key)
+        
+        # 如果缓存键不存在，返回404
+        if match_detail is None:
+            logger.warning(f"匹配详情不存在或已过期: {cache_key}")
+            return jsonify({
+                'success': False,
+                'error_code': 'DETAIL_NOT_FOUND',
+                'error_message': '匹配详情不存在或已过期，请重新执行匹配操作'
+            }), 404
+        
+        # 将MatchDetail对象序列化为JSON
+        try:
+            detail_dict = match_detail.to_dict()
+        except Exception as serialize_error:
+            logger.error(f"序列化匹配详情失败: {serialize_error}")
+            logger.error(traceback.format_exc())
+            return jsonify({
+                'success': False,
+                'error_code': 'SERIALIZATION_ERROR',
+                'error_message': '匹配详情数据格式错误，无法序列化'
+            }), 500
+        
+        logger.info(f"成功获取匹配详情: {cache_key}")
+        return jsonify({
+            'success': True,
+            'detail': detail_dict
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"获取匹配详情失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_DETAIL_ERROR', '获取匹配详情失败', {'error_detail': str(e)})
+
+
+@app.route('/api/match/detail/export/<cache_key>', methods=['GET'])
+def export_match_detail(cache_key: str):
+    """
+    导出匹配详情接口
+    
+    Args:
+        cache_key: 匹配详情的缓存键
+    
+    Query Parameters:
+        format: 导出格式，支持 'json' 或 'txt'，默认为 'json'
+    
+    Returns:
+        文件下载响应
+    
+    验证需求: Requirements 9.1, 9.2, 9.3, 9.4, 9.5
+    """
+    try:
+        # 验证cache_key格式
+        if not cache_key or len(cache_key) < 10:
+            logger.warning(f"无效的缓存键格式: {cache_key}")
+            return jsonify({
+                'success': False,
+                'error_code': 'INVALID_CACHE_KEY',
+                'error_message': '无效的缓存键格式'
+            }), 400
+        
+        # 获取导出格式参数
+        export_format = request.args.get('format', 'json').lower()
+        
+        # 验证格式参数
+        if export_format not in ['json', 'txt']:
+            logger.warning(f"不支持的导出格式: {export_format}")
+            return jsonify({
+                'success': False,
+                'error_code': 'UNSUPPORTED_FORMAT',
+                'error_message': f'不支持的导出格式: {export_format}，仅支持 json 或 txt'
+            }), 400
+        
+        # 检查match_engine和detail_recorder是否可用
+        if not match_engine or not hasattr(match_engine, 'detail_recorder'):
+            logger.error("匹配引擎或详情记录器未初始化")
+            return jsonify({
+                'success': False,
+                'error_code': 'SERVICE_UNAVAILABLE',
+                'error_message': '匹配详情服务暂时不可用，请稍后重试'
+            }), 503
+        
+        # 从detail_recorder获取匹配详情
+        match_detail = match_engine.detail_recorder.get_detail(cache_key)
+        
+        # 如果缓存键不存在，返回404
+        if match_detail is None:
+            logger.warning(f"匹配详情不存在或已过期: {cache_key}")
+            return jsonify({
+                'success': False,
+                'error_code': 'DETAIL_NOT_FOUND',
+                'error_message': '匹配详情不存在或已过期，请重新执行匹配操作'
+            }), 404
+        
+        # 生成文件内容
+        try:
+            if export_format == 'json':
+                # JSON格式：直接序列化为JSON字符串
+                import json
+                file_content = json.dumps(match_detail.to_dict(), ensure_ascii=False, indent=2)
+                mimetype = 'application/json'
+                file_extension = 'json'
+            else:
+                # TXT格式：生成可读的文本格式
+                file_content = _format_match_detail_as_text(match_detail)
+                mimetype = 'text/plain; charset=utf-8'
+                file_extension = 'txt'
+        except Exception as format_error:
+            logger.error(f"格式化匹配详情失败: {format_error}")
+            logger.error(traceback.format_exc())
+            return jsonify({
+                'success': False,
+                'error_code': 'FORMAT_ERROR',
+                'error_message': '匹配详情格式化失败，无法生成导出文件'
+            }), 500
+        
+        # 创建临时文件
+        try:
+            import tempfile
+            with tempfile.NamedTemporaryFile(mode='w', suffix=f'.{file_extension}', delete=False, encoding='utf-8') as f:
+                f.write(file_content)
+                temp_path = f.name
+        except Exception as file_error:
+            logger.error(f"创建临时文件失败: {file_error}")
+            logger.error(traceback.format_exc())
+            return jsonify({
+                'success': False,
+                'error_code': 'FILE_CREATION_ERROR',
+                'error_message': '创建导出文件失败，请稍后重试'
+            }), 500
+        
+        # 生成文件名
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        download_name = f"match_detail_{timestamp}.{file_extension}"
+        
+        logger.info(f"成功导出匹配详情: {cache_key}, 格式: {export_format}")
+        
+        # 返回文件下载响应
+        return send_file(
+            temp_path,
+            as_attachment=True,
+            download_name=download_name,
+            mimetype=mimetype
+        )
+        
+    except Exception as e:
+        logger.error(f"导出匹配详情失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('EXPORT_DETAIL_ERROR', '导出匹配详情失败', {'error_detail': str(e)})
+
+
+def _format_match_detail_as_text(match_detail) -> str:
+    """
+    将匹配详情格式化为可读的文本格式
+    
+    Args:
+        match_detail: MatchDetail对象
+    
+    Returns:
+        格式化的文本字符串
+    """
+    lines = []
+    lines.append("=" * 80)
+    lines.append("匹配详情报告")
+    lines.append("=" * 80)
+    lines.append("")
+    
+    # 基本信息
+    lines.append("【基本信息】")
+    lines.append(f"匹配时间: {match_detail.timestamp}")
+    lines.append(f"匹配耗时: {match_detail.match_duration_ms:.2f} 毫秒")
+    lines.append("")
+    
+    # 原始文本
+    lines.append("【原始文本】")
+    lines.append(match_detail.original_text)
+    lines.append("")
+    
+    # 预处理过程
+    lines.append("【预处理过程】")
+    preprocessing = match_detail.preprocessing
+    lines.append(f"1. 原始文本: {preprocessing.get('original', '')}")
+    lines.append(f"2. 清理后: {preprocessing.get('cleaned', '')}")
+    lines.append(f"3. 归一化: {preprocessing.get('normalized', '')}")
+    lines.append(f"4. 提取特征: {', '.join(preprocessing.get('features', []))}")
+    lines.append("")
+    
+    # 候选规则
+    lines.append("【候选规则列表】")
+    lines.append(f"共找到 {len(match_detail.candidates)} 个候选规则")
+    lines.append("")
+    
+    for idx, candidate in enumerate(match_detail.candidates, 1):
+        lines.append(f"候选 #{idx}")
+        lines.append(f"  规则ID: {candidate.rule_id}")
+        lines.append(f"  目标设备: {candidate.target_device_id}")
+        
+        device_info = candidate.device_info
+        lines.append(f"  设备信息: {device_info.get('brand', '')} {device_info.get('device_name', '')} ({device_info.get('spec_model', '')})")
+        lines.append(f"  单价: ¥{device_info.get('unit_price', 0):.2f}")
+        
+        lines.append(f"  权重得分: {candidate.weight_score:.2f}")
+        lines.append(f"  匹配阈值: {candidate.match_threshold} ({candidate.threshold_type})")
+        lines.append(f"  是否合格: {'是' if candidate.is_qualified else '否'}")
+        
+        lines.append(f"  匹配特征 ({len(candidate.matched_features)}):")
+        for feature in candidate.matched_features:
+            lines.append(f"    - {feature.feature} (权重: {feature.weight}, 类型: {feature.feature_type}, 贡献: {feature.contribution_percentage:.1f}%)")
+        
+        if candidate.unmatched_features:
+            lines.append(f"  未匹配特征 ({len(candidate.unmatched_features)}):")
+            for feature in candidate.unmatched_features:
+                lines.append(f"    - {feature}")
+        
+        lines.append("")
+    
+    # 最终结果
+    lines.append("【最终匹配结果】")
+    final_result = match_detail.final_result
+    lines.append(f"匹配状态: {final_result.get('match_status', '')}")
+    
+    if final_result.get('match_status') == 'success':
+        lines.append(f"匹配设备: {final_result.get('matched_device_text', '')}")
+        lines.append(f"设备ID: {final_result.get('device_id', '')}")
+        lines.append(f"单价: ¥{final_result.get('unit_price', 0):.2f}")
+    
+    lines.append(f"匹配得分: {final_result.get('match_score', 0):.2f}")
+    if 'threshold' in final_result:
+        lines.append(f"匹配阈值: {final_result.get('threshold')}")
+    lines.append(f"匹配原因: {final_result.get('match_reason', '')}")
+    lines.append("")
+    
+    # 决策原因
+    lines.append("【决策原因】")
+    lines.append(match_detail.decision_reason)
+    lines.append("")
+    
+    # 优化建议
+    if match_detail.optimization_suggestions:
+        lines.append("【优化建议】")
+        for idx, suggestion in enumerate(match_detail.optimization_suggestions, 1):
+            lines.append(f"{idx}. {suggestion}")
+        lines.append("")
+    
+    lines.append("=" * 80)
+    lines.append("报告结束")
+    lines.append("=" * 80)
+    
+    return '\n'.join(lines)
 
 
 @app.route('/api/devices', methods=['GET'])
@@ -1559,6 +2134,10 @@ def manual_adjust():
         
         # 3. 处理每个调整记录
         updated_rows = []
+        analysis_results = cache['analysis_results']
+        
+        # 创建行号到分析结果的映射
+        row_number_map = {result.row_number: result for result in analysis_results}
         
         for adj in adjustments:
             if 'row_number' not in adj or 'action' not in adj:
@@ -1567,9 +2146,9 @@ def manual_adjust():
             row_number = adj['row_number']
             action = adj['action']
             
-            # 验证行号有效性
-            if row_number < 1 or row_number > len(cache['parse_result'].rows):
-                logger.warning(f"无效的行号: {row_number}")
+            # 验证行号是否在分析结果中
+            if row_number not in row_number_map:
+                logger.warning(f"无效的行号: {row_number}，不在分析结果中")
                 continue
             
             # 根据操作类型保存调整记录
@@ -1633,7 +2212,7 @@ def get_final_device_rows():
         auto_count = 0
         manual_count = 0
         
-        for result in analysis_results:
+        for idx, result in enumerate(analysis_results):
             row_number = result.row_number
             
             # 检查是否有手动调整
@@ -1651,9 +2230,9 @@ def get_final_device_rows():
             
             # 如果判定为设备行，添加到结果列表
             if is_device:
-                row_idx = row_number - 1
-                if 0 <= row_idx < len(parse_result.rows):
-                    row_data = parse_result.rows[row_idx]
+                # 使用枚举索引而不是 row_number，因为 parse_result.rows 只包含选定范围内的行
+                if 0 <= idx < len(parse_result.rows):
+                    row_data = parse_result.rows[idx]
                     device_rows.append({
                         'row_number': row_number,
                         'row_content': row_data.raw_data,

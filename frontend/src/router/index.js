@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import FileUploadView from '../views/FileUploadView.vue'
+import DataRangeSelectionView from '../views/DataRangeSelectionView.vue'
 import DeviceRowAdjustmentView from '../views/DeviceRowAdjustmentView.vue'
 import MatchingView from '../views/MatchingView.vue'
 import RuleManagementView from '../views/RuleManagementView.vue'
@@ -15,6 +16,16 @@ const routes = [
     component: FileUploadView,
     meta: {
       title: '上传设备清单'
+    }
+  },
+  {
+    path: '/data-range-selection/:excelId',
+    name: 'DataRangeSelection',
+    component: DataRangeSelectionView,
+    props: true,
+    meta: {
+      title: '数据范围选择',
+      requiresExcelId: true
     }
   },
   {
@@ -83,6 +94,15 @@ const routes = [
     meta: {
       title: '配置管理'
     }
+  },
+  {
+    path: '/match-detail/:cacheKey',
+    name: 'MatchDetail',
+    component: () => import('../views/MatchDetailView.vue'),
+    props: true,
+    meta: {
+      title: '匹配详情'
+    }
   }
 ]
 
@@ -91,11 +111,19 @@ const router = createRouter({
   routes
 })
 
-// 路由守卫：更新页面标题
+// 路由守卫：更新页面标题和验证excelId
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = `${to.meta.title} - DDC设备清单匹配报价系统`
   }
+  
+  // 验证需要excelId的路由
+  if (to.meta.requiresExcelId && !to.params.excelId) {
+    console.error('缺少必需的excelId参数')
+    next({ name: 'FileUpload' })
+    return
+  }
+  
   next()
 })
 

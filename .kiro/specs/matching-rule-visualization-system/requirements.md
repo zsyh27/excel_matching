@@ -17,6 +17,14 @@
 - **Match_Score**: 匹配得分,基于特征权重计算的数值
 - **Match_Threshold**: 匹配阈值,决定是否接受匹配结果的最低分数
 - **Visualization_Detail**: 可视化详情,展示匹配过程的完整信息
+- **Intelligent_Cleaning**: 智能清理功能,用于删除无效数据和噪音文本
+- **Truncation_Delimiter**: 截断分隔符,用于识别并删除分隔符后的无效内容
+- **Noise_Pattern**: 噪音段落模式,用于识别并删除噪音段落的正则表达式
+- **Metadata_Tag**: 元数据标签,用于识别并删除HTML元数据标签
+- **Normalization**: 归一化处理,将文本转换为标准格式的过程
+- **Synonym_Mapping**: 同义词映射,将同义词转换为标准词的规则
+- **Config_Management**: 配置管理系统,用于管理系统配置
+- **Lazy_Loading**: 懒加载,按需加载内容以提高性能的技术
 
 ## Requirements
 
@@ -42,6 +50,66 @@
 3. WHEN 显示特征提取过程 THEN THE System SHALL 展示文本归一化后的结果
 4. WHEN 显示特征提取过程 THEN THE System SHALL 展示提取的特征列表及其类型(品牌、型号、参数等)
 5. WHEN 特征列表为空 THEN THE System SHALL 显示"未提取到特征"的提示信息
+
+### Requirement 13: 智能清理过程详情展示
+
+**User Story:** 作为用户,我希望看到智能清理的详细过程和匹配结果,以便判断清理是否正确执行。
+
+#### Acceptance Criteria
+
+1. WHEN 智能清理执行后 THEN THE System SHALL 显示应用的清理规则列表(截断分隔符、噪音段落模式、元数据标签)
+2. WHEN 某个清理规则匹配到内容时 THEN THE System SHALL 显示该规则匹配到的具体文本片段
+3. WHEN 显示清理结果时 THEN THE System SHALL 展示删除前后的文本对比
+4. WHEN 显示智能清理统计时 THEN THE System SHALL 包含原始长度、清理后长度和删除长度
+5. WHEN 某个清理规则未匹配到内容时 THEN THE System SHALL 明确显示该规则未匹配
+
+### Requirement 14: 归一化过程详情展示
+
+**User Story:** 作为用户,我希望看到归一化过程应用了哪些规则,以便理解文本转换逻辑。
+
+#### Acceptance Criteria
+
+1. WHEN 归一化执行后 THEN THE System SHALL 显示所有应用的同义词映射规则及其转换详情
+2. WHEN 归一化执行后 THEN THE System SHALL 显示所有应用的归一化映射规则及其转换详情
+3. WHEN 归一化执行后 THEN THE System SHALL 显示应用的全局配置项(如大小写转换、空格处理)
+4. WHEN 显示归一化结果时 THEN THE System SHALL 展示转换前后的文本对比
+5. WHEN 某个映射规则被应用时 THEN THE System SHALL 高亮显示或标注转换的具体位置
+
+### Requirement 15: 特征提取配置详情展示
+
+**User Story:** 作为用户,我希望看到特征提取过程使用的配置信息,以便理解特征识别逻辑。
+
+#### Acceptance Criteria
+
+1. WHEN 特征提取执行后 THEN THE System SHALL 显示使用的所有分隔符列表
+2. WHEN 特征提取执行后 THEN THE System SHALL 显示识别出的品牌关键词和设备类型关键词
+3. WHEN 特征提取执行后 THEN THE System SHALL 显示应用的特征质量评分规则
+4. WHEN 显示提取的特征时 THEN THE System SHALL 标注每个特征的来源(品牌库、设备类型库、参数识别等)
+5. WHEN 特征被过滤时 THEN THE System SHALL 显示过滤原因(质量评分低、重复等)
+
+### Requirement 16: 智能清理配置管理界面
+
+**User Story:** 作为用户,我希望在配置管理页面中管理智能清理设置,以便控制清理行为。
+
+#### Acceptance Criteria
+
+1. WHEN 用户访问配置管理页面时 THEN THE Config_Management SHALL 显示智能清理配置选项卡或区域
+2. WHEN 用户修改智能清理配置时 THEN THE Config_Management SHALL 保存配置到 static_config.json 的 intelligent_extraction 字段
+3. WHEN 显示智能清理配置时 THEN THE Config_Management SHALL 包含截断分隔符、噪音段落模式和元数据标签的编辑功能
+4. WHEN 用户查看配置说明时 THEN THE Config_Management SHALL 明确区分智能清理和删除无关关键词的功能差异
+5. WHEN 配置保存成功时 THEN THE Config_Management SHALL 提供用户反馈并更新显示
+
+### Requirement 17: 匹配详情对话框懒加载优化
+
+**User Story:** 作为用户,我希望匹配详情对话框快速打开,以便提高工作效率。
+
+#### Acceptance Criteria
+
+1. WHEN 用户打开匹配详情对话框时 THEN THE System SHALL 仅加载特征提取标签页的内容
+2. WHEN 用户点击候选规则标签页时 THEN THE System SHALL 延迟加载该标签页内容
+3. WHEN 用户点击匹配结果标签页时 THEN THE System SHALL 延迟加载该标签页内容
+4. WHEN 标签页内容正在加载时 THEN THE System SHALL 显示加载状态指示器
+5. WHEN 标签页内容已加载时 THEN THE System SHALL 缓存内容避免重复加载
 
 ### Requirement 3: 候选规则列表展示
 

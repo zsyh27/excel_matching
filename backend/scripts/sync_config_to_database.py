@@ -11,8 +11,10 @@ import os
 import sys
 
 # 配置文件路径
-CONFIG_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'static_config.json')
-DB_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'devices.db')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(script_dir))
+CONFIG_FILE = os.path.join(project_root, 'data', 'static_config.json')
+DB_FILE = os.path.join(project_root, 'data', 'devices.db')
 
 def sync_config_to_database():
     """同步配置到数据库"""

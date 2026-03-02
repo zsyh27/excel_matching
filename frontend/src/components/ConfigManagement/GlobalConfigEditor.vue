@@ -3,8 +3,22 @@
     <div class="editor-header">
       <h2>全局配置</h2>
       <p class="description">
-        全局处理选项，包括大小写转换、空格删除、全角转半角等。
+        全局处理选项，控制文本预处理和特征提取的基本行为。
       </p>
+      <div class="info-box">
+        <div class="info-title">⚙️ 配置说明</div>
+        <ul class="info-list">
+          <li><strong>默认匹配阈值</strong>：当规则自身阈值未达到时使用的兜底阈值（推荐：5.0）</li>
+          <li><strong>统一转小写</strong>：将所有字母转为小写，提高匹配一致性</li>
+          <li><strong>删除空格</strong>：删除所有空格字符，简化文本结构</li>
+          <li><strong>全角转半角</strong>：将全角字符转为半角，统一字符格式</li>
+          <li><strong>最小特征长度</strong>：英文/数字特征的最小长度（推荐：1）</li>
+          <li><strong>最小特征长度（中文）</strong>：中文特征的最小长度（推荐：1）</li>
+        </ul>
+        <div class="info-note">
+          <strong>建议</strong>：除非有特殊需求，建议保持默认配置，这些参数已经过优化测试
+        </div>
+      </div>
     </div>
 
     <div class="editor-body">
@@ -179,10 +193,46 @@ export default {
 }
 
 .description {
-  margin: 0 0 30px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.info-box {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  border-radius: 4px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #388e3c;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  margin: 10px 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.info-list li {
+  margin: 5px 0;
+}
+
+.info-note {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #c8e6c9;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #1b5e20;
 }
 
 .config-item {

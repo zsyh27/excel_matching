@@ -351,6 +351,290 @@ pytest tests/ --cov=modules --cov-report=html
 
 ---
 
+## 🔍 核心业务流程
+
+### 特征提取与匹配流程
+
+特征提取和匹配是本系统的核心功能，以下是完整的业务流程和模块调用关系。
+
+#### 1. 整体流程图
+
+```
+Excel文件上传
+    ↓
+设备行识别 (DeviceRowClassifier)
+    ↓
+文本预处理 (TextPreprocessor)
+    ├─ 智能清理
+    ├─ 删除无关关键词
+    ├─ 归一化处理
+    └─ 特征提取
+    ↓
+设备匹配 (MatchEngine)
+    ├─ 特征权重计算
+    ├─ 同义词扩展
+    └─ 最佳匹配选择
+    ↓
+结果导出 (ExcelExporter)
+```
+
+#### 2. 文本预处理详细流程
+
+**模块**: `backend/modules/text_preprocessor.py` → `TextPreprocessor`
+
+**处理阶段**:
+
+```python
+def preprocess(text: str, mode: str = 'matching') -> PreprocessResult:
+    """
+    统一的文本预处理入口
+    
+    处理流程：
+    1. 智能清理（截断噪音、删除噪音段落）
+    2. 删除元数据标签
+    3. 删除无关关键词
+    4. 将空格转换为分隔符（在归一化之前）
+    5. 三层归一化（精准映射、通用归一化、模糊兼容）
+    6. 特征拆分
+    """
+```
+
+**阶段1：智能清理** (`_intelligent_clean_with_detail`)
+- 在噪音分隔符处截断文本
+- 删除噪音段落（如"按照图纸规范"、"达到验收"等）
+- 删除元数据标签（如"型号:"、"规格:"等）
+- 统一分隔符（将逗号、空格等转为标准分隔符）
+
+**阶段2：删除无关关键词** (`remove_ignore_keywords`)
+- 删除配置文件中指定的无关关键词
+- 如："施工要求"、"验收"、"含税"、"品牌"等
+
+**阶段3：归一化处理** (`_normalize_with_detail`)
+- **层次1：精准映射** - 应用 `normalization_map` 中的映射规则
+  - 单位统一：℃ → (空)、Pa → pa
+  - 符号标准化：~ → -、± → (空)
+- **层次2：通用归一化**
+  - 全角转半角：将全角字符转为半角
+  - 删除空格：删除所有空格字符
+  - 统一小写：将字母转为小写
+- **注意**：同义词映射已移到匹配阶段，不在预处理阶段应用
+
+**阶段4：特征拆分** (`_extract_features_with_detail`)
+- 按分隔符拆分文本
+- 处理括号内外的特征
+- 移除元数据关键词前缀
+- 删除单位后缀
+- 智能拆分（识别品牌和设备类型）
+- 复杂参数分解（如"±5%@25c"）
+- 特征质量评分和过滤
+
+**特征质量评分规则**:
+```
+基础分: 50
+加分项:
+  + 是技术术语: +20
+  + 包含数字: +10
+  + 包含单位: +10
+  + 在设备关键词中: +15
+  + 长度适中(3-20): +5
+减分项:
+  - 是元数据标签: -30
+  - 是常见词: -20
+  - 太短(<2且不在设备关键词中): -20
+  - 纯数字: -15
+  - 纯标点: -30
+```
+
+#### 3. 设备匹配详细流程
+
+**模块**: `backend/modules/match_engine.py` → `MatchEngine`
+
+**匹配算法**:
+
+```python
+def match(features: List[str], input_description: str) -> MatchResult:
+    """
+    基于权重的特征匹配算法
+    
+    匹配流程：
+    1. 对于每条规则，计算 Excel 特征与规则特征的权重累计得分
+    2. 如果得分达到规则的 match_threshold，将规则加入候选列表
+    3. 如果没有候选规则，使用 default_match_threshold 再次判定
+    4. 选择权重得分最高的规则对应的设备
+    """
+```
+
+**权重计算** (`calculate_weight_score`):
+```python
+# 对于每个 Excel 特征
+for feature in features:
+    # 1. 直接匹配
+    if feature in rule.auto_extracted_features:
+        weight_score += rule.feature_weights[feature]
+    
+    # 2. 同义词扩展匹配（新增）
+    else:
+        matched_synonym = _find_synonym_match(feature, rule_features, synonym_map)
+        if matched_synonym:
+            weight_score += rule.feature_weights[matched_synonym]
+```
+
+**同义词扩展** (`_find_synonym_match`):
+- 支持双向匹配：原词 → 目标词，目标词 → 原词
+- 示例：Excel输入"阀"可以匹配规则中的"阀门"
+- 优势：保留原始信息，提高召回率
+
+**匹配策略**:
+1. **第一轮匹配**：使用每条规则自己的 `match_threshold`
+2. **第二轮匹配**：使用 `default_match_threshold` 兜底
+3. **最佳选择**：选择权重得分最高的规则
+
+#### 4. 规则生成流程
+
+**模块**: `backend/modules/rule_generator.py` → `RuleGenerator`
+
+**生成过程**:
+```python
+def generate_rule(device: Device) -> Rule:
+    """
+    为设备生成匹配规则
+    
+    步骤：
+    1. 对设备的所有字段（品牌、设备名称、规格型号、详细参数）进行预处理
+    2. 使用 mode='device' 确保设备库数据的特殊处理
+    3. 提取所有特征并去重
+    4. 根据特征类型分配权重
+    5. 计算匹配阈值
+    """
+```
+
+**特征权重分配**:
+```python
+feature_weight_config = {
+    'brand_weight': 1,        # 品牌权重系数
+    'device_type_weight': 4,  # 设备类型权重系数（最高）
+    'model_weight': 1,        # 型号权重系数
+    'parameter_weight': 4     # 参数权重系数
+}
+
+# 实际权重 = 基础权重 × 权重系数
+# 例如：设备类型特征 = 1.0 × 4 = 4.0
+```
+
+**匹配阈值计算**:
+```python
+# 方法1：基于总权重的百分比
+match_threshold = total_weight * 0.6  # 60%的总权重
+
+# 方法2：使用默认阈值
+match_threshold = default_match_threshold  # 通常为 5.0
+```
+
+#### 5. 模块调用关系
+
+```
+app.py (Flask应用)
+    │
+    ├─ /api/parse (Excel解析)
+    │   └─ ExcelParser.parse()
+    │       └─ DeviceRowClassifier.classify_row()
+    │
+    ├─ /api/match (设备匹配)
+    │   └─ MatchEngine.match()
+    │       ├─ TextPreprocessor.preprocess()
+    │       │   ├─ intelligent_clean()
+    │       │   ├─ remove_ignore_keywords()
+    │       │   ├─ normalize_text()
+    │       │   └─ extract_features()
+    │       │
+    │       ├─ calculate_weight_score()
+    │       │   └─ _find_synonym_match()
+    │       │
+    │       └─ select_best_match()
+    │
+    ├─ /api/export (结果导出)
+    │   └─ ExcelExporter.export()
+    │
+    └─ /api/devices (设备管理)
+        └─ DataLoader (数据库/JSON)
+            ├─ DatabaseLoader.load_devices()
+            └─ RuleGenerator.generate_rule()
+```
+
+#### 6. 配置文件结构
+
+**文件**: `data/static_config.json`
+
+```json
+{
+  "ignore_keywords": [],           // 删除无关关键词
+  "normalization_map": {},         // 归一化映射
+  "synonym_map": {},               // 同义词映射（匹配阶段使用）
+  "feature_split_chars": [],       // 特征分隔符
+  "brand_keywords": [],            // 品牌关键词
+  "device_type_keywords": [],      // 设备类型关键词
+  "feature_weight_config": {},     // 特征权重配置
+  "global_config": {               // 全局配置
+    "default_match_threshold": 5.0,
+    "unify_lowercase": true,
+    "remove_whitespace": true,
+    "fullwidth_to_halfwidth": true,
+    "min_feature_length": 1,
+    "min_feature_length_chinese": 1
+  },
+  "intelligent_extraction": {      // 智能提取配置
+    "enabled": true,
+    "text_cleaning": {},
+    "feature_quality_scoring": {},
+    "complex_parameter_decomposition": {}
+  }
+}
+```
+
+#### 7. 数据流转示例
+
+**输入**: "霍尼韦尔+座阀+二通+DN15"
+
+**预处理流程**:
+```
+原始文本: "霍尼韦尔+座阀+二通+DN15"
+    ↓ (智能清理)
+清理后: "霍尼韦尔+座阀+二通+DN15"
+    ↓ (删除无关关键词)
+删除后: "霍尼韦尔+座阀+二通+DN15"
+    ↓ (归一化)
+归一化: "霍尼韦尔+座阀+二通+dn15"  (DN→dn, 统一小写)
+    ↓ (特征拆分)
+特征列表: ["霍尼韦尔", "座阀", "二通", "dn15"]
+```
+
+**匹配流程**:
+```
+Excel特征: ["霍尼韦尔", "座阀", "二通", "dn15"]
+规则特征: ["霍尼韦尔", "座阀", "二通", "dn15"]
+
+权重计算:
+  霍尼韦尔 (品牌): 1.0 × 1 = 1.0
+  座阀 (设备类型): 1.0 × 4 = 4.0
+  二通 (参数): 1.0 × 4 = 4.0
+  dn15 (参数): 1.0 × 4 = 4.0
+  总得分: 13.0
+
+匹配阈值: 5.0
+结果: 匹配成功 (13.0 >= 5.0)
+```
+
+#### 8. 关键设计原则
+
+1. **统一预处理**：所有模块（Excel解析、规则生成、匹配引擎）使用相同的预处理逻辑
+2. **配置驱动**：所有规则和参数都可通过配置文件调整，无需修改代码
+3. **同义词扩展**：在匹配阶段使用同义词扩展，保留原始信息，提高召回率
+4. **特征质量评分**：智能过滤低质量特征，提高匹配准确性
+5. **权重分配**：根据特征类型分配不同权重，设备类型和参数权重最高
+6. **双阈值机制**：规则阈值 + 默认阈值，确保匹配的灵活性和准确性
+
+---
+
 ## 📚 技术栈
 
 ### 后端技术
