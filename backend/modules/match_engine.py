@@ -23,7 +23,7 @@ class MatchResult:
     """
     device_id: Optional[str]        # 匹配的设备ID，失败时为 None
     matched_device_text: Optional[str]  # 完整的设备显示文本，失败时为 None
-    unit_price: float               # 设备单价，失败时为 0.00
+    unit_price: int                 # 设备单价（整数），失败时为 0
     match_status: str               # 匹配状态: "success" 或 "failed"
     match_score: float              # 权重得分
     match_reason: str               # 匹配成功/失败的原因说明

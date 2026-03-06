@@ -92,8 +92,9 @@
           :rules="param.required ? [{ required: true, message: `请输入${param.name}`, trigger: 'blur' }] : []"
         >
           <el-input
-            v-model="formData.key_params[param.name].value"
+            :model-value="getParamValue(param.name)"
             :placeholder="`请输入${param.name}${param.unit ? '，单位：' + param.unit : ''}`"
+            @update:model-value="(val) => setParamValue(param.name, val, param)"
           >
             <template v-if="param.unit" #append>{{ param.unit }}</template>
           </el-input>
@@ -192,6 +193,51 @@ const currentDeviceParams = computed(() => {
   if (!formData.device_type) return []
   return deviceTypesConfig.value[formData.device_type]?.params || []
 })
+
+// 获取参数值的辅助函数
+const getParamValue = (paramName) => {
+  if (!formData.key_params[paramName]) {
+    return ''
+  }
+  
+  // 处理两种数据格式：
+  // 1. 简单格式: {参数名: "参数值"}
+  // 2. 嵌套格式: {参数名: {value: "参数值", raw_value: ..., ...}}
+  const param = formData.key_params[paramName]
+  
+  if (typeof param === 'string') {
+    // 简单格式：直接返回字符串值
+    return param
+  } else if (typeof param === 'object' && param !== null) {
+    // 嵌套格式：返回 value 字段
+    return param.value || ''
+  }
+  
+  return ''
+}
+
+// 设置参数值的辅助函数
+const setParamValue = (paramName, value, param) => {
+  if (!formData.key_params[paramName]) {
+    // 如果参数不存在，使用简单格式初始化
+    formData.key_params[paramName] = value
+  } else {
+    // 如果参数已存在，检查其格式
+    const existingParam = formData.key_params[paramName]
+    
+    if (typeof existingParam === 'string') {
+      // 简单格式：直接更新值
+      formData.key_params[paramName] = value
+    } else if (typeof existingParam === 'object' && existingParam !== null) {
+      // 嵌套格式：更新 value 和 raw_value
+      formData.key_params[paramName].value = value
+      formData.key_params[paramName].raw_value = value
+    } else {
+      // 其他情况：使用简单格式
+      formData.key_params[paramName] = value
+    }
+  }
+}
 
 const formData = reactive({
   device_id: '',
@@ -298,16 +344,10 @@ const onDeviceTypeChange = (newType) => {
   
   if (!newType) return
   
-  // 初始化新类型的参数结构
+  // 初始化新类型的参数结构（使用简单格式）
   const params = deviceTypesConfig.value[newType]?.params || []
   params.forEach(param => {
-    formData.key_params[param.name] = {
-      value: '',
-      raw_value: '',
-      data_type: param.data_type,
-      unit: param.unit || null,
-      confidence: 1.0
-    }
+    formData.key_params[param.name] = ''
   })
 }
 
@@ -355,9 +395,15 @@ const initForm = () => {
       formData.device_id = generateDeviceId()
     }
     
-    // 如果有device_type但没有key_params，初始化参数结构
-    if (formData.device_type && Object.keys(formData.key_params).length === 0) {
-      onDeviceTypeChange(formData.device_type)
+    // 确保所有当前设备类型的参数都被初始化（使用简单格式）
+    if (formData.device_type) {
+      const params = deviceTypesConfig.value[formData.device_type]?.params || []
+      params.forEach(param => {
+        if (formData.key_params[param.name] === undefined) {
+          // 如果参数不存在，初始化为空字符串
+          formData.key_params[param.name] = ''
+        }
+      })
     }
   } else {
     isEdit.value = false

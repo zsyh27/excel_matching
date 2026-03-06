@@ -539,7 +539,7 @@ const getFeatureTagType = (weight) => {
   if (weight >= 15) return 'danger'  // 高权重：红色
   if (weight >= 10) return 'warning' // 中高权重：橙色
   if (weight >= 5) return 'success'  // 中权重：绿色
-  return ''  // 低权重：默认灰色
+  return 'info'  // 低权重：灰色
 }
 
 // 刷新列表（供父组件调用）

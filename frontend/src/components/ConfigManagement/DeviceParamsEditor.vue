@@ -52,6 +52,10 @@
                   <el-icon><Plus /></el-icon>
                   添加参数
                 </el-button>
+                <el-button size="small" @click="showCopyDialog = true">
+                  <el-icon><CopyDocument /></el-icon>
+                  复制类型
+                </el-button>
                 <el-button size="small" type="danger" @click="deleteDeviceType">
                   <el-icon><Delete /></el-icon>
                   删除类型
@@ -68,14 +72,35 @@
               >
                 <div class="param-header">
                   <span class="param-index">参数 {{ index + 1 }}</span>
-                  <el-button
-                    type="danger"
-                    size="small"
-                    text
-                    @click="deleteParameter(index)"
-                  >
-                    <el-icon><Delete /></el-icon>
-                  </el-button>
+                  <div class="param-actions">
+                    <el-button
+                      size="small"
+                      text
+                      :disabled="index === 0"
+                      @click="moveParameterUp(index)"
+                      title="上移"
+                    >
+                      <el-icon><ArrowUp /></el-icon>
+                    </el-button>
+                    <el-button
+                      size="small"
+                      text
+                      :disabled="index === currentParams.length - 1"
+                      @click="moveParameterDown(index)"
+                      title="下移"
+                    >
+                      <el-icon><ArrowDown /></el-icon>
+                    </el-button>
+                    <el-button
+                      type="danger"
+                      size="small"
+                      text
+                      @click="deleteParameter(index)"
+                      title="删除"
+                    >
+                      <el-icon><Delete /></el-icon>
+                    </el-button>
+                  </div>
                 </div>
 
                 <div class="param-form">
@@ -193,13 +218,47 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 复制设备类型对话框 -->
+    <el-dialog
+      v-model="showCopyDialog"
+      title="复制设备类型"
+      width="500px"
+    >
+      <el-form label-width="100px">
+        <el-form-item label="源类型">
+          <el-input :value="selectedType" disabled />
+        </el-form-item>
+        <el-form-item label="新类型名称">
+          <el-input
+            v-model="copyTypeName"
+            placeholder="输入新的设备类型名称"
+          />
+        </el-form-item>
+        <el-alert
+          title="提示"
+          type="info"
+          :closable="false"
+          style="margin-top: 10px"
+        >
+          将复制当前设备类型的所有参数配置，您可以在复制后进行修改。
+        </el-alert>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="showCopyDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmCopyDeviceType">
+          确定
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete, Edit } from '@element-plus/icons-vue'
+import { Plus, Delete, Edit, ArrowUp, ArrowDown, CopyDocument } from '@element-plus/icons-vue'
 
 const props = defineProps({
   modelValue: {
@@ -216,6 +275,8 @@ const showAddDeviceType = ref(false)
 const newDeviceTypeName = ref('')
 const showRenameDialog = ref(false)
 const renameValue = ref('')
+const showCopyDialog = ref(false)
+const copyTypeName = ref('')
 
 // 当前选中设备类型的参数
 const currentParams = computed(() => {
@@ -307,6 +368,32 @@ const deleteParameter = (index) => {
   emitChange()
 }
 
+// 上移参数
+const moveParameterUp = (index) => {
+  if (!selectedType.value || index === 0) return
+  
+  const params = localValue.value[selectedType.value].params
+  const temp = params[index]
+  params[index] = params[index - 1]
+  params[index - 1] = temp
+  
+  emitChange()
+}
+
+// 下移参数
+const moveParameterDown = (index) => {
+  if (!selectedType.value) return
+  
+  const params = localValue.value[selectedType.value].params
+  if (index >= params.length - 1) return
+  
+  const temp = params[index]
+  params[index] = params[index + 1]
+  params[index + 1] = temp
+  
+  emitChange()
+}
+
 // 重命名设备类型
 const confirmRename = () => {
   const newName = renameValue.value.trim()
@@ -349,6 +436,41 @@ const confirmRename = () => {
   ElMessage.success('设备类型重命名成功')
 }
 
+// 复制设备类型
+const confirmCopyDeviceType = () => {
+  const newName = copyTypeName.value.trim()
+  
+  if (!newName) {
+    ElMessage.warning('请输入新的设备类型名称')
+    return
+  }
+  
+  if (localValue.value[newName]) {
+    ElMessage.warning('该设备类型名称已存在')
+    return
+  }
+  
+  // 深拷贝当前设备类型的配置
+  const sourceConfig = localValue.value[selectedType.value]
+  const copiedConfig = {
+    keywords: [newName],
+    params: JSON.parse(JSON.stringify(sourceConfig.params || []))
+  }
+  
+  // 添加新的设备类型
+  localValue.value[newName] = copiedConfig
+  
+  // 选中新创建的类型
+  selectedType.value = newName
+  
+  // 清空输入并关闭对话框
+  copyTypeName.value = ''
+  showCopyDialog.value = false
+  
+  emitChange()
+  ElMessage.success(`设备类型"${newName}"复制成功，已复制 ${copiedConfig.params.length} 个参数`)
+}
+
 // 发送变更事件
 const emitChange = () => {
   emit('update:modelValue', localValue.value)
@@ -364,6 +486,13 @@ watch(() => props.modelValue, (newVal) => {
 watch(showRenameDialog, (newVal) => {
   if (newVal && selectedType.value) {
     renameValue.value = selectedType.value
+  }
+})
+
+// 监听复制对话框打开，初始化输入值
+watch(showCopyDialog, (newVal) => {
+  if (newVal && selectedType.value) {
+    copyTypeName.value = `${selectedType.value} - 副本`
   }
 })
 
@@ -523,6 +652,12 @@ watch(() => localValue.value, (newVal) => {
   margin-bottom: 15px;
   padding-bottom: 10px;
   border-bottom: 1px solid #e0e0e0;
+}
+
+.param-actions {
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .param-index {

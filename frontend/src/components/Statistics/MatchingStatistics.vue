@@ -94,7 +94,7 @@ const loadTrendData = async () => {
     }
     
     // 调用统计API获取匹配成功率趋势
-    const response = await api.get('/api/statistics/match-success-rate', { params })
+    const response = await api.get('/statistics/match-success-rate', { params })
     
     if (response.data.success) {
       const trend = response.data.trend || []

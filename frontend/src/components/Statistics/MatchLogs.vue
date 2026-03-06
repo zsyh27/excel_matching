@@ -227,7 +227,7 @@ const loadLogs = async () => {
     })
     
     // 更新API路径到统计命名空间
-    const response = await api.get('/api/statistics/match-logs', { params })
+    const response = await api.get('/statistics/match-logs', { params })
     
     if (response.data.success) {
       logs.value = response.data.logs.map(log => ({

@@ -29,7 +29,7 @@ class Device(Base):
     detailed_params = Column(Text, nullable=True, 
                             comment='详细参数文本描述(可选,主要用于向后兼容)')
     
-    unit_price = Column(Float, nullable=False)
+    unit_price = Column(Integer, nullable=False)
     
     # 智能设备录入字段
     raw_description = Column(Text, nullable=True, comment='用户输入的原始设备描述文本')

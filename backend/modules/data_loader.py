@@ -24,7 +24,7 @@ class Device:
     device_name: str        # 设备名称
     spec_model: str         # 规格型号
     detailed_params: str    # 详细参数
-    unit_price: float       # 不含税单价
+    unit_price: int         # 不含税单价（整数）
     
     # ✅ 新增字段 - 支持动态表单和数据追溯
     device_type: Optional[str] = None           # 设备类型 (验证需求 30.1)
@@ -44,7 +44,7 @@ class Device:
             device_name=data['device_name'],
             spec_model=data['spec_model'],
             detailed_params=data.get('detailed_params', ''),  # 改为可选
-            unit_price=float(data['unit_price']),
+            unit_price=int(float(data['unit_price'])),  # 转换为整数
             # 新增字段
             device_type=data.get('device_type'),
             key_params=data.get('key_params'),

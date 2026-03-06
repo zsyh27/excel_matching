@@ -1021,7 +1021,7 @@ def parse_device_description():
         # 验证价格（如果提供）
         if price is not None:
             try:
-                price = float(price)
+                price = int(float(price))  # 转换为整数
                 if price < 0:
                     raise ValidationError('INVALID_PRICE', '价格不能为负数')
             except (ValueError, TypeError):
@@ -1312,7 +1312,7 @@ def update_device(device_id):
         if 'detailed_params' in data:
             device.detailed_params = data['detailed_params']
         if 'unit_price' in data:
-            device.unit_price = float(data['unit_price'])
+            device.unit_price = int(float(data['unit_price']))  # 转换为整数
         
         # 更新新字段
         if 'device_type' in data:
@@ -1910,9 +1910,9 @@ def batch_import_devices():
                         device['spec_model'] = str(value).strip()
                     elif header == '单价':
                         try:
-                            device['unit_price'] = float(value)
+                            device['unit_price'] = int(float(value))  # 转换为整数
                         except (ValueError, TypeError):
-                            device['unit_price'] = 0.0
+                            device['unit_price'] = 0
                     else:
                         # 其他列作为key_params
                         key_params[header] = str(value).strip()
@@ -2088,7 +2088,7 @@ def create_device():
             device_name=data['device_name'],
             spec_model=data['spec_model'],
             detailed_params=data.get('detailed_params', ''),
-            unit_price=float(data['unit_price']),
+            unit_price=int(float(data['unit_price'])),  # 转换为整数
             # 新增字段
             device_type=data.get('device_type'),
             key_params=data.get('key_params'),
@@ -4534,7 +4534,7 @@ def create_intelligent_device():
         # 验证价格
         if price is not None:
             try:
-                price = float(price)
+                price = int(float(price))  # 转换为整数
                 if price < 0:
                     raise ValidationError('INVALID_PRICE', '价格不能为负数')
             except (ValueError, TypeError):

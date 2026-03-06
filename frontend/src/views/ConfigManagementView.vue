@@ -34,27 +34,14 @@
     </div>
 
     <div class="content">
-      <!-- 左侧导航 -->
+      <!-- 左侧导航 - 使用新的 MenuNavigation 组件 -->
       <div class="sidebar">
-        <nav class="nav-menu">
-          <template v-for="item in menuItems" :key="item.key">
-            <!-- 分组标题 -->
-            <div v-if="item.isGroup" class="nav-group-title">
-              <span class="group-icon">{{ item.icon }}</span>
-              <span class="group-label">{{ item.label }}</span>
-            </div>
-            <!-- 菜单项 -->
-            <div 
-              v-else
-              :class="['nav-item', { active: activeTab === item.key }]"
-              @click="activeTab = item.key"
-            >
-              <span class="nav-icon">{{ item.icon }}</span>
-              <span class="nav-label">{{ item.label }}</span>
-            </div>
-          </template>
-        </nav>
-
+        <MenuNavigation 
+          :menu-structure="menuStructure"
+          :active-item-id="activeTab"
+          @select="handleMenuSelect"
+        />
+        
         <div class="sidebar-footer">
           <button @click="showHistory = true" class="btn btn-link">
             📜 版本历史
@@ -184,6 +171,9 @@
 <script>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import configApi from '../api/config'
+import MenuNavigation from '../components/MenuNavigation.vue'
+import { MENU_STRUCTURE } from '../config/menuStructure'
+import MenuStateManager from '../utils/MenuStateManager'
 import IgnoreKeywordsEditor from '../components/ConfigManagement/IgnoreKeywordsEditor.vue'
 import SplitCharsEditor from '../components/ConfigManagement/SplitCharsEditor.vue'
 import SynonymMapEditor from '../components/ConfigManagement/SynonymMapEditor.vue'
@@ -200,6 +190,7 @@ import DeviceParamsEditor from '../components/ConfigManagement/DeviceParamsEdito
 export default {
   name: 'ConfigManagementView',
   components: {
+    MenuNavigation,
     IgnoreKeywordsEditor,
     SplitCharsEditor,
     SynonymMapEditor,
@@ -214,7 +205,10 @@ export default {
     DeviceParamsEditor
   },
   setup() {
-    const activeTab = ref('brand_keywords')
+    // Load initial menu state from localStorage
+    const initialState = MenuStateManager.loadState() || MenuStateManager.getDefaultState()
+    
+    const activeTab = ref(initialState.activeItemId || 'brand-keywords')
     const config = ref({})
     const originalConfig = ref({})
     const hasChanges = ref(false)
@@ -236,49 +230,50 @@ export default {
       }, 3000)
     }
 
-    // 菜单项（按照业务流程排序，带分组）
-    const menuItems = [
-      // 1. 设备信息录入前的配置
-      { key: 'group1', label: '1. 设备信息录入前配置', icon: '📝', isGroup: true },
-      { key: 'brand_keywords', label: '品牌关键词', icon: '🏷️' },
-      { key: 'device_params', label: '设备参数配置', icon: '📋' },
-      { key: 'feature_weight_config', label: '特征权重', icon: '⚖️' },
-      
-      // 2. 数据导入阶段
-      { key: 'group2', label: '2. 数据导入阶段', icon: '📥', isGroup: true },
-      { key: 'device_row_recognition', label: '设备行识别', icon: '🎯' },
-      
-      // 3. 特征提取配置阶段（匹配阶段）
-      { key: 'group3', label: '3. 特征提取配置（匹配阶段）', icon: '🔍', isGroup: true },
-      { key: 'intelligent_extraction', label: '智能清理', icon: '🧹' },
-      { key: 'feature_split_chars', label: '处理分隔符', icon: '✂️' },
-      { key: 'normalization_map', label: '归一化映射', icon: '📝' },
-      { key: 'metadata_keywords', label: '高级配置', icon: '🔧' },
-      
-      // 4. 匹配配置阶段
-      { key: 'group4', label: '4. 匹配配置阶段', icon: '🎯', isGroup: true },
-      { key: 'synonym_map', label: '同义词映射', icon: '🔄' },
-      { key: 'device_type_keywords', label: '设备类型', icon: '📦' },
-      
-      // 5. 全局配置
-      { key: 'group5', label: '5. 全局配置', icon: '⚙️', isGroup: true },
-      { key: 'global_config', label: '全局配置', icon: '⚙️' }
-    ]
+    // Use the new menu structure
+    const menuStructure = MENU_STRUCTURE
+
+    // Handle menu item selection
+    const handleMenuSelect = (itemId) => {
+      activeTab.value = itemId
+    }
 
     // 当前编辑器组件
     const currentEditor = computed(() => {
       const editorMap = {
-        'feature_split_chars': 'SplitCharsEditor',
-        'synonym_map': 'SynonymMapEditor',
-        'normalization_map': 'NormalizationEditor',
-        'global_config': 'GlobalConfigEditor',
-        'brand_keywords': 'BrandKeywordsEditor',
-        'device_type_keywords': 'DeviceTypeEditor',
-        'device_params': 'DeviceParamsEditor',
-        'feature_weight_config': 'FeatureWeightEditor',
-        'metadata_keywords': 'AdvancedConfigEditor',
-        'device_row_recognition': 'DeviceRowRecognitionEditor',
-        'intelligent_extraction': 'IntelligentCleaningEditor'
+        // Pre-entry Configuration
+        'brand-keywords': 'BrandKeywordsEditor',
+        'device-params': 'DeviceParamsEditor',
+        'feature-weights': 'FeatureWeightEditor',
+        
+        // Data Import Stage
+        'device-row': 'DeviceRowRecognitionEditor',
+        
+        // Preprocessing Configuration - Text Cleaning
+        'noise-filter': 'IgnoreKeywordsEditor',
+        'metadata': 'AdvancedConfigEditor',
+        'separator-unify': 'SplitCharsEditor',
+        
+        // Preprocessing Configuration - Normalization
+        'normalization': 'NormalizationEditor',
+        
+        // Preprocessing Configuration - Feature Extraction
+        'separator-process': 'SplitCharsEditor',
+        'param-decompose': 'AdvancedConfigEditor',
+        'smart-split': 'IntelligentCleaningEditor',
+        'unit-remove': 'AdvancedConfigEditor',
+        
+        // Preprocessing Configuration - Feature Quality
+        'quality-score': 'AdvancedConfigEditor',
+        'whitelist': 'AdvancedConfigEditor',
+        
+        // Matching Configuration
+        'synonym-map': 'SynonymMapEditor',
+        'device-type': 'DeviceTypeEditor',
+        'match-threshold': 'AdvancedConfigEditor',
+        
+        // Global Configuration
+        'global-settings': 'GlobalConfigEditor'
       }
       return editorMap[activeTab.value]
     })
@@ -321,25 +316,53 @@ export default {
       hasChanges.value = JSON.stringify(config.value) !== JSON.stringify(originalConfig.value)
     }
     
+    // Map menu item IDs (kebab-case) to config keys (snake_case)
+    const menuIdToConfigKey = {
+      'brand-keywords': 'brand_keywords',
+      'device-params': 'device_params',
+      'feature-weights': 'feature_weight_config',
+      'device-row': 'device_row_recognition',
+      'noise-filter': 'ignore_keywords',
+      'metadata': 'metadata_keywords',
+      'separator-unify': 'feature_split_chars',
+      'normalization': 'normalization_map',
+      'separator-process': 'feature_split_chars',
+      'param-decompose': 'metadata_keywords',
+      'smart-split': 'intelligent_extraction',
+      'unit-remove': 'metadata_keywords',
+      'quality-score': 'metadata_keywords',
+      'whitelist': 'metadata_keywords',
+      'synonym-map': 'synonym_map',
+      'device-type': 'device_type_keywords',
+      'match-threshold': 'metadata_keywords',
+      'global-settings': 'global_config'
+    }
+    
     // 获取编辑器的值（处理嵌套结构）
-    const getEditorValue = (tabKey) => {
-      const value = config.value[tabKey]
+    const getEditorValue = (menuId) => {
+      const configKey = menuIdToConfigKey[menuId]
+      if (!configKey) return null
+      
+      const value = config.value[configKey]
       // 如果是device_type_keywords，需要提取嵌套的数组
-      if (tabKey === 'device_type_keywords' && value && typeof value === 'object' && 'device_type_keywords' in value) {
+      if (configKey === 'device_type_keywords' && value && typeof value === 'object' && 'device_type_keywords' in value) {
         return value.device_type_keywords
       }
       return value
     }
     
     // 处理编辑器更新（处理嵌套结构）
-    const handleEditorUpdate = (tabKey, newValue) => {
+    const handleEditorUpdate = (menuId, newValue) => {
+      const configKey = menuIdToConfigKey[menuId]
+      if (!configKey) return
+      
       // 如果是device_type_keywords，需要保持嵌套结构
-      if (tabKey === 'device_type_keywords') {
-        config.value[tabKey] = {
+      if (configKey === 'device_type_keywords') {
+        config.value[configKey] = {
           device_type_keywords: newValue
         }
       } else {
-        config.value[tabKey] = newValue
+        config.value[configKey] = newValue
       }
       handleConfigChange()
     }
@@ -558,13 +581,14 @@ export default {
       showHistory,
       history,
       fileInput,
-      menuItems,
+      menuStructure,
       currentEditor,
       loading,
       saving,
       testing,
       regenerating,
       message,
+      handleMenuSelect,
       handleConfigChange,
       getEditorValue,
       handleEditorUpdate,
@@ -623,73 +647,13 @@ export default {
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-}
-
-.nav-menu {
-  flex: 1;
-  padding: 20px 0;
-}
-
-.nav-item {
-  padding: 12px 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.2s;
-}
-
-.nav-item:hover {
-  background: #f5f5f5;
-}
-
-.nav-item.active {
-  background: #e3f2fd;
-  border-left: 3px solid #2196f3;
-  color: #2196f3;
-}
-
-.nav-icon {
-  font-size: 18px;
-}
-
-.nav-label {
-  font-size: 14px;
-}
-
-.nav-group-title {
-  padding: 16px 20px 8px 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #666;
-  background: #f9f9f9;
-  border-top: 1px solid #e8e8e8;
-  border-bottom: 1px solid #e8e8e8;
-  margin-top: 8px;
-  margin-bottom: 4px;
-}
-
-.nav-group-title:first-child {
-  margin-top: 0;
-  border-top: none;
-}
-
-.nav-group-title .group-icon {
-  font-size: 16px;
-}
-
-.nav-group-title .group-label {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  overflow: hidden;
 }
 
 .sidebar-footer {
   padding: 20px;
   border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
 }
 
 .main-content {

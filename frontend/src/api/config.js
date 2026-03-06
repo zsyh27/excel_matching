@@ -2,13 +2,36 @@
  * 配置管理相关API
  */
 import api from './index'
+import ConfigMigration from '../utils/ConfigMigration'
 
 /**
  * 获取系统配置
  * @returns {Promise} 配置数据
  */
-export const getConfig = () => {
-  return api.get('/config')
+export const getConfig = async () => {
+  try {
+    const response = await api.get('/config')
+    
+    // Check if response contains config data
+    if (response.data && response.data.config) {
+      // Migrate legacy format to new format if needed
+      const migratedConfig = ConfigMigration.migrateConfiguration(response.data.config)
+      
+      // Return response with migrated config
+      return {
+        ...response,
+        data: {
+          ...response.data,
+          config: migratedConfig
+        }
+      }
+    }
+    
+    return response
+  } catch (error) {
+    console.error('Failed to load config:', error)
+    throw error
+  }
 }
 
 /**
@@ -26,8 +49,33 @@ export const updateConfig = (config) => {
  * @param {String} remark 备注信息
  * @returns {Promise} 保存结果
  */
-export const saveConfig = (config, remark) => {
-  return api.post('/config/save', { config, remark })
+export const saveConfig = async (config, remark) => {
+  try {
+    // Save in new format (backend will handle backward compatibility if needed)
+    const response = await api.post('/config/save', { config, remark })
+    return response
+  } catch (error) {
+    console.error('Failed to save config:', error)
+    throw error
+  }
+}
+
+/**
+ * Map new format to legacy format for backward compatibility
+ * @param {Object} config 新格式配置数据
+ * @returns {Object} 旧格式配置数据
+ */
+export const mapNewToLegacyFormat = (config) => {
+  return ConfigMigration.mapNewToLegacyFormat(config)
+}
+
+/**
+ * Map legacy format to new format
+ * @param {Object} config 旧格式配置数据
+ * @returns {Object} 新格式配置数据
+ */
+export const mapLegacyToNewFormat = (config) => {
+  return ConfigMigration.migrateConfiguration(config)
 }
 
 /**
@@ -99,5 +147,7 @@ export default {
   exportConfig,
   importConfig,
   testConfig,
-  regenerateRules
+  regenerateRules,
+  mapNewToLegacyFormat,
+  mapLegacyToNewFormat
 }

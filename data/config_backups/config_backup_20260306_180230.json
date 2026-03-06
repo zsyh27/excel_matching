@@ -394,174 +394,6 @@
         }
       ]
     },
-    "温度传感器": {
-      "params": [
-        {
-          "name": "检测对象",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "安装位置",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "温度信号类型",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "温度量程",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "温度精度",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "湿度信号类型",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "湿度量程",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "湿度精度",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "浓度量程",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "浓度精度",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "输出信号",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "通道数",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "显示屏",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "继电器",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "面板颜色",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "电源",
-          "required": false,
-          "type": "text"
-        }
-      ]
-    },
-    "温湿度传感器": {
-      "params": [
-        {
-          "name": "检测对象",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "安装位置",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "温度信号类型",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "温度量程",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "温度精度",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "湿度信号类型",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "湿度量程",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "湿度精度",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "浓度量程",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "浓度精度",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "输出信号",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "通道数",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "显示屏",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "继电器",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "面板颜色",
-          "required": false,
-          "type": "text"
-        },
-        {
-          "name": "电源",
-          "required": false,
-          "type": "text"
-        }
-      ]
-    },
     "电动开关阀": {
       "keywords": [
         "电动开关阀"
@@ -982,87 +814,255 @@
         }
       ]
     },
+    "温度传感器": {
+      "params": [
+        {
+          "name": "检测对象",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "安装位置",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "温度信号类型",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "温度量程",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "温度精度",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "湿度信号类型",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "湿度量程",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "湿度精度",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "浓度量程",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "浓度精度",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "输出信号",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "通道数",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "显示屏",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "继电器",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "面板颜色",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "电源",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    "温湿度传感器": {
+      "params": [
+        {
+          "name": "检测对象",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "安装位置",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "温度信号类型",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "温度量程",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "温度精度",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "湿度信号类型",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "湿度量程",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "湿度精度",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "浓度量程",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "浓度精度",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "输出信号",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "通道数",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "显示屏",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "继电器",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "面板颜色",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "电源",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
     "空气质量传感器": {
       "params": [
         {
           "name": "检测对象",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "安装位置",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "温度信号类型",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "温度量程",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "温度精度",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "湿度信号类型",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "湿度量程",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "湿度精度",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "浓度量程",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "浓度精度",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "输出信号",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "通道数",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "显示屏",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "继电器",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "面板颜色",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         },
         {
           "name": "电源",
-          "required": false,
-          "type": "text"
+          "type": "text",
+          "required": false
         }
       ]
     }
@@ -1509,8 +1509,8 @@
     "风阀"
   ],
   "feature_extraction": {
-    "separator_processing": [],
     "param_decompose": [],
+    "separator_processing": [],
     "smart_split": [],
     "unit_remove": []
   },
@@ -1525,19 +1525,19 @@
     "\n"
   ],
   "feature_weight_config": {
-    "brand_weight": 1,
-    "device_type_weight": 15,
-    "key_params_weight": 5,
-    "model_weight": 5,
-    "parameter_weight": 1
+    "brand_weight": 10.0,
+    "device_type_weight": 20.0,
+    "key_params_weight": 15.0,
+    "model_weight": 5.0,
+    "parameter_weight": 1.0
   },
   "feature_weight_strategy": {
-    "brand_weight": 10,
-    "common_param_weight": 1,
-    "device_type_weight": 15,
-    "important_param_weight": 3,
-    "key_params_weight": 15,
-    "model_weight": 5
+    "brand_weight": 10.0,
+    "common_param_weight": 1.0,
+    "device_type_weight": 15.0,
+    "important_param_weight": 3.0,
+    "key_params_weight": 15.0,
+    "model_weight": 5.0
   },
   "global_config": {
     "default_match_threshold": 5,
@@ -1573,6 +1573,125 @@
     "传输",
     "传输方式"
   ],
+  "intelligent_extraction": {
+    "complex_parameter_decomposition": {
+      "enabled": true,
+      "patterns": [
+        {
+          "description": "提取精度、温度、湿度、量程中的数值（归一化后的格式）",
+          "name": "精度规格",
+          "pattern": "±(\\d+)%?@(\\d+)c\\.?(\\d+)%?rh\\((\\d+)[-~](\\d+)"
+        }
+      ]
+    },
+    "enabled": true,
+    "feature_quality_scoring": {
+      "enabled": true,
+      "min_quality_score": 50,
+      "scoring_rules": {
+        "appropriate_length": 5,
+        "has_number": 10,
+        "has_unit": 10,
+        "in_device_keywords": 15,
+        "is_common_word": -20,
+        "is_metadata_label": -30,
+        "is_pure_number": -5,
+        "is_pure_punctuation": -30,
+        "is_technical_term": 20,
+        "too_short": -20
+      },
+      "whitelist_features": [
+        "0-10v",
+        "2-10v",
+        "4-20ma",
+        "co",
+        "co2",
+        "modbus",
+        "ntc",
+        "pm10",
+        "pm2.5",
+        "pt1000",
+        "一氧化碳",
+        "二氧化碳",
+        "单通道",
+        "双通道",
+        "墙装",
+        "室内",
+        "室外",
+        "带显示",
+        "无显示",
+        "显示屏",
+        "气",
+        "水",
+        "温度",
+        "湿度",
+        "电子式",
+        "白色",
+        "继电器",
+        "阀",
+        "霍尼韦尔",
+        "颗粒物",
+        "风管",
+        "黑色"
+      ]
+    },
+    "metadata_label_patterns": [
+      "\\d+\\.?名称[:：]",
+      "\\d+\\.?施工要求[:：]"
+    ],
+    "technical_term_expansion": {
+      "0-10V": [
+        "0-10V",
+        "电压输出"
+      ],
+      "4-20mA": [
+        "4-20mA",
+        "电流输出"
+      ],
+      "485通讯": [
+        "RS485",
+        "485"
+      ],
+      "CO2": [
+        "CO2",
+        "二氧化碳",
+        "co2"
+      ],
+      "DDC": [
+        "DDC",
+        "直接数字控制器"
+      ]
+    },
+    "text_cleaning": {
+      "enabled": true,
+      "filter_row_numbers": true,
+      "noise_section_patterns": [
+        {
+          "description": "删除按照图纸规范的描述",
+          "pattern": "按照.*?(?:图纸|规范|清单).*?(?:要求|配置)"
+        },
+        {
+          "description": "删除验收相关描述",
+          "pattern": "(?:达到|满足|通过).*?验收"
+        },
+        {
+          "description": "删除采购运输相关描述",
+          "pattern": "(?:采购|运输|保管|转运).*?(?:施工|验收)"
+        }
+      ],
+      "row_number_columns": 3,
+      "truncate_delimiters": [
+        {
+          "description": "在施工要求处截断",
+          "pattern": "\\d+\\.?施工要求[:：]"
+        },
+        {
+          "description": "在采购说明处截断",
+          "pattern": "含该项施工内容"
+        }
+      ]
+    }
+  },
   "location_words": [
     "室内",
     "室外",
@@ -1728,8 +1847,8 @@
     "version": "1.0.0"
   },
   "text_cleaning": {
-    "noise_patterns": [],
     "metadata_rules": [],
+    "noise_patterns": [],
     "separator_mappings": []
   },
   "ui_config": {

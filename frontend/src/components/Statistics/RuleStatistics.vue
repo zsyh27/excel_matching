@@ -81,7 +81,7 @@ const metrics = reactive({
 const loadStatistics = async () => {
   try {
     // 更新API路径到统计命名空间
-    const response = await api.get('/api/statistics/rules')
+    const response = await api.get('/statistics/rules')
     
     if (response.data.success) {
       const stats = response.data.statistics
