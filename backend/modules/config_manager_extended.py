@@ -153,11 +153,23 @@ class ConfigManagerExtended:
         if 'synonym_map' in config and not isinstance(config['synonym_map'], dict):
             errors.append("synonym_map 必须是字典类型")
         
-        if 'brand_keywords' in config and not isinstance(config['brand_keywords'], list):
-            errors.append("brand_keywords 必须是列表类型")
+        if 'brand_keywords' in config:
+            bk = config['brand_keywords']
+            # 处理嵌套结构：{'brand_keywords': [...]}
+            if isinstance(bk, dict) and 'brand_keywords' in bk:
+                bk = bk['brand_keywords']
+                config['brand_keywords'] = bk  # 修正配置
+            if not isinstance(bk, list):
+                errors.append("brand_keywords 必须是列表类型")
         
-        if 'device_type_keywords' in config and not isinstance(config['device_type_keywords'], list):
-            errors.append("device_type_keywords 必须是列表类型")
+        if 'device_type_keywords' in config:
+            dtk = config['device_type_keywords']
+            # 处理嵌套结构：{'device_type_keywords': [...]}
+            if isinstance(dtk, dict) and 'device_type_keywords' in dtk:
+                dtk = dtk['device_type_keywords']
+                config['device_type_keywords'] = dtk  # 修正配置
+            if not isinstance(dtk, list):
+                errors.append("device_type_keywords 必须是列表类型")
         
         if 'feature_split_chars' in config and not isinstance(config['feature_split_chars'], list):
             errors.append("feature_split_chars 必须是列表类型")
@@ -204,18 +216,28 @@ class ConfigManagerExtended:
             path.append(word)
             
             next_word = synonym_map[word]
-            result = find_cycle(next_word, visited, path)
             
-            if result:
-                return result
+            # 如果值是列表，跳过循环检查（列表类型的同义词不会形成循环）
+            if isinstance(next_word, list):
+                path.pop()
+                return None
+            
+            # 只对字符串类型的值进行循环检查
+            if isinstance(next_word, str):
+                result = find_cycle(next_word, visited, path)
+                
+                if result:
+                    return result
             
             path.pop()
             return None
         
         for word in synonym_map:
-            result = find_cycle(word, set(), [])
-            if result:
-                return result
+            # 只检查值为字符串的条目
+            if isinstance(synonym_map[word], str):
+                result = find_cycle(word, set(), [])
+                if result:
+                    return result
         
         return None
     

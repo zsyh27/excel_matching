@@ -465,9 +465,9 @@ class DatabaseLoader:
 
 **验证需求**: 4.1-4.5, 9.1-9.5, 13.1-13.11, 14.1-14.12, 15.1-15.7, 16.1-16.6, 18.1-18.10, 19.1-19.8
 
-### 3. RuleGenerator（规则生成器）
+### 3. RuleGenerator（规则生成器）- 优化版
 
-**职责**: 为设备自动生成匹配规则
+**职责**: 为设备自动生成匹配规则,支持基于device_type和key_params的优化特征提取
 
 **接口**:
 
@@ -477,16 +477,125 @@ class RuleGenerator:
         """初始化规则生成器"""
         
     def generate_rule(self, device: Device) -> Rule:
-        """为单个设备生成规则"""
+        """
+        为单个设备生成规则
+        
+        验证需求: 3.3, 3.4, 38.5
+        """
         
     def extract_features(self, device: Device) -> List[str]:
-        """提取设备特征"""
+        """
+        提取设备特征 - 优化版
         
-    def assign_weights(self, features: List[str]) -> Dict[str, float]:
-        """为特征分配权重"""
+        特征提取优先级:
+        1. 品牌特征(高权重)
+        2. 设备类型特征(高权重) - 新增
+        3. 型号特征(高权重)
+        4. 关键参数特征(中权重) - 从key_params提取
+        5. 设备名称特征(中权重)
+        6. 详细参数特征(低权重) - 仅当key_params为空时使用
+        
+        验证需求: 3.1, 38.1, 38.4
+        """
+        
+    def assign_weights(self, features: List[str], device: Device) -> Dict[str, float]:
+        """
+        为特征分配权重 - 优化版
+        
+        权重分配策略:
+        - 品牌权重: 3.0
+        - 设备类型权重: 3.0 (新增)
+        - 型号权重: 3.0
+        - 关键参数权重: 2.5 (新增)
+        - 设备名称关键词权重: 2.0
+        - 其他特征权重: 1.0
+        
+        验证需求: 3.2, 38.2, 38.3
+        """
 ```
 
-**验证需求**: 3.1-3.5, 13.4, 13.10
+**实现示例**:
+
+```python
+def extract_features(self, device: Device) -> List[str]:
+    """提取设备特征 - 优化版"""
+    features = []
+    
+    # 1. 品牌特征(高权重)
+    if device.brand:
+        features.append(device.brand)
+    
+    # 2. 设备类型特征(高权重) - 新增
+    if device.device_type:
+        features.append(device.device_type)
+    
+    # 3. 型号特征(高权重)
+    if device.spec_model:
+        features.append(device.spec_model)
+    
+    # 4. 关键参数特征(中权重) - 从key_params提取
+    if device.key_params:
+        for param_name, param_data in device.key_params.items():
+            if isinstance(param_data, dict):
+                value = param_data.get('value', '')
+            else:
+                value = str(param_data)
+            
+            if value:
+                # 提取参数值中的关键词
+                tokens = self.preprocessor.preprocess(value)
+                features.extend(tokens)
+    
+    # 5. 设备名称特征(中权重)
+    if device.device_name:
+        tokens = self.preprocessor.preprocess(device.device_name)
+        features.extend(tokens)
+    
+    # 6. 详细参数特征(低权重) - 仅当key_params为空时使用
+    if not device.key_params and device.detailed_params:
+        tokens = self.preprocessor.preprocess(device.detailed_params)
+        features.extend(tokens)
+    
+    # 去重
+    return list(set(features))
+
+def assign_weights(self, features: List[str], device: Device) -> Dict[str, float]:
+    """分配特征权重 - 优化版"""
+    weights = {}
+    
+    for feature in features:
+        # 品牌权重: 3.0
+        if device.brand and feature == device.brand:
+            weights[feature] = 3.0
+        
+        # 设备类型权重: 3.0
+        elif device.device_type and feature == device.device_type:
+            weights[feature] = 3.0
+        
+        # 型号权重: 3.0
+        elif device.spec_model and feature in device.spec_model:
+            weights[feature] = 3.0
+        
+        # 关键参数权重: 2.5
+        elif device.key_params and any(
+            feature in str(param_data.get('value', '')) 
+            for param_data in device.key_params.values()
+            if isinstance(param_data, dict)
+        ):
+            weights[feature] = 2.5
+        
+        # 设备名称关键词权重: 2.0
+        elif device.device_name and feature in device.device_name:
+            weights[feature] = 2.0
+        
+        # 其他特征权重: 1.0
+        else:
+            weights[feature] = 1.0
+    
+    return weights
+```
+
+**验证需求**: 3.1-3.5, 13.4, 13.10, 38.1-38.5
 
 ### 4. MigrationTool（迁移工具）
 
@@ -606,32 +715,93 @@ class StatisticsReporter:
 
 ### ORM 模型定义
 
-#### Device（设备模型）
+#### Device（设备模型）- 优化版
 
 ```python
 class Device(Base):
     __tablename__ = 'devices'
     
+    # 基础字段
     device_id = Column(String(100), primary_key=True)
     brand = Column(String(50), nullable=False, index=True)
     device_name = Column(String(100), nullable=False, index=True)
     spec_model = Column(String(200), nullable=False)
-    detailed_params = Column(Text, nullable=False)
+    
+    # ✅ 新增: 设备类型字段 - 支持动态表单
+    device_type = Column(String(50), nullable=True, index=True, 
+                        comment='设备类型,如:CO2传感器、座阀、温度传感器等')
+    
+    # ✅ 修改: detailed_params改为可选 - 避免与key_params重复
+    detailed_params = Column(Text, nullable=True, 
+                            comment='详细参数文本描述(可选,主要用于向后兼容)')
+    
     unit_price = Column(Float, nullable=False)
+    
+    # 智能设备录入字段
+    raw_description = Column(Text, nullable=True, 
+                            comment='用户输入的原始设备描述文本')
+    
+    # ✅ 规范化: key_params结构 - 支持结构化参数存储
+    key_params = Column(JSON, nullable=True, 
+                       comment='根据设备类型提取的关键参数(JSON格式)')
+    
+    confidence_score = Column(Float, nullable=True, index=True, 
+                             comment='解析结果的置信度评分(0.0-1.0)')
+    
+    # ✅ 新增: 数据来源标识 - 追溯数据来源
+    input_method = Column(String(20), nullable=True, default='manual', index=True,
+                         comment='录入方式: manual(手动), intelligent(智能解析), excel(Excel导入)')
+    
+    # ✅ 新增: 创建和更新时间 - 追溯数据变更历史
+    created_at = Column(DateTime, nullable=True, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # 关联规则 - 级联删除
     rules = relationship("Rule", back_populates="device", cascade="all, delete-orphan")
 ```
 
 **字段说明**:
+
+**基础字段**:
 - `device_id`: 设备唯一标识（主键）
 - `brand`: 品牌（索引字段）
 - `device_name`: 设备名称（索引字段）
 - `spec_model`: 规格型号
-- `detailed_params`: 详细参数（文本）
+- `device_type`: 设备类型（索引字段,支持动态表单）- **新增**
+- `detailed_params`: 详细参数文本（可选,向后兼容）- **改为可选**
 - `unit_price`: 单价
 
-**验证需求**: 11.1, 11.5
+**智能设备录入字段**:
+- `raw_description`: 原始设备描述文本（智能解析输入）
+- `key_params`: 关键参数JSON（结构化存储）
+- `confidence_score`: 解析置信度（0.0-1.0）
+
+**数据追溯字段**:
+- `input_method`: 录入方式（manual/intelligent/excel）- **新增**
+- `created_at`: 创建时间 - **新增**
+- `updated_at`: 更新时间 - **新增**
+
+**key_params JSON结构规范**:
+```json
+{
+  "量程": {
+    "value": "0-2000 ppm",
+    "raw_value": "0-2000 ppm",
+    "data_type": "range",
+    "unit": "ppm",
+    "confidence": 0.95
+  },
+  "输出信号": {
+    "value": "4-20 mA",
+    "raw_value": "4-20mA",
+    "data_type": "string",
+    "unit": "mA",
+    "confidence": 0.98
+  }
+}
+```
+
+**验证需求**: 11.1, 11.5, 30.1-30.5, 31.1-31.5, 32.1-32.5, 33.1-33.5, 34.1-34.5
 
 #### Rule（规则模型）
 
@@ -683,14 +853,27 @@ class Config(Base):
 系统使用数据类（dataclass）作为应用层的数据传输对象：
 
 ```python
+from dataclasses import dataclass, field
+from typing import Optional, Dict, Any
+from datetime import datetime
+
 @dataclass
 class Device:
     device_id: str
     brand: str
     device_name: str
     spec_model: str
-    detailed_params: str
     unit_price: float
+    
+    # 可选字段
+    device_type: Optional[str] = None
+    detailed_params: Optional[str] = None
+    raw_description: Optional[str] = None
+    key_params: Optional[Dict[str, Any]] = None
+    confidence_score: Optional[float] = None
+    input_method: str = 'manual'
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 @dataclass
 class Rule:
@@ -708,9 +891,12 @@ class Rule:
 
 1. `devices.brand` - 支持按品牌过滤
 2. `devices.device_name` - 支持按名称搜索
-3. `rules.target_device_id` - 支持快速查询设备的规则
+3. `devices.device_type` - 支持按设备类型过滤 **（新增）**
+4. `devices.input_method` - 支持按录入方式过滤 **（新增）**
+5. `devices.confidence_score` - 支持按置信度排序
+6. `rules.target_device_id` - 支持快速查询设备的规则
 
-**验证需求**: 11.5
+**验证需求**: 11.5, 30.2, 32.2
 
 ### 外键约束
 
@@ -1668,3 +1854,625 @@ StatisticsDashboard (统计仪表板视图)
 - 前端列表渲染性能测试
 
 **验证需求**: 12.1-12.5
+
+
+## 动态表单设计
+
+### 设备类型配置API
+
+**验证需求**: 35.1-35.5
+
+#### GET /api/device-types
+
+获取所有设备类型及其参数配置
+
+**响应示例**:
+```json
+{
+  "success": true,
+  "data": {
+    "device_types": ["CO2传感器", "座阀", "温度传感器", "压力传感器"],
+    "params_config": {
+      "CO2传感器": {
+        "keywords": ["CO2传感器", "二氧化碳传感器"],
+        "params": [
+          {
+            "name": "量程",
+            "pattern": "量程[:：]?\\s*([0-9]+-[0-9]+\\s*ppm)",
+            "required": true,
+            "data_type": "range",
+            "unit": "ppm"
+          },
+          {
+            "name": "输出信号",
+            "pattern": "输出[:：]?\\s*([0-9]+-[0-9]+\\s*[mM][aA])",
+            "required": true,
+            "data_type": "string",
+            "unit": "mA"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+### 前端动态表单组件
+
+**验证需求**: 36.1-36.7
+
+#### DeviceForm组件设计
+
+```vue
+<template>
+  <el-form :model="deviceForm" :rules="formRules" ref="deviceFormRef">
+    <!-- 基础信息 -->
+    <el-form-item label="设备ID" prop="device_id">
+      <el-input v-model="deviceForm.device_id" :disabled="isEditMode" />
+    </el-form-item>
+    
+    <el-form-item label="品牌" prop="brand">
+      <el-select v-model="deviceForm.brand" filterable>
+        <el-option v-for="brand in brands" :key="brand" :value="brand" />
+      </el-select>
+    </el-form-item>
+    
+    <!-- ✅ 设备类型选择 - 触发动态表单 -->
+    <el-form-item label="设备类型" prop="device_type">
+      <el-select 
+        v-model="deviceForm.device_type" 
+        @change="onDeviceTypeChange"
+        filterable
+        placeholder="请选择设备类型"
+      >
+        <el-option 
+          v-for="type in deviceTypes" 
+          :key="type" 
+          :value="type" 
+        />
+      </el-select>
+    </el-form-item>
+    
+    <el-form-item label="设备名称" prop="device_name">
+      <el-input v-model="deviceForm.device_name" />
+    </el-form-item>
+    
+    <el-form-item label="规格型号" prop="spec_model">
+      <el-input v-model="deviceForm.spec_model" />
+    </el-form-item>
+    
+    <!-- ✅ 动态参数表单 - 根据device_type显示 -->
+    <div v-if="deviceForm.device_type" class="dynamic-params">
+      <el-divider content-position="left">设备参数</el-divider>
+      <el-form-item 
+        v-for="param in currentDeviceParams" 
+        :key="param.name"
+        :label="param.name"
+        :prop="`key_params.${param.name}.value`"
+        :required="param.required"
+      >
+        <el-input 
+          v-model="deviceForm.key_params[param.name].value"
+          :placeholder="`请输入${param.name}${param.unit ? ',单位:' + param.unit : ''}`"
+        >
+          <template #append v-if="param.unit">{{ param.unit }}</template>
+        </el-input>
+        <span class="param-hint" v-if="param.hint">{{ param.hint }}</span>
+      </el-form-item>
+    </div>
+    
+    <!-- 详细参数(可选) -->
+    <el-form-item label="详细参数(可选)" prop="detailed_params">
+      <el-input 
+        v-model="deviceForm.detailed_params" 
+        type="textarea"
+        :rows="3"
+        placeholder="可选填写,如有特殊参数可在此补充"
+      />
+    </el-form-item>
+    
+    <el-form-item label="单价" prop="unit_price">
+      <el-input-number 
+        v-model="deviceForm.unit_price" 
+        :min="0" 
+        :precision="2" 
+        :controls="false"
+      />
+    </el-form-item>
+    
+    <!-- 自动生成规则选项 -->
+    <el-form-item v-if="!isEditMode">
+      <el-checkbox v-model="deviceForm.auto_generate_rule">
+        自动生成匹配规则
+      </el-checkbox>
+    </el-form-item>
+    
+    <el-form-item v-if="isEditMode">
+      <el-checkbox v-model="deviceForm.regenerate_rule">
+        重新生成匹配规则
+      </el-checkbox>
+    </el-form-item>
+  </el-form>
+</template>
+
+<script setup>
+import { ref, computed, watch } from 'vue'
+import { getDeviceTypes } from '@/api/devices'
+
+const props = defineProps({
+  device: Object,
+  isEditMode: Boolean
+})
+
+const deviceForm = ref({
+  device_id: '',
+  brand: '',
+  device_type: '',
+  device_name: '',
+  spec_model: '',
+  key_params: {},
+  detailed_params: '',
+  unit_price: 0,
+  input_method: 'manual',
+  auto_generate_rule: true,
+  regenerate_rule: false
+})
+
+// 设备类型配置
+const deviceTypesConfig = ref({})
+const deviceTypes = computed(() => Object.keys(deviceTypesConfig.value))
+
+// 当前设备类型的参数配置
+const currentDeviceParams = computed(() => {
+  if (!deviceForm.value.device_type) return []
+  return deviceTypesConfig.value[deviceForm.value.device_type]?.params || []
+})
+
+// 加载设备类型配置
+const loadDeviceTypes = async () => {
+  const response = await getDeviceTypes()
+  if (response.success) {
+    deviceTypesConfig.value = response.data.params_config
+  }
+}
+
+// 设备类型变更时
+const onDeviceTypeChange = (newType) => {
+  // 清空之前的参数
+  deviceForm.value.key_params = {}
+  
+  // 初始化新类型的参数
+  const params = deviceTypesConfig.value[newType]?.params || []
+  params.forEach(param => {
+    deviceForm.value.key_params[param.name] = {
+      value: '',
+      raw_value: '',
+      data_type: param.data_type,
+      unit: param.unit,
+      confidence: 1.0
+    }
+  })
+}
+
+// 编辑模式下回填数据
+watch(() => props.device, (device) => {
+  if (device && props.isEditMode) {
+    Object.assign(deviceForm.value, device)
+    
+    // 如果有device_type,初始化key_params结构
+    if (device.device_type && !device.key_params) {
+      onDeviceTypeChange(device.device_type)
+    }
+  }
+}, { immediate: true })
+
+// 初始化
+loadDeviceTypes()
+</script>
+
+<style scoped>
+.dynamic-params {
+  background: #f5f7fa;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.param-hint {
+  font-size: 12px;
+  color: #909399;
+  margin-left: 10px;
+}
+</style>
+```
+
+### 后端API实现
+
+#### 设备类型配置API
+
+```python
+@app.route('/api/device-types', methods=['GET'])
+def get_device_types():
+    """
+    获取所有设备类型及其参数配置
+    
+    验证需求: 35.1-35.5
+    """
+    try:
+        import yaml
+        config_path = 'backend/config/device_params.yaml'
+        
+        with open(config_path, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'device_types': list(config['device_types'].keys()),
+                'params_config': config['device_types']
+            }
+        })
+    except FileNotFoundError:
+        return jsonify({
+            'success': False,
+            'error_code': 'CONFIG_NOT_FOUND',
+            'error_message': '设备参数配置文件不存在'
+        }), 404
+    except Exception as e:
+        logger.error(f"获取设备类型配置失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error_code': 'SERVER_ERROR',
+            'error_message': str(e)
+        }), 500
+```
+
+#### 创建设备API增强
+
+```python
+@app.route('/api/devices', methods=['POST'])
+def create_device():
+    """
+    创建设备 - 支持动态参数
+    
+    验证需求: 21.3, 30.1, 31.1, 32.1, 33.1, 36.6
+    """
+    try:
+        data = request.json
+        
+        # 验证必填字段
+        required_fields = ['device_id', 'brand', 'device_name', 'spec_model', 'unit_price']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({
+                    'success': False,
+                    'error_code': 'VALIDATION_ERROR',
+                    'error_message': f'缺少必填字段: {field}'
+                }), 400
+        
+        # 验证key_params格式
+        if 'key_params' in data and data['key_params']:
+            if not validate_key_params(data['key_params']):
+                return jsonify({
+                    'success': False,
+                    'error_code': 'INVALID_KEY_PARAMS',
+                    'error_message': 'key_params格式不正确'
+                }), 400
+        
+        # 创建设备对象
+        device = Device(
+            device_id=data['device_id'],
+            brand=data['brand'],
+            device_name=data['device_name'],
+            spec_model=data['spec_model'],
+            unit_price=data['unit_price'],
+            device_type=data.get('device_type'),
+            key_params=data.get('key_params'),
+            detailed_params=data.get('detailed_params'),
+            raw_description=data.get('raw_description'),
+            confidence_score=data.get('confidence_score'),
+            input_method=data.get('input_method', 'manual')
+        )
+        
+        # 保存到数据库
+        auto_generate_rule = data.get('auto_generate_rule', True)
+        success = db_loader.add_device(device, auto_generate_rule=auto_generate_rule)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'data': {
+                    'device_id': device.device_id,
+                    'rule_generated': auto_generate_rule
+                },
+                'message': '设备创建成功' + ('，已自动生成匹配规则' if auto_generate_rule else '')
+            }), 201
+        else:
+            return jsonify({
+                'success': False,
+                'error_code': 'CREATE_FAILED',
+                'error_message': '设备创建失败'
+            }), 500
+            
+    except Exception as e:
+        logger.error(f"创建设备失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error_code': 'SERVER_ERROR',
+            'error_message': str(e)
+        }), 500
+
+def validate_key_params(key_params: dict) -> bool:
+    """
+    验证key_params格式
+    
+    验证需求: 31.2, 31.3
+    """
+    if not isinstance(key_params, dict):
+        return False
+    
+    for param_name, param_data in key_params.items():
+        if not isinstance(param_data, dict):
+            return False
+        
+        # 检查必需字段
+        required_fields = ['value', 'data_type']
+        if not all(field in param_data for field in required_fields):
+            return False
+    
+    return True
+```
+
+## 数据迁移脚本设计
+
+### 数据库Schema迁移
+
+**验证需求**: 30.1-30.5, 31.1-31.5, 32.1-32.5, 33.1-33.5, 34.1-34.5
+
+```python
+# backend/migrations/add_device_type_and_optimize_schema.py
+
+"""
+数据库Schema优化迁移脚本
+添加device_type、input_method、时间戳字段
+修改detailed_params为可选
+"""
+
+from sqlalchemy import text, inspect
+from backend.modules.database_manager import DatabaseManager
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+def migrate_schema(database_url: str = "sqlite:///data/devices.db"):
+    """执行Schema迁移"""
+    
+    logger.info("开始数据库Schema迁移...")
+    db_manager = DatabaseManager(database_url)
+    
+    try:
+        with db_manager.session_scope() as session:
+            inspector = inspect(session.bind)
+            existing_columns = [col['name'] for col in inspector.get_columns('devices')]
+            
+            # 1. 添加device_type字段
+            if 'device_type' not in existing_columns:
+                logger.info("添加device_type字段...")
+                session.execute(text("""
+                    ALTER TABLE devices 
+                    ADD COLUMN device_type VARCHAR(50);
+                """))
+                logger.info("✅ device_type字段添加成功")
+            
+            # 2. 添加input_method字段
+            if 'input_method' not in existing_columns:
+                logger.info("添加input_method字段...")
+                session.execute(text("""
+                    ALTER TABLE devices 
+                    ADD COLUMN input_method VARCHAR(20) DEFAULT 'manual';
+                """))
+                logger.info("✅ input_method字段添加成功")
+            
+            # 3. 添加created_at字段
+            if 'created_at' not in existing_columns:
+                logger.info("添加created_at字段...")
+                session.execute(text("""
+                    ALTER TABLE devices 
+                    ADD COLUMN created_at DATETIME;
+                """))
+                logger.info("✅ created_at字段添加成功")
+            
+            # 4. 添加updated_at字段
+            if 'updated_at' not in existing_columns:
+                logger.info("添加updated_at字段...")
+                session.execute(text("""
+                    ALTER TABLE devices 
+                    ADD COLUMN updated_at DATETIME;
+                """))
+                logger.info("✅ updated_at字段添加成功")
+            
+            # 5. 为现有数据设置默认值
+            logger.info("为现有数据设置默认值...")
+            session.execute(text("""
+                UPDATE devices 
+                SET input_method = 'manual',
+                    created_at = datetime('now'),
+                    updated_at = datetime('now')
+                WHERE input_method IS NULL;
+            """))
+            
+            # 6. 创建索引
+            logger.info("创建索引...")
+            try:
+                session.execute(text("""
+                    CREATE INDEX IF NOT EXISTS idx_device_type 
+                    ON devices(device_type);
+                """))
+                session.execute(text("""
+                    CREATE INDEX IF NOT EXISTS idx_input_method 
+                    ON devices(input_method);
+                """))
+                logger.info("✅ 索引创建成功")
+            except Exception as e:
+                logger.warning(f"索引创建警告: {str(e)}")
+            
+            session.commit()
+            
+        logger.info("✅ 数据库Schema迁移完成")
+        logger.info("  - 添加device_type字段")
+        logger.info("  - 添加input_method字段")
+        logger.info("  - 添加created_at和updated_at字段")
+        logger.info("  - 创建相关索引")
+        logger.info("  - 为现有数据设置默认值")
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ 数据库Schema迁移失败: {str(e)}")
+        return False
+    finally:
+        db_manager.close()
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    success = migrate_schema()
+    exit(0 if success else 1)
+```
+
+### 旧设备类型推断脚本
+
+**验证需求**: 37.1-37.5
+
+```python
+# backend/scripts/infer_device_types.py
+
+"""
+为旧设备数据推断device_type
+根据设备名称中的关键词匹配设备类型
+"""
+
+from backend.modules.database_manager import DatabaseManager
+from backend.modules.models import Device as DeviceModel
+from datetime import datetime
+import logging
+import yaml
+
+logger = logging.getLogger(__name__)
+
+def load_device_type_keywords():
+    """加载设备类型关键词配置"""
+    with open('backend/config/device_params.yaml', 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+    
+    # 构建关键词映射
+    keywords_map = {}
+    for device_type, type_config in config['device_types'].items():
+        keywords_map[device_type] = type_config.get('keywords', [])
+    
+    return keywords_map
+
+def infer_device_type(device_name: str, keywords_map: dict) -> str:
+    """根据设备名称推断设备类型"""
+    for device_type, keywords in keywords_map.items():
+        if any(keyword in device_name for keyword in keywords):
+            return device_type
+    return None
+
+def migrate_device_types(database_url: str = "sqlite:///data/devices.db"):
+    """为旧设备推断device_type"""
+    
+    logger.info("开始为旧设备推断device_type...")
+    db_manager = DatabaseManager(database_url)
+    keywords_map = load_device_type_keywords()
+    
+    stats = {
+        'total': 0,
+        'success': 0,
+        'failed': 0
+    }
+    
+    try:
+        with db_manager.session_scope() as session:
+            # 查询所有device_type为空的设备
+            old_devices = session.query(DeviceModel).filter(
+                DeviceModel.device_type == None
+            ).all()
+            
+            stats['total'] = len(old_devices)
+            logger.info(f"找到 {stats['total']} 个需要推断device_type的设备")
+            
+            for device in old_devices:
+                # 根据device_name推断device_type
+                device_type = infer_device_type(device.device_name, keywords_map)
+                
+                if device_type:
+                    device.device_type = device_type
+                    device.updated_at = datetime.utcnow()
+                    stats['success'] += 1
+                    logger.info(f"  ✅ {device.device_id}: {device.device_name} -> {device_type}")
+                else:
+                    stats['failed'] += 1
+                    logger.warning(f"  ⚠️ {device.device_id}: {device.device_name} -> 无法推断")
+            
+            session.commit()
+            
+        logger.info("✅ device_type推断完成")
+        logger.info(f"  - 总数: {stats['total']}")
+        logger.info(f"  - 成功: {stats['success']}")
+        logger.info(f"  - 失败: {stats['failed']}")
+        
+        return stats
+        
+    except Exception as e:
+        logger.error(f"❌ device_type推断失败: {str(e)}")
+        return None
+    finally:
+        db_manager.close()
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    stats = migrate_device_types()
+    exit(0 if stats else 1)
+```
+
+## 测试策略更新
+
+### 新增单元测试
+
+1. **device_type字段测试**
+   - 测试按device_type过滤
+   - 测试device_type索引性能
+   - 测试device_type为空的向后兼容
+
+2. **key_params结构测试**
+   - 测试key_params JSON格式验证
+   - 测试key_params存储和读取
+   - 测试key_params为空的向后兼容
+
+3. **特征提取优化测试**
+   - 测试优先使用key_params提取特征
+   - 测试device_type作为高权重特征
+   - 测试回退到detailed_params的逻辑
+
+4. **动态表单测试**
+   - 测试设备类型配置API
+   - 测试动态参数表单渲染
+   - 测试参数验证逻辑
+
+### 集成测试更新
+
+1. **完整录入流程测试**
+   - 选择设备类型 -> 填写动态参数 -> 保存设备 -> 自动生成规则
+   - 验证key_params正确存储
+   - 验证规则特征提取正确
+
+2. **新旧数据兼容性测试**
+   - 旧设备(无device_type)仍能正常匹配
+   - 新设备(有device_type)匹配准确度提升
+   - 混合数据场景测试
+
+3. **数据迁移测试**
+   - 测试Schema迁移脚本
+   - 测试device_type推断脚本
+   - 验证迁移后数据完整性

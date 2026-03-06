@@ -7,6 +7,16 @@
 [![Vue](https://img.shields.io/badge/vue-3.x-brightgreen.svg)](https://vuejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
+## 🎉 最新更新 (2026-03-04)
+
+### 设备管理功能优化
+
+- ✅ **修复品牌下拉框显示问题** - 现在正确显示品牌名称而非数字
+- ✅ **新增Excel模板下载功能** - 批量导入时可下载标准模板，包含示例数据
+- ✅ **优化详细参数提示** - 改进提示信息，提供更清晰的填写指导
+
+详见：[修复总结](DEVICE_FORM_FIXES_SUMMARY.md) | [用户通知](USER_NOTIFICATION.md)
+
 ## 📖 项目简介
 
 DDC 设备清单匹配报价系统是一个轻量化的 Web 应用，专为 DDC 自控领域的设备清单报价流程设计。系统通过**设备行智能识别**和**智能匹配算法**，自动识别 Excel 设备清单中的设备行并匹配设备信息，生成标准化的报价单，大幅提升报价效率和准确性。
@@ -66,17 +76,51 @@ npm run dev
 
 ### 数据库初始化（可选）
 
+系统支持两种数据存储模式：**JSON模式**（默认）和**数据库模式**（推荐）。
+
+#### JSON模式（默认）
+- 数据存储在 `data/static_device.json`、`data/static_rule.json`、`data/static_config.json`
+- 适合小规模数据（<100个设备）
+- 无需额外配置，开箱即用
+
+#### 数据库模式（推荐）
+- 支持SQLite（开发）和MySQL（生产）
+- 适合大规模数据（100+个设备）
+- 提供完整的CRUD API和管理界面
+
+**切换到数据库模式**：
+
 ```bash
 cd backend
 
-# 创建数据库
+# 1. 创建数据库和表结构
 python scripts/init_database.py
 
-# 导入真实设备数据（720+条）
-python scripts/import_devices_from_excel.py
+# 2. 导入真实设备数据（720+条）
+python scripts/import_devices_from_excel.py data/真实设备价格例子.xlsx
 
-# 生成匹配规则
+# 3. 生成匹配规则
 python scripts/generate_rules_for_devices.py
+
+# 4. 修改配置文件启用数据库模式
+# 编辑 backend/config.py，设置：
+# USE_DATABASE = True
+# DATABASE_URL = "sqlite:///data/devices.db"  # SQLite
+# 或
+# DATABASE_URL = "mysql+pymysql://user:pass@host:3306/dbname"  # MySQL
+```
+
+**数据库管理工具**：
+
+```bash
+# 查看数据库统计信息
+python -c "from modules.database import StatisticsReporter; StatisticsReporter('sqlite:///data/devices.db').generate_report()"
+
+# 检查数据一致性
+python -c "from modules.database_loader import DatabaseLoader; loader = DatabaseLoader('sqlite:///data/devices.db'); print(loader.check_data_consistency())"
+
+# 修复数据一致性问题
+python -c "from modules.database_loader import DatabaseLoader; loader = DatabaseLoader('sqlite:///data/devices.db'); loader.fix_consistency_issues()"
 ```
 
 详细安装说明请参考 [docs/SETUP.md](docs/SETUP.md)
@@ -235,6 +279,153 @@ excel_matching/
 6. **设备行识别** - 配置设备行识别参数
 
 详细说明请参考 [docs/CONFIG_MANAGEMENT_USER_GUIDE.md](docs/CONFIG_MANAGEMENT_USER_GUIDE.md)
+
+---
+
+## 🗄️ 数据库模式 API
+
+当启用数据库模式后，系统提供完整的RESTful API用于设备、规则和配置管理。
+
+### 设备管理 API
+
+```bash
+# 获取设备列表（支持分页和筛选）
+GET /api/devices?page=1&per_page=20&brand=霍尼韦尔&device_type=阀门
+
+# 获取单个设备详情
+GET /api/devices/:id
+
+# 创建新设备（支持自动生成规则）
+POST /api/devices
+{
+  "device_id": "DEV001",
+  "brand": "霍尼韦尔",
+  "device_name": "电动二通阀",
+  "spec_model": "VC4013",
+  "detailed_params": "DN15 AC24V",
+  "price": 850.00,
+  "device_type": "阀门",
+  "key_params": {"口径": "DN15", "电压": "AC24V"},
+  "auto_generate_rule": true
+}
+
+# 更新设备（支持重新生成规则）
+PUT /api/devices/:id
+{
+  "price": 900.00,
+  "regenerate_rule": true
+}
+
+# 删除设备（级联删除关联规则）
+DELETE /api/devices/:id
+
+# 批量导入设备
+POST /api/devices/batch
+Content-Type: multipart/form-data
+file: devices.xlsx
+```
+
+### 规则管理 API
+
+```bash
+# 获取规则列表
+GET /api/rules?device_id=DEV001
+
+# 获取单个规则详情
+GET /api/rules/:id
+
+# 创建新规则
+POST /api/rules
+{
+  "rule_id": "R_DEV001",
+  "target_device_id": "DEV001",
+  "auto_extracted_features": ["霍尼韦尔", "电动", "二通阀", "dn15"],
+  "feature_weights": {"霍尼韦尔": 1.0, "电动": 4.0, "二通阀": 4.0, "dn15": 4.0},
+  "match_threshold": 5.0
+}
+
+# 更新规则
+PUT /api/rules/:id
+
+# 删除规则
+DELETE /api/rules/:id
+
+# 批量生成规则
+POST /api/rules/generate
+{
+  "device_ids": ["DEV001", "DEV002"],
+  "force_regenerate": false
+}
+```
+
+### 配置管理 API
+
+```bash
+# 获取所有配置
+GET /api/config
+
+# 获取单个配置
+GET /api/config/:key
+
+# 创建配置
+POST /api/config
+{
+  "key": "custom_setting",
+  "value": {"enabled": true}
+}
+
+# 更新配置（自动重新初始化相关组件）
+PUT /api/config
+{
+  "key": "feature_weight_config",
+  "value": {"brand_weight": 1, "device_type_weight": 5}
+}
+
+# 删除配置
+DELETE /api/config/:key
+```
+
+### 统计信息 API
+
+```bash
+# 获取数据库统计概览
+GET /api/database/statistics
+
+# 获取品牌分布
+GET /api/database/statistics/brands
+
+# 获取价格分布
+GET /api/database/statistics/prices
+
+# 获取最近添加的设备
+GET /api/database/statistics/recent
+
+# 获取没有规则的设备
+GET /api/database/statistics/without-rules
+```
+
+### 数据一致性 API
+
+```bash
+# 检查数据一致性
+GET /api/database/consistency-check
+
+# 修复数据一致性问题
+POST /api/database/fix-consistency
+{
+  "generate_missing_rules": true,
+  "delete_orphan_rules": true
+}
+```
+
+### 动态表单 API
+
+```bash
+# 获取设备类型配置（用于动态表单）
+GET /api/device-types
+```
+
+完整API文档请参考 [backend/docs/API.md](backend/docs/API.md)
 
 ---
 
@@ -661,11 +852,28 @@ Excel特征: ["霍尼韦尔", "座阀", "二通", "dn15"]
 
 ### 数据存储
 
-| 技术 | 用途 |
-|------|------|
-| SQLite | 默认数据库（开发/小规模） |
-| MySQL | 生产数据库（可选） |
-| JSON | 向后兼容模式 |
+| 技术 | 用途 | 特点 |
+|------|------|------|
+| SQLite | 默认数据库（开发/小规模） | 无需配置，单文件存储 |
+| MySQL | 生产数据库（可选） | 高性能，支持并发 |
+| JSON | 向后兼容模式 | 简单直接，适合小数据量 |
+
+**数据库模式优势**：
+- ✅ 支持大规模数据（1000+设备）
+- ✅ 完整的CRUD操作
+- ✅ 数据一致性保证
+- ✅ 事务支持
+- ✅ 索引优化查询性能
+- ✅ 可视化管理界面
+
+**JSON模式优势**：
+- ✅ 零配置，开箱即用
+- ✅ 数据可读性强
+- ✅ 易于版本控制
+- ✅ 适合小规模数据
+
+**模式切换**：
+系统支持在两种模式间无缝切换，通过修改 `backend/config.py` 中的 `USE_DATABASE` 配置即可。数据库连接失败时会自动回退到JSON模式。
 
 ---
 
@@ -678,8 +886,15 @@ Excel特征: ["霍尼韦尔", "座阀", "二通", "dn15"]
 
 ### 使用指南
 - [docs/CONFIG_MANAGEMENT_USER_GUIDE.md](docs/CONFIG_MANAGEMENT_USER_GUIDE.md) - 配置管理
+- [docs/DEVICE_MANAGEMENT_USAGE_GUIDE.md](docs/DEVICE_MANAGEMENT_USAGE_GUIDE.md) - 设备管理
 - [docs/MAINTENANCE.md](docs/MAINTENANCE.md) - 数据维护
 - [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md) - 测试指南
+
+### 数据库指南
+- [.kiro/specs/database-migration/requirements.md](.kiro/specs/database-migration/requirements.md) - 数据库需求
+- [.kiro/specs/database-migration/design.md](.kiro/specs/database-migration/design.md) - 数据库设计
+- [backend/docs/DATABASE_SCHEMA.md](backend/docs/DATABASE_SCHEMA.md) - 数据库Schema
+- [backend/docs/API.md](backend/docs/API.md) - RESTful API文档
 
 ### 开发指南
 - [docs/FILE_MANAGEMENT_GUIDE.md](docs/FILE_MANAGEMENT_GUIDE.md) - 文件管理
@@ -687,9 +902,9 @@ Excel特征: ["霍尼韦尔", "座阀", "二通", "dn15"]
 - [docs/KIRO_WORKFLOW_GUIDE.md](docs/KIRO_WORKFLOW_GUIDE.md) - Kiro 工作流程
 
 ### 技术文档
-- [backend/docs/](backend/docs/) - 后端 API 文档
+- [backend/docs/](backend/docs/) - 后端技术文档
 - [frontend/docs/](frontend/docs/) - 前端组件文档
-- [.kiro/specs/](. kiro/specs/) - 功能规格文档
+- [.kiro/specs/](.kiro/specs/) - 功能规格文档
 
 ---
 

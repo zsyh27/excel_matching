@@ -176,8 +176,16 @@ class DatabaseLoader:
                 device_model.brand = device.brand
                 device_model.device_name = device.device_name
                 device_model.spec_model = device.spec_model
-                device_model.detailed_params = device.detailed_params
+                device_model.detailed_params = device.detailed_params or ''  # 确保不是None
                 device_model.unit_price = device.unit_price
+                
+                # 更新新增字段
+                device_model.device_type = device.device_type
+                device_model.key_params = device.key_params
+                device_model.raw_description = device.raw_description
+                device_model.confidence_score = device.confidence_score
+                device_model.input_method = device.input_method or 'manual'
+                # updated_at会自动更新（onupdate=datetime.utcnow）
                 
                 logger.info(f"更新设备成功: {device.device_id}")
                 return True
@@ -301,8 +309,16 @@ class DatabaseLoader:
             brand=device_model.brand,
             device_name=device_model.device_name,
             spec_model=device_model.spec_model,
-            detailed_params=device_model.detailed_params,
-            unit_price=device_model.unit_price
+            detailed_params=device_model.detailed_params or '',  # 处理None值
+            unit_price=device_model.unit_price,
+            # 新增字段
+            device_type=device_model.device_type,
+            key_params=device_model.key_params,
+            raw_description=device_model.raw_description,
+            confidence_score=device_model.confidence_score,
+            input_method=device_model.input_method or 'manual',
+            created_at=device_model.created_at,
+            updated_at=device_model.updated_at
         )
     
     def _device_to_model(self, device: Device) -> DeviceModel:
@@ -320,8 +336,16 @@ class DatabaseLoader:
             brand=device.brand,
             device_name=device.device_name,
             spec_model=device.spec_model,
-            detailed_params=device.detailed_params,
-            unit_price=device.unit_price
+            detailed_params=device.detailed_params or '',  # 确保不是None，使用空字符串
+            unit_price=device.unit_price,
+            # 新增字段
+            device_type=device.device_type,
+            key_params=device.key_params,
+            raw_description=device.raw_description,
+            confidence_score=device.confidence_score,
+            input_method=device.input_method or 'manual',
+            created_at=device.created_at,
+            updated_at=device.updated_at
         )
     
     def _model_to_rule(self, rule_model: RuleModel) -> Rule:
@@ -334,11 +358,22 @@ class DatabaseLoader:
         Returns:
             规则数据类实例
         """
+        import json
+        
+        # 确保JSON字段被正确解析
+        auto_extracted_features = rule_model.auto_extracted_features
+        if isinstance(auto_extracted_features, str):
+            auto_extracted_features = json.loads(auto_extracted_features)
+        
+        feature_weights = rule_model.feature_weights
+        if isinstance(feature_weights, str):
+            feature_weights = json.loads(feature_weights)
+        
         return Rule(
             rule_id=rule_model.rule_id,
             target_device_id=rule_model.target_device_id,
-            auto_extracted_features=rule_model.auto_extracted_features,
-            feature_weights=rule_model.feature_weights,
+            auto_extracted_features=auto_extracted_features,
+            feature_weights=feature_weights,
             match_threshold=rule_model.match_threshold,
             remark=rule_model.remark or ''
         )
@@ -399,6 +434,126 @@ class DatabaseLoader:
                 return config
         except Exception as e:
             logger.error(f"从数据库加载配置失败: {e}")
+            raise
+    
+    def get_config_by_key(self, config_key: str) -> Optional[Any]:
+        """
+        根据键查询配置值
+        
+        验证需求: 15.2, 23.2
+        
+        Args:
+            config_key: 配置键
+            
+        Returns:
+            配置值，不存在返回 None
+        """
+        try:
+            with self.db_manager.session_scope() as session:
+                config_model = session.query(ConfigModel).filter_by(config_key=config_key).first()
+                
+                if config_model is None:
+                    logger.debug(f"配置不存在: {config_key}")
+                    return None
+                
+                return config_model.config_value
+        except Exception as e:
+            logger.error(f"查询配置失败: {e}")
+            raise
+    
+    def add_config(self, config_key: str, config_value: Any, description: str = '') -> bool:
+        """
+        添加新配置
+        
+        验证需求: 15.3, 23.4
+        
+        Args:
+            config_key: 配置键
+            config_value: 配置值（JSON 格式）
+            description: 配置描述
+            
+        Returns:
+            是否添加成功
+        """
+        try:
+            with self.db_manager.session_scope() as session:
+                # 检查配置是否已存在
+                existing = session.query(ConfigModel).filter_by(config_key=config_key).first()
+                if existing:
+                    logger.warning(f"配置已存在，无法添加: {config_key}")
+                    return False
+                
+                # 创建新配置
+                config_model = ConfigModel(
+                    config_key=config_key,
+                    config_value=config_value,
+                    description=description
+                )
+                session.add(config_model)
+                
+                logger.info(f"添加配置成功: {config_key}")
+                return True
+        except Exception as e:
+            logger.error(f"添加配置失败: {e}")
+            raise
+    
+    def update_config(self, config_key: str, config_value: Any) -> bool:
+        """
+        更新配置值
+        
+        验证需求: 15.4, 23.3
+        
+        Args:
+            config_key: 配置键
+            config_value: 新的配置值
+            
+        Returns:
+            是否更新成功
+        """
+        try:
+            with self.db_manager.session_scope() as session:
+                config_model = session.query(ConfigModel).filter_by(config_key=config_key).first()
+                
+                if config_model is None:
+                    logger.warning(f"配置不存在，无法更新: {config_key}")
+                    return False
+                
+                # 更新配置值
+                config_model.config_value = config_value
+                
+                logger.info(f"更新配置成功: {config_key}")
+                return True
+        except Exception as e:
+            logger.error(f"更新配置失败: {e}")
+            raise
+    
+    def delete_config(self, config_key: str) -> bool:
+        """
+        删除配置
+        
+        验证需求: 15.5, 23.5
+        
+        Args:
+            config_key: 配置键
+            
+        Returns:
+            是否删除成功
+        """
+        try:
+            with self.db_manager.session_scope() as session:
+                config_model = session.query(ConfigModel).filter_by(config_key=config_key).first()
+                
+                if config_model is None:
+                    logger.warning(f"配置不存在，无法删除: {config_key}")
+                    return False
+                
+                # 删除配置
+                session.delete(config_model)
+                
+                logger.info(f"删除配置成功: {config_key}")
+                return True
+        except Exception as e:
+            logger.error(f"删除配置失败: {e}")
             raise
 
     # ========== 数据一致性检查方法 ==========
@@ -570,4 +725,191 @@ class DatabaseLoader:
             
         except Exception as e:
             logger.error(f"修复数据一致性问题失败: {e}")
+            raise
+    
+    # ========== 批量操作方法 ==========
+    
+    def batch_add_devices(self, devices: List[Device], batch_size: int = 100, 
+                         auto_generate_rule: bool = False) -> Dict[str, int]:
+        """
+        批量添加设备
+        
+        验证需求: 13.9, 13.10, 18.4
+        
+        Args:
+            devices: 设备列表
+            batch_size: 批量大小（默认100）
+            auto_generate_rule: 是否自动生成规则
+            
+        Returns:
+            统计信息 {
+                'inserted': int,  # 成功插入的设备数
+                'updated': int,   # 更新的设备数
+                'failed': int,    # 失败的设备数
+                'rules_generated': int  # 生成的规则数
+            }
+        """
+        stats = {
+            'inserted': 0,
+            'updated': 0,
+            'failed': 0,
+            'rules_generated': 0
+        }
+        
+        try:
+            # 分批处理
+            for i in range(0, len(devices), batch_size):
+                batch = devices[i:i + batch_size]
+                
+                try:
+                    with self.db_manager.session_scope() as session:
+                        for device in batch:
+                            try:
+                                # 检查设备是否已存在
+                                existing = session.query(DeviceModel).filter_by(
+                                    device_id=device.device_id
+                                ).first()
+                                
+                                if existing:
+                                    # 更新现有设备
+                                    existing.brand = device.brand
+                                    existing.device_name = device.device_name
+                                    existing.spec_model = device.spec_model
+                                    existing.detailed_params = device.detailed_params if device.detailed_params else None
+                                    existing.unit_price = device.unit_price
+                                    existing.device_type = device.device_type
+                                    existing.key_params = device.key_params
+                                    existing.raw_description = device.raw_description
+                                    existing.confidence_score = device.confidence_score
+                                    existing.input_method = device.input_method or 'manual'
+                                    stats['updated'] += 1
+                                else:
+                                    # 插入新设备
+                                    device_model = self._device_to_model(device)
+                                    session.add(device_model)
+                                    stats['inserted'] += 1
+                                
+                                # 自动生成规则
+                                if auto_generate_rule and self.rule_generator:
+                                    try:
+                                        rule = self.rule_generator.generate_rule(device)
+                                        
+                                        # 检查规则是否已存在
+                                        existing_rule = session.query(RuleModel).filter_by(
+                                            rule_id=rule.rule_id
+                                        ).first()
+                                        
+                                        if existing_rule:
+                                            # 更新现有规则
+                                            existing_rule.auto_extracted_features = rule.auto_extracted_features
+                                            existing_rule.feature_weights = rule.feature_weights
+                                            existing_rule.match_threshold = rule.match_threshold
+                                        else:
+                                            # 插入新规则
+                                            rule_model = self._rule_to_model(rule)
+                                            session.add(rule_model)
+                                        
+                                        stats['rules_generated'] += 1
+                                    except Exception as e:
+                                        logger.warning(f"为设备 {device.device_id} 生成规则失败: {e}")
+                                
+                            except Exception as e:
+                                logger.warning(f"处理设备 {device.device_id} 失败: {e}")
+                                stats['failed'] += 1
+                        
+                        # 批次提交成功
+                        logger.debug(f"批次 {i//batch_size + 1} 处理完成")
+                        
+                except Exception as e:
+                    logger.error(f"批次 {i//batch_size + 1} 处理失败，回滚: {e}")
+                    # 该批次的所有操作都会回滚
+                    stats['failed'] += len(batch)
+            
+            logger.info(f"批量添加设备完成: 插入 {stats['inserted']}, 更新 {stats['updated']}, "
+                       f"失败 {stats['failed']}, 生成规则 {stats['rules_generated']}")
+            return stats
+            
+        except Exception as e:
+            logger.error(f"批量添加设备失败: {e}")
+            raise
+    
+    def batch_generate_rules(self, device_ids: Optional[List[str]] = None, 
+                            force_regenerate: bool = False) -> Dict[str, int]:
+        """
+        批量生成规则
+        
+        验证需求: 14.12, 18.4, 22.7
+        
+        Args:
+            device_ids: 设备ID列表（None表示为所有设备生成）
+            force_regenerate: 是否强制重新生成已有规则
+            
+        Returns:
+            统计信息 {
+                'generated': int,  # 生成的规则数
+                'updated': int,    # 更新的规则数
+                'skipped': int,    # 跳过的设备数（已有规则且不强制重新生成）
+                'failed': int      # 失败的设备数
+            }
+        """
+        if not self.rule_generator:
+            logger.error("RuleGenerator 未初始化，无法生成规则")
+            raise ValueError("RuleGenerator 未初始化")
+        
+        stats = {
+            'generated': 0,
+            'updated': 0,
+            'skipped': 0,
+            'failed': 0
+        }
+        
+        try:
+            with self.db_manager.session_scope() as session:
+                # 获取要处理的设备
+                if device_ids:
+                    devices = session.query(DeviceModel).filter(
+                        DeviceModel.device_id.in_(device_ids)
+                    ).all()
+                else:
+                    devices = session.query(DeviceModel).all()
+                
+                for device_model in devices:
+                    try:
+                        device = self._model_to_device(device_model)
+                        
+                        # 检查是否已有规则
+                        existing_rule = session.query(RuleModel).filter_by(
+                            target_device_id=device.device_id
+                        ).first()
+                        
+                        if existing_rule and not force_regenerate:
+                            stats['skipped'] += 1
+                            continue
+                        
+                        # 生成规则
+                        rule = self.rule_generator.generate_rule(device)
+                        
+                        if existing_rule:
+                            # 更新现有规则
+                            existing_rule.auto_extracted_features = rule.auto_extracted_features
+                            existing_rule.feature_weights = rule.feature_weights
+                            existing_rule.match_threshold = rule.match_threshold
+                            existing_rule.remark = rule.remark
+                            stats['updated'] += 1
+                        else:
+                            # 插入新规则
+                            rule_model = self._rule_to_model(rule)
+                            session.add(rule_model)
+                            stats['generated'] += 1
+                        
+                    except Exception as e:
+                        logger.warning(f"为设备 {device_model.device_id} 生成规则失败: {e}")
+                        stats['failed'] += 1
+                
+                logger.info(f"批量生成规则完成: 生成 {stats['generated']}, 更新 {stats['updated']}, "
+                           f"跳过 {stats['skipped']}, 失败 {stats['failed']}")
+                return stats
+                
+        except Exception as e:
+            logger.error(f"批量生成规则失败: {e}")
             raise

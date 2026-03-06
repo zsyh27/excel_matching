@@ -26,6 +26,15 @@ class Device:
     detailed_params: str    # 详细参数
     unit_price: float       # 不含税单价
     
+    # ✅ 新增字段 - 支持动态表单和数据追溯
+    device_type: Optional[str] = None           # 设备类型 (验证需求 30.1)
+    key_params: Optional[Dict[str, Any]] = None # 关键参数JSON (验证需求 31.1)
+    raw_description: Optional[str] = None       # 原始描述文本
+    confidence_score: Optional[float] = None    # 置信度评分
+    input_method: str = 'manual'                # 录入方式 (验证需求 32.1)
+    created_at: Optional[datetime] = None       # 创建时间 (验证需求 33.1)
+    updated_at: Optional[datetime] = None       # 更新时间 (验证需求 33.1)
+    
     @classmethod
     def from_dict(cls, data: Dict) -> 'Device':
         """从字典创建设备实例"""
@@ -34,13 +43,21 @@ class Device:
             brand=data['brand'],
             device_name=data['device_name'],
             spec_model=data['spec_model'],
-            detailed_params=data['detailed_params'],
-            unit_price=float(data['unit_price'])
+            detailed_params=data.get('detailed_params', ''),  # 改为可选
+            unit_price=float(data['unit_price']),
+            # 新增字段
+            device_type=data.get('device_type'),
+            key_params=data.get('key_params'),
+            raw_description=data.get('raw_description'),
+            confidence_score=data.get('confidence_score'),
+            input_method=data.get('input_method', 'manual'),
+            created_at=data.get('created_at'),
+            updated_at=data.get('updated_at')
         )
     
     def to_dict(self) -> Dict:
         """转换为字典"""
-        return {
+        result = {
             'device_id': self.device_id,
             'brand': self.brand,
             'device_name': self.device_name,
@@ -48,6 +65,24 @@ class Device:
             'detailed_params': self.detailed_params,
             'unit_price': self.unit_price
         }
+        
+        # 添加可选字段（如果有值）
+        if self.device_type:
+            result['device_type'] = self.device_type
+        if self.key_params:
+            result['key_params'] = self.key_params
+        if self.raw_description:
+            result['raw_description'] = self.raw_description
+        if self.confidence_score is not None:
+            result['confidence_score'] = self.confidence_score
+        if self.input_method:
+            result['input_method'] = self.input_method
+        if self.created_at:
+            result['created_at'] = self.created_at.isoformat() if isinstance(self.created_at, datetime) else self.created_at
+        if self.updated_at:
+            result['updated_at'] = self.updated_at.isoformat() if isinstance(self.updated_at, datetime) else self.updated_at
+        
+        return result
     
     def get_display_text(self) -> str:
         """获取完整的设备显示文本"""
@@ -450,7 +485,7 @@ class JSONLoader:
             default_threshold = config.get('global_config', {}).get('default_match_threshold', 5.0)
             
             # 创建规则生成器并生成规则
-            rule_generator = RuleGenerator(self.preprocessor, default_threshold)
+            rule_generator = RuleGenerator(config=config, default_threshold=default_threshold)
             rule = rule_generator.generate_rule(device)
             
             if rule:
@@ -594,9 +629,17 @@ class DataLoader:
                     
                     db_manager = DatabaseManager(config.DATABASE_URL)
                     
-                    # 创建 RuleGenerator 用于自动生成规则
-                    rule_generator = RuleGenerator(preprocessor) if preprocessor else None
+                    # 先创建一个临时的DatabaseLoader来加载配置
+                    temp_loader = DatabaseLoader(db_manager, preprocessor, None)
                     
+                    # 加载配置
+                    db_config = temp_loader.load_config()
+                    
+                    # 创建 RuleGenerator 用于自动生成规则
+                    default_threshold = db_config.get('global_config', {}).get('default_match_threshold', 5.0) if db_config else 5.0
+                    rule_generator = RuleGenerator(config=db_config, default_threshold=default_threshold) if db_config else None
+                    
+                    # 创建最终的DatabaseLoader
                     self.loader = DatabaseLoader(db_manager, preprocessor, rule_generator)
                     logger.info(f"使用数据库存储模式: {getattr(config, 'DATABASE_TYPE', 'unknown')}")
                 except Exception as e:

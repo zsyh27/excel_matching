@@ -14,10 +14,8 @@
             @select="handleMenuSelect"
           >
             <el-menu-item index="/">上传清单</el-menu-item>
-            <el-menu-item index="/device-input">设备录入</el-menu-item>
             <el-menu-item index="/database/devices">设备库管理</el-menu-item>
-            <el-menu-item index="/database/statistics">统计仪表板</el-menu-item>
-            <el-menu-item index="/rule-management">规则管理</el-menu-item>
+            <el-menu-item index="/statistics">统计仪表板</el-menu-item>
             <el-menu-item index="/config-management">配置管理</el-menu-item>
           </el-menu>
         </div>
@@ -39,12 +37,10 @@ const activeMenu = ref(route.path)
 
 // 监听路由变化更新活动菜单
 watch(() => route.path, (newPath) => {
-  if (newPath.startsWith('/rule-management')) {
-    activeMenu.value = '/rule-management'
-  } else if (newPath.startsWith('/database/devices')) {
+  if (newPath.startsWith('/database/devices')) {
     activeMenu.value = '/database/devices'
-  } else if (newPath.startsWith('/database/statistics')) {
-    activeMenu.value = '/database/statistics'
+  } else if (newPath.startsWith('/database/statistics') || newPath.startsWith('/statistics')) {
+    activeMenu.value = '/statistics'
   } else if (newPath.startsWith('/config-management')) {
     activeMenu.value = '/config-management'
   } else if (newPath === '/device-input') {

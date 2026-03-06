@@ -1,0 +1,245 @@
+{
+  "total": 34,
+  "success": 34,
+  "error": 0,
+  "updated_devices": [
+    {
+      "device_id": "霍尼韦尔_V5011N1040_20260305183656367976",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011N1057_20260305183656398109",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1004_20260305183656412823",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1012_20260305183656428313",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1020_20260305183656442603",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1038_20260305183656456912",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5211F1004_20260305183656475209",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5211F1012_20260305183656493209",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011N1040_20260305183656509142",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011N1057_20260305183656523468",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1004_20260305183656540566",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1012_20260305183656558882",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1020_20260305183656574192",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P1038_20260305183656588683",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5211F1004_20260305183656604499",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5211F1012_20260305183656619992",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013N1048_20260305183656638067",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013N1055_20260305183656654673",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013N1063_20260305183656672876",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013P1002_20260305183656686947",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013P1010_20260305183656702636",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013P1028_20260305183656717833",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013N1048_20260305183656732235",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013N1055_20260305183656746638",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013N1063_20260305183656764389",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013P1002_20260305183656780004",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013P1010_20260305183656801948",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5013P1028_20260305183656820431",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": true,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P2036_20260305183656837920",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": false,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P2002_20260305183656855889",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": false,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P2010_20260305183656873430",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": false,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5011P2028_20260305183656891118",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": false,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5211F2002_20260305183656910161",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": false,
+      "spec_model_weight": 5
+    },
+    {
+      "device_id": "霍尼韦尔_V5211F2010_20260305183656925731",
+      "device_name": "座阀",
+      "features_count": 8,
+      "has_water": false,
+      "spec_model_weight": 5
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试批量导入预览</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        .upload-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .key-params {
+            font-size: 12px;
+            color: #666;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            margin: 2px;
+            background-color: #e8f4f8;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>批量导入预览测试</h1>
+    
+    <div class="upload-section">
+        <h3>选择Excel文件</h3>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" />
+        <button onclick="handlePreview()">预览数据</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        function handlePreview() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('请先选择文件');
+                return;
+            }
+            
+            console.log('开始解析文件:', file.name);
+            
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    console.log('工作簿:', workbook);
+                    console.log('工作表名称:', workbook.SheetNames);
+                    
+                    // 获取第一个工作表
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    console.log('工作表:', worksheet);
+                    
+                    // 将工作表转换为JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    console.log('JSON数据:', jsonData);
+                    console.log('数据行数:', jsonData.length);
+                    
+                    if (jsonData.length === 0) {
+                        alert('Excel文件中没有数据');
+                        return;
+                    }
+                    
+                    // 映射Excel列名到系统字段名
+                    const previewData = jsonData.map(row => {
+                        const device = {
+                            brand: row['品牌'] || '',
+                            device_type: row['设备类型'] || '',
+                            device_name: row['设备名称'] || '',
+                            spec_model: row['规格型号'] || '',
+                            unit_price: row['单价'] || 0
+                        };
+                        
+                        // 收集其他列作为key_params
+                        const excludeKeys = ['品牌', '设备类型', '设备名称', '规格型号', '单价'];
+                        const keyParams = {};
+                        
+                        for (const [key, value] of Object.entries(row)) {
+                            if (!excludeKeys.includes(key) && value !== undefined && value !== null && value !== '') {
+                                keyParams[key] = value;
+                            }
+                        }
+                        
+                        if (Object.keys(keyParams).length > 0) {
+                            device.key_params = keyParams;
+                        }
+                        
+                        return device;
+                    });
+                    
+                    console.log('预览数据:', previewData);
+                    
+                    // 显示预览数据
+                    displayPreview(previewData);
+                    
+                } catch (error) {
+                    console.error('解析Excel失败:', error);
+                    alert('解析Excel文件失败: ' + error.message);
+                }
+            };
+            
+            reader.onerror = () => {
+                alert('读取文件失败');
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+        
+        function displayPreview(data) {
+            const resultDiv = document.getElementById('result');
+            
+            let html = `<h3>预览结果（共 ${data.length} 条数据）</h3>`;
+            html += '<table>';
+            html += '<thead><tr>';
+            html += '<th>品牌</th>';
+            html += '<th>设备类型</th>';
+            html += '<th>设备名称</th>';
+            html += '<th>规格型号</th>';
+            html += '<th>单价</th>';
+            html += '<th>其他参数</th>';
+            html += '</tr></thead>';
+            html += '<tbody>';
+            
+            data.forEach((device, index) => {
+                html += '<tr>';
+                html += `<td>${device.brand}</td>`;
+                html += `<td>${device.device_type || '-'}</td>`;
+                html += `<td>${device.device_name}</td>`;
+                html += `<td>${device.spec_model}</td>`;
+                html += `<td>¥${device.unit_price}</td>`;
+                html += '<td class="key-params">';
+                
+                if (device.key_params && Object.keys(device.key_params).length > 0) {
+                    for (const [key, value] of Object.entries(device.key_params)) {
+                        html += `<span class="tag">${key}: ${value}</span>`;
+                    }
+                } else {
+                    html += '-';
+                }
+                
+                html += '</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            
+            resultDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

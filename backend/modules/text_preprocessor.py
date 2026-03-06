@@ -230,7 +230,7 @@ class TextPreprocessor:
         normalized_text, normalization_detail = self._normalize_with_detail(cleaned_text, mode=mode)
         
         # 步骤 3: 特征拆分（带详情记录）
-        features, extraction_detail = self._extract_features_with_detail(normalized_text)
+        features, extraction_detail = self._extract_features_with_detail(normalized_text, mode=mode)
         
         result = PreprocessResult(
             original=original_text,  # 使用真正的原始文本
@@ -430,7 +430,7 @@ class TextPreprocessor:
                 result.append(char)
         return ''.join(result)
     
-    def extract_features(self, text: str) -> List[str]:
+    def extract_features(self, text: str, mode: str = 'matching') -> List[str]:
         """
         使用配置文件中的分隔符拆分文本为特征列表
         
@@ -438,7 +438,7 @@ class TextPreprocessor:
         1. 先按分隔符拆分文本
         2. 再处理每个片段中的括号
         3. 移除元数据关键词前缀
-        4. 智能拆分：识别品牌和设备类型
+        4. 智能拆分：识别品牌和设备类型（仅在matching模式）
         5. 复杂参数分解（如果启用）
         6. 过滤和去重
         
@@ -446,14 +446,15 @@ class TextPreprocessor:
         
         Args:
             text: 归一化后的文本
+            mode: 处理模式 ('device' 或 'matching')
             
         Returns:
             特征列表
         """
-        features, _ = self._extract_features_with_detail(text)
+        features, _ = self._extract_features_with_detail(text, mode)
         return features
     
-    def _extract_features_with_detail(self, text: str):
+    def _extract_features_with_detail(self, text: str, mode: str = 'matching'):
         """
         使用配置文件中的分隔符拆分文本为特征列表，并返回详细信息
         
@@ -519,15 +520,17 @@ class TextPreprocessor:
             # 找到片段在原文本中的位置
             segment_position = text.find(segment, current_position)
             
-            # 2.1 处理括号
-            bracket_features = self._extract_bracket_features(segment)
+            # 2.1 处理括号 - 传递mode参数
+            bracket_features = self._extract_bracket_features(segment, mode=mode)
             
             # 2.2 移除元数据关键词前缀
             for feature in bracket_features:
                 cleaned = self._remove_metadata_prefix(feature)
                 if cleaned:
-                    # 2.3 删除单位后缀(新增)
-                    cleaned = self._remove_unit_suffix(cleaned)
+                    # 2.3 删除单位后缀(新增) - 只在匹配模式下删除
+                    # 在设备录入模式下跳过,避免型号被截断(如"HST-RA"→"HST-R")
+                    if mode == 'matching':
+                        cleaned = self._remove_unit_suffix(cleaned)
                     if cleaned:  # 确保删除单位后还有内容
                         features.append(cleaned)
                         
@@ -572,6 +575,14 @@ class TextPreprocessor:
         
         # 步骤4: 智能拆分 - 识别品牌和设备类型
         enhanced_features = []
+        
+        # 获取智能拆分配置
+        intelligent_splitting_config = self.config.get('intelligent_splitting', {})
+        intelligent_splitting_enabled = intelligent_splitting_config.get('enabled', False)
+        split_compound_words = intelligent_splitting_config.get('split_compound_words', True)
+        split_technical_specs = intelligent_splitting_config.get('split_technical_specs', True)
+        split_by_space = intelligent_splitting_config.get('split_by_space', True)
+        
         for feature in features:
             # 添加原始特征
             enhanced_features.append(feature)
@@ -599,34 +610,135 @@ class TextPreprocessor:
                             feature_details_map[feature].feature_type = 'device_type'
                             feature_details_map[feature].source = 'device_type_keywords'
             
-            # 只对较长的特征进行智能拆分
-            if len(feature) > 4:
-                sub_features = self._smart_split_feature(feature)
-                for sub_feature in sub_features:
-                    enhanced_features.append(sub_feature)
+            # 智能拆分（仅在matching模式且启用时）
+            if mode == 'matching' and intelligent_splitting_enabled:
+                # 1. 按空格拆分（如果启用）
+                if split_by_space and ' ' in feature:
+                    space_parts = feature.split()
+                    for part in space_parts:
+                        if part and part != feature:
+                            enhanced_features.append(part)
+                            # 为子特征创建详情
+                            if part not in feature_details_map:
+                                feature_details_map[part] = FeatureDetail(
+                                    feature=part,
+                                    feature_type='parameter',
+                                    source='intelligent_splitting_space',
+                                    quality_score=0.0,
+                                    position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
+                                )
+                
+                # 2. 拆分技术规格（如果启用）
+                if split_technical_specs:
+                    # 拆分模式1：字母+数字+字母（如"ntc10k" → ["ntc", "10k"]）
+                    tech_pattern1 = r'([a-z]+)(\d+[a-z]+)'
+                    tech_matches1 = re.findall(tech_pattern1, feature_lower)
+                    for letter_part, number_letter_part in tech_matches1:
+                        if letter_part and letter_part != feature_lower:
+                            enhanced_features.append(letter_part)
+                            if letter_part not in feature_details_map:
+                                feature_details_map[letter_part] = FeatureDetail(
+                                    feature=letter_part,
+                                    feature_type='parameter',
+                                    source='intelligent_splitting_technical',
+                                    quality_score=0.0,
+                                    position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
+                                )
+                        if number_letter_part and number_letter_part != feature_lower:
+                            enhanced_features.append(number_letter_part)
+                            if number_letter_part not in feature_details_map:
+                                feature_details_map[number_letter_part] = FeatureDetail(
+                                    feature=number_letter_part,
+                                    feature_type='parameter',
+                                    source='intelligent_splitting_technical',
+                                    quality_score=0.0,
+                                    position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
+                                )
                     
-                    # 为子特征创建详情
-                    if sub_feature not in feature_details_map:
-                        # 判断子特征类型
-                        sub_feature_type = 'parameter'
-                        sub_feature_source = 'smart_split'
+                    # 拆分模式2：字母+数字（如"DN15" → ["dn", "15"]）
+                    # 只有在模式1没有匹配时才使用模式2
+                    if not tech_matches1:
+                        tech_pattern2 = r'([a-z]+)(\d+)'
+                        tech_matches2 = re.findall(tech_pattern2, feature_lower)
+                        for letter_part, number_part in tech_matches2:
+                            if letter_part and letter_part != feature_lower:
+                                enhanced_features.append(letter_part)
+                                if letter_part not in feature_details_map:
+                                    feature_details_map[letter_part] = FeatureDetail(
+                                        feature=letter_part,
+                                        feature_type='parameter',
+                                        source='intelligent_splitting_technical',
+                                        quality_score=0.0,
+                                        position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
+                                    )
+                            if number_part and number_part != feature_lower:
+                                enhanced_features.append(number_part)
+                                if number_part not in feature_details_map:
+                                    feature_details_map[number_part] = FeatureDetail(
+                                        feature=number_part,
+                                        feature_type='parameter',
+                                        source='intelligent_splitting_technical',
+                                        quality_score=0.0,
+                                        position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
+                                    )
+                
+                # 3. 拆分复合词（如果启用且特征较长）
+                if split_compound_words and len(feature) >= 4:  # 改为 >= 4
+                    sub_features = self._smart_split_feature(feature)
+                    for sub_feature in sub_features:
+                        enhanced_features.append(sub_feature)
                         
-                        if sub_feature.lower() in [b.lower() for b in self.brand_keywords]:
-                            sub_feature_type = 'brand'
-                            sub_feature_source = 'brand_keywords'
-                            identified_brands.add(sub_feature.lower())
-                        elif sub_feature.lower() in [d.lower() for d in self.device_type_keywords]:
-                            sub_feature_type = 'device_type'
-                            sub_feature_source = 'device_type_keywords'
-                            identified_device_types.add(sub_feature.lower())
+                        # 为子特征创建详情
+                        if sub_feature not in feature_details_map:
+                            # 判断子特征类型
+                            sub_feature_type = 'parameter'
+                            sub_feature_source = 'intelligent_splitting_compound'
+                            
+                            if sub_feature.lower() in [b.lower() for b in self.brand_keywords]:
+                                sub_feature_type = 'brand'
+                                sub_feature_source = 'brand_keywords'
+                                identified_brands.add(sub_feature.lower())
+                            elif sub_feature.lower() in [d.lower() for d in self.device_type_keywords]:
+                                sub_feature_type = 'device_type'
+                                sub_feature_source = 'device_type_keywords'
+                                identified_device_types.add(sub_feature.lower())
+                            
+                            feature_details_map[sub_feature] = FeatureDetail(
+                                feature=sub_feature,
+                                feature_type=sub_feature_type,
+                                source=sub_feature_source,
+                                quality_score=0.0,
+                                position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
+                            )
+            elif mode == 'matching' and not intelligent_splitting_enabled:
+                # 如果智能拆分未启用，但特征较长，仍然使用原有的智能拆分逻辑
+                if len(feature) > 4:
+                    sub_features = self._smart_split_feature(feature)
+                    for sub_feature in sub_features:
+                        enhanced_features.append(sub_feature)
                         
-                        feature_details_map[sub_feature] = FeatureDetail(
-                            feature=sub_feature,
-                            feature_type=sub_feature_type,
-                            source=sub_feature_source,
-                            quality_score=0.0,
-                            position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
-                        )
+                        # 为子特征创建详情
+                        if sub_feature not in feature_details_map:
+                            # 判断子特征类型
+                            sub_feature_type = 'parameter'
+                            sub_feature_source = 'smart_split'
+                            
+                            if sub_feature.lower() in [b.lower() for b in self.brand_keywords]:
+                                sub_feature_type = 'brand'
+                                sub_feature_source = 'brand_keywords'
+                                identified_brands.add(sub_feature.lower())
+                            elif sub_feature.lower() in [d.lower() for d in self.device_type_keywords]:
+                                sub_feature_type = 'device_type'
+                                sub_feature_source = 'device_type_keywords'
+                                identified_device_types.add(sub_feature.lower())
+                            
+                            feature_details_map[sub_feature] = FeatureDetail(
+                                feature=sub_feature,
+                                feature_type=sub_feature_type,
+                                source=sub_feature_source,
+                                quality_score=0.0,
+                                position=feature_details_map.get(feature, FeatureDetail('', '', '', 0, 0)).position
+                            )
         
         # 步骤5: 过滤无效特征并去重，同时记录过滤原因
         filtered_features = []
@@ -635,8 +747,12 @@ class TextPreprocessor:
         # 获取特征质量评分配置
         quality_enabled = quality_scoring_config.get('enabled', False)
         min_quality_score = quality_scoring_config.get('min_quality_score', 50)
+        whitelist_features = quality_scoring_config.get('whitelist_features', [])  # 新增：白名单
         
         for feature in enhanced_features:
+            # 检查是否在白名单中（白名单特征直接通过，不进行质量评分）
+            is_whitelisted = feature in whitelist_features
+            
             # 计算质量评分
             quality_score = self._calculate_feature_quality(feature)
             
@@ -657,7 +773,8 @@ class TextPreprocessor:
                 filter_reason = 'invalid'
             elif feature in seen:
                 filter_reason = 'duplicate'
-            elif quality_enabled and quality_score < min_quality_score:
+            elif quality_enabled and quality_score < min_quality_score and not is_whitelisted:
+                # 新增：白名单特征不受质量评分限制
                 filter_reason = 'low_quality'
             
             # 如果需要过滤，记录过滤原因
@@ -682,7 +799,7 @@ class TextPreprocessor:
         
         return filtered_features, detail
     
-    def _extract_bracket_features(self, text: str) -> List[str]:
+    def _extract_bracket_features(self, text: str, mode: str = 'matching') -> List[str]:
         """
         从单个片段中提取括号内外的特征
         
@@ -693,25 +810,35 @@ class TextPreprocessor:
         - 删除元数据关键词前缀（如"精度±5%" → "5%"）
         - 处理精度值（如"±5%" → "5%"）
         
+        改进（2024-03-06）：
+        - 添加mode参数,在设备录入阶段跳过元数据关键词处理
+        - 避免设备类型被错误拆分(如"温度传感器"→"传感器")
+        
         Args:
             text: 单个文本片段，如 "1/2\"(dn15)" 或 "50%rh(0-100" 或 "精度±5%"
+            mode: 处理模式
+                  'device' - 设备库数据(跳过元数据关键词处理)
+                  'matching' - 匹配数据(应用元数据关键词处理)
             
         Returns:
             特征列表，如 ["1/2\"", "dn15"] 或 ["50", "0-100"] 或 ["5%"]
         """
         features = []
         
-        # 首先检查并删除元数据关键词前缀（新增）
-        # 按长度从长到短排序，优先匹配较长的关键词
-        sorted_metadata_keywords = sorted(self.metadata_keywords, key=len, reverse=True)
-        for keyword in sorted_metadata_keywords:
-            keyword_lower = keyword.lower()
-            text_lower = text.lower()
-            # 检查文本是否以元数据关键词开头
-            if text_lower.startswith(keyword_lower):
-                # 删除前缀，保留值部分
-                text = text[len(keyword):]
-                break  # 只删除一次
+        # 只在匹配模式下删除元数据关键词前缀
+        # 在设备录入模式下跳过,避免设备类型被拆分
+        if mode == 'matching':
+            # 首先检查并删除元数据关键词前缀
+            # 按长度从长到短排序，优先匹配较长的关键词
+            sorted_metadata_keywords = sorted(self.metadata_keywords, key=len, reverse=True)
+            for keyword in sorted_metadata_keywords:
+                keyword_lower = keyword.lower()
+                text_lower = text.lower()
+                # 检查文本是否以元数据关键词开头
+                if text_lower.startswith(keyword_lower):
+                    # 删除前缀，保留值部分
+                    text = text[len(keyword):]
+                    break  # 只删除一次
         
         # 尝试匹配完整的括号对
         bracket_pattern = r'([^()]+)\(([^)]+)\)'
@@ -935,8 +1062,8 @@ class TextPreprocessor:
         Returns:
             拆分后的子特征列表
         """
-        # 如果特征太短，不拆分
-        if len(feature) <= 4:
+        # 如果特征太短，不拆分（改为<4，允许4个字符的特征被拆分）
+        if len(feature) < 4:
             return []
         
         sub_features = []

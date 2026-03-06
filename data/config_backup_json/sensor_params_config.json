@@ -1,0 +1,298 @@
+{
+  "温度传感器": {
+    "params": [
+      {
+        "name": "检测对象",
+        "type": "string",
+        "required": true,
+        "options": [
+          "温度"
+        ]
+      },
+      {
+        "name": "安装位置",
+        "type": "string",
+        "required": false,
+        "options": [
+          "室内墙装",
+          "风管",
+          "室外"
+        ]
+      },
+      {
+        "name": "温度信号类型",
+        "type": "string",
+        "required": false,
+        "options": [
+          "NTC 10K",
+          "NTC 20K",
+          "Pt1000",
+          "电子式"
+        ]
+      },
+      {
+        "name": "温度量程",
+        "type": "string",
+        "required": false,
+        "default": "-20~60℃"
+      },
+      {
+        "name": "输出信号",
+        "type": "string",
+        "required": false,
+        "options": [
+          "4-20mA",
+          "0-10V",
+          "2-10V"
+        ]
+      }
+    ]
+  },
+  "温湿度传感器": {
+    "params": [
+      {
+        "name": "检测对象",
+        "type": "string",
+        "required": true,
+        "options": [
+          "温度+湿度"
+        ]
+      },
+      {
+        "name": "安装位置",
+        "type": "string",
+        "required": false,
+        "options": [
+          "室内墙装",
+          "风管",
+          "室外"
+        ]
+      },
+      {
+        "name": "温度信号类型",
+        "type": "string",
+        "required": false,
+        "options": [
+          "NTC 10K",
+          "NTC 20K",
+          "Pt1000",
+          "电子式"
+        ]
+      },
+      {
+        "name": "湿度信号类型",
+        "type": "string",
+        "required": false,
+        "options": [
+          "4-20mA",
+          "0-10V"
+        ]
+      },
+      {
+        "name": "湿度精度",
+        "type": "string",
+        "required": false,
+        "options": [
+          "±2%",
+          "±3%",
+          "±5%"
+        ]
+      },
+      {
+        "name": "温度量程",
+        "type": "string",
+        "required": false,
+        "default": "-20~60℃"
+      },
+      {
+        "name": "湿度量程",
+        "type": "string",
+        "required": false,
+        "default": "0-100%RH"
+      },
+      {
+        "name": "输出信号",
+        "type": "string",
+        "required": false,
+        "options": [
+          "4-20mA",
+          "0-10V",
+          "2-10V"
+        ]
+      }
+    ]
+  },
+  "CO2传感器": {
+    "params": [
+      {
+        "name": "检测对象",
+        "type": "string",
+        "required": true,
+        "options": [
+          "CO2",
+          "二氧化碳",
+          "温度+湿度+二氧化碳",
+          "温度+湿度+二氧化碳+PM2.5"
+        ]
+      },
+      {
+        "name": "量程",
+        "type": "string",
+        "required": false,
+        "options": [
+          "0-2000ppm",
+          "0-5000ppm"
+        ]
+      },
+      {
+        "name": "输出信号",
+        "type": "string",
+        "required": true,
+        "options": [
+          "4-20mA",
+          "0-10V",
+          "2-10V",
+          "4-20mA/0-10V/2-10V",
+          "Modbus"
+        ]
+      },
+      {
+        "name": "通道数",
+        "type": "string",
+        "required": false,
+        "options": [
+          "单通道",
+          "双通道"
+        ]
+      },
+      {
+        "name": "显示屏",
+        "type": "string",
+        "required": false,
+        "options": [
+          "带显示",
+          "无显示"
+        ]
+      },
+      {
+        "name": "面板颜色",
+        "type": "string",
+        "required": false,
+        "options": [
+          "黑色",
+          "白色"
+        ]
+      },
+      {
+        "name": "电源",
+        "type": "string",
+        "required": false,
+        "options": [
+          "24VDC"
+        ]
+      }
+    ]
+  },
+  "CO传感器": {
+    "params": [
+      {
+        "name": "检测对象",
+        "type": "string",
+        "required": true,
+        "options": [
+          "CO",
+          "一氧化碳"
+        ]
+      },
+      {
+        "name": "量程",
+        "type": "string",
+        "required": true,
+        "options": [
+          "0-100ppm",
+          "0-200ppm",
+          "0-500ppm",
+          "0-1000ppm"
+        ]
+      },
+      {
+        "name": "输出信号",
+        "type": "string",
+        "required": true,
+        "options": [
+          "4-20mA",
+          "0-10V",
+          "2-10V",
+          "4-20mA/0-10V/2-10V"
+        ]
+      },
+      {
+        "name": "显示屏",
+        "type": "string",
+        "required": false,
+        "options": [
+          "带显示",
+          "无显示"
+        ]
+      },
+      {
+        "name": "继电器",
+        "type": "string",
+        "required": false,
+        "options": [
+          "有继电器",
+          "无继电器"
+        ]
+      }
+    ]
+  },
+  "空气质量传感器": {
+    "params": [
+      {
+        "name": "检测对象",
+        "type": "string",
+        "required": true,
+        "options": [
+          "CO2+PM2.5+温度+湿度",
+          "多参数"
+        ]
+      },
+      {
+        "name": "显示屏",
+        "type": "string",
+        "required": false,
+        "options": [
+          "带显示屏",
+          "无显示"
+        ]
+      },
+      {
+        "name": "显示状态",
+        "type": "string",
+        "required": false,
+        "options": [
+          "长暗",
+          "常亮",
+          "靠近点亮"
+        ]
+      },
+      {
+        "name": "面板颜色",
+        "type": "string",
+        "required": false,
+        "options": [
+          "黑色",
+          "白色"
+        ]
+      },
+      {
+        "name": "电源",
+        "type": "string",
+        "required": false,
+        "options": [
+          "24VDC"
+        ]
+      }
+    ]
+  }
+}

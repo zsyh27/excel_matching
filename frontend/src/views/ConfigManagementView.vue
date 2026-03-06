@@ -37,15 +37,22 @@
       <!-- 左侧导航 -->
       <div class="sidebar">
         <nav class="nav-menu">
-          <div 
-            v-for="item in menuItems" 
-            :key="item.key"
-            :class="['nav-item', { active: activeTab === item.key }]"
-            @click="activeTab = item.key"
-          >
-            <span class="nav-icon">{{ item.icon }}</span>
-            <span class="nav-label">{{ item.label }}</span>
-          </div>
+          <template v-for="item in menuItems" :key="item.key">
+            <!-- 分组标题 -->
+            <div v-if="item.isGroup" class="nav-group-title">
+              <span class="group-icon">{{ item.icon }}</span>
+              <span class="group-label">{{ item.label }}</span>
+            </div>
+            <!-- 菜单项 -->
+            <div 
+              v-else
+              :class="['nav-item', { active: activeTab === item.key }]"
+              @click="activeTab = item.key"
+            >
+              <span class="nav-icon">{{ item.icon }}</span>
+              <span class="nav-label">{{ item.label }}</span>
+            </div>
+          </template>
         </nav>
 
         <div class="sidebar-footer">
@@ -61,10 +68,11 @@
           <!-- 根据activeTab显示不同的编辑器 -->
           <component 
             :is="currentEditor" 
-            v-model="config[activeTab]"
+            :model-value="getEditorValue(activeTab)"
             :full-config="config"
             @change="handleConfigChange"
             @update-ignore-keywords="handleUpdateIgnoreKeywords"
+            @update:model-value="handleEditorUpdate(activeTab, $event)"
           />
         </div>
 
@@ -187,6 +195,7 @@ import FeatureWeightEditor from '../components/ConfigManagement/FeatureWeightEdi
 import AdvancedConfigEditor from '../components/ConfigManagement/AdvancedConfigEditor.vue'
 import DeviceRowRecognitionEditor from '../components/ConfigManagement/DeviceRowRecognitionEditor.vue'
 import IntelligentCleaningEditor from '../components/ConfigManagement/IntelligentCleaningEditor.vue'
+import DeviceParamsEditor from '../components/ConfigManagement/DeviceParamsEditor.vue'
 
 export default {
   name: 'ConfigManagementView',
@@ -201,10 +210,11 @@ export default {
     FeatureWeightEditor,
     AdvancedConfigEditor,
     DeviceRowRecognitionEditor,
-    IntelligentCleaningEditor
+    IntelligentCleaningEditor,
+    DeviceParamsEditor
   },
   setup() {
-    const activeTab = ref('device_row_recognition')
+    const activeTab = ref('brand_keywords')
     const config = ref({})
     const originalConfig = ref({})
     const hasChanges = ref(false)
@@ -226,24 +236,32 @@ export default {
       }, 3000)
     }
 
-    // 菜单项（按照业务流程排序）
+    // 菜单项（按照业务流程排序，带分组）
     const menuItems = [
-      // 1. 数据导入阶段
+      // 1. 设备信息录入前的配置
+      { key: 'group1', label: '1. 设备信息录入前配置', icon: '📝', isGroup: true },
+      { key: 'brand_keywords', label: '品牌关键词', icon: '🏷️' },
+      { key: 'device_params', label: '设备参数配置', icon: '📋' },
+      { key: 'feature_weight_config', label: '特征权重', icon: '⚖️' },
+      
+      // 2. 数据导入阶段
+      { key: 'group2', label: '2. 数据导入阶段', icon: '📥', isGroup: true },
       { key: 'device_row_recognition', label: '设备行识别', icon: '🎯' },
       
-      // 2. 特征提取配置阶段
+      // 3. 特征提取配置阶段（匹配阶段）
+      { key: 'group3', label: '3. 特征提取配置（匹配阶段）', icon: '🔍', isGroup: true },
       { key: 'intelligent_extraction', label: '智能清理', icon: '🧹' },
       { key: 'feature_split_chars', label: '处理分隔符', icon: '✂️' },
       { key: 'normalization_map', label: '归一化映射', icon: '📝' },
       { key: 'metadata_keywords', label: '高级配置', icon: '🔧' },
       
-      // 3. 匹配配置阶段
+      // 4. 匹配配置阶段
+      { key: 'group4', label: '4. 匹配配置阶段', icon: '🎯', isGroup: true },
       { key: 'synonym_map', label: '同义词映射', icon: '🔄' },
-      { key: 'brand_keywords', label: '品牌关键词', icon: '🏷️' },
       { key: 'device_type_keywords', label: '设备类型', icon: '📦' },
-      { key: 'feature_weight_config', label: '特征权重', icon: '⚖️' },
       
-      // 4. 全局配置
+      // 5. 全局配置
+      { key: 'group5', label: '5. 全局配置', icon: '⚙️', isGroup: true },
       { key: 'global_config', label: '全局配置', icon: '⚙️' }
     ]
 
@@ -256,6 +274,7 @@ export default {
         'global_config': 'GlobalConfigEditor',
         'brand_keywords': 'BrandKeywordsEditor',
         'device_type_keywords': 'DeviceTypeEditor',
+        'device_params': 'DeviceParamsEditor',
         'feature_weight_config': 'FeatureWeightEditor',
         'metadata_keywords': 'AdvancedConfigEditor',
         'device_row_recognition': 'DeviceRowRecognitionEditor',
@@ -300,6 +319,29 @@ export default {
     // 配置变更处理
     const handleConfigChange = () => {
       hasChanges.value = JSON.stringify(config.value) !== JSON.stringify(originalConfig.value)
+    }
+    
+    // 获取编辑器的值（处理嵌套结构）
+    const getEditorValue = (tabKey) => {
+      const value = config.value[tabKey]
+      // 如果是device_type_keywords，需要提取嵌套的数组
+      if (tabKey === 'device_type_keywords' && value && typeof value === 'object' && 'device_type_keywords' in value) {
+        return value.device_type_keywords
+      }
+      return value
+    }
+    
+    // 处理编辑器更新（处理嵌套结构）
+    const handleEditorUpdate = (tabKey, newValue) => {
+      // 如果是device_type_keywords，需要保持嵌套结构
+      if (tabKey === 'device_type_keywords') {
+        config.value[tabKey] = {
+          device_type_keywords: newValue
+        }
+      } else {
+        config.value[tabKey] = newValue
+      }
+      handleConfigChange()
     }
     
     // 处理 ignore_keywords 更新
@@ -524,6 +566,8 @@ export default {
       regenerating,
       message,
       handleConfigChange,
+      getEditorValue,
+      handleEditorUpdate,
       handleUpdateIgnoreKeywords,
       handleTestTextChange,
       handleSave,
@@ -611,6 +655,36 @@ export default {
 
 .nav-label {
   font-size: 14px;
+}
+
+.nav-group-title {
+  padding: 16px 20px 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  background: #f9f9f9;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.nav-group-title:first-child {
+  margin-top: 0;
+  border-top: none;
+}
+
+.nav-group-title .group-icon {
+  font-size: 16px;
+}
+
+.nav-group-title .group-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .sidebar-footer {

@@ -10,9 +10,12 @@ class Config:
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
     ALLOWED_EXTENSIONS = {'xls', 'xlsm', 'xlsx'}
     
-    # 数据文件路径（JSON模式）
+    # 数据文件路径（JSON模式 - 仅作为备份）
+    # 注意：配置已迁移到数据库，运行时不再使用这些JSON文件
+    # 如需备份配置，请使用 /api/config/export 接口
     DEVICE_FILE = os.path.join(BASE_DIR, 'data', 'static_device.json')
     RULE_FILE = os.path.join(BASE_DIR, 'data', 'static_rule.json')
+    # CONFIG_FILE - 配置文件路径（用于配置管理器的备份和历史功能）
     CONFIG_FILE = os.path.join(BASE_DIR, 'data', 'static_config.json')
     
     # 存储模式配置

@@ -8,6 +8,60 @@
     </div>
 
     <div class="editor-body">
+      <div class="config-item highlight-item">
+        <label class="config-label">
+          <span class="label-text">设备类型权重</span>
+          <span class="label-desc">设备类型特征的权重值（如：传感器、控制器、阀门）- 最核心的匹配参数</span>
+        </label>
+        <div class="config-control">
+          <input 
+            v-model.number="localValue.device_type_weight" 
+            type="number" 
+            step="0.5"
+            min="0"
+            max="30"
+            class="number-input"
+            @input="emitChange"
+          />
+          <input 
+            v-model.number="localValue.device_type_weight" 
+            type="range" 
+            min="0" 
+            max="30" 
+            step="0.5"
+            class="range-input"
+            @input="emitChange"
+          />
+        </div>
+      </div>
+
+      <div class="config-item highlight-item">
+        <label class="config-label">
+          <span class="label-text">关键参数权重（key_params）</span>
+          <span class="label-desc">设备关键参数的权重值（如：量程、输出信号）- 次核心的匹配参数</span>
+        </label>
+        <div class="config-control">
+          <input 
+            v-model.number="localValue.key_params_weight" 
+            type="number" 
+            step="0.5"
+            min="0"
+            max="20"
+            class="number-input"
+            @input="emitChange"
+          />
+          <input 
+            v-model.number="localValue.key_params_weight" 
+            type="range" 
+            min="0" 
+            max="20" 
+            step="0.5"
+            class="range-input"
+            @input="emitChange"
+          />
+        </div>
+      </div>
+
       <div class="config-item">
         <label class="config-label">
           <span class="label-text">品牌权重</span>
@@ -17,9 +71,9 @@
           <input 
             v-model.number="localValue.brand_weight" 
             type="number" 
-            step="0.1"
+            step="0.5"
             min="0"
-            max="10"
+            max="20"
             class="number-input"
             @input="emitChange"
           />
@@ -27,8 +81,8 @@
             v-model.number="localValue.brand_weight" 
             type="range" 
             min="0" 
-            max="10" 
-            step="0.1"
+            max="20" 
+            step="0.5"
             class="range-input"
             @input="emitChange"
           />
@@ -44,7 +98,7 @@
           <input 
             v-model.number="localValue.model_weight" 
             type="number" 
-            step="0.1"
+            step="0.5"
             min="0"
             max="10"
             class="number-input"
@@ -55,7 +109,7 @@
             type="range" 
             min="0" 
             max="10" 
-            step="0.1"
+            step="0.5"
             class="range-input"
             @input="emitChange"
           />
@@ -64,35 +118,8 @@
 
       <div class="config-item">
         <label class="config-label">
-          <span class="label-text">设备类型权重</span>
-          <span class="label-desc">设备类型特征的权重值（如：传感器、控制器、阀门）</span>
-        </label>
-        <div class="config-control">
-          <input 
-            v-model.number="localValue.device_type_weight" 
-            type="number" 
-            step="0.1"
-            min="0"
-            max="10"
-            class="number-input"
-            @input="emitChange"
-          />
-          <input 
-            v-model.number="localValue.device_type_weight" 
-            type="range" 
-            min="0" 
-            max="10" 
-            step="0.1"
-            class="range-input"
-            @input="emitChange"
-          />
-        </div>
-      </div>
-
-      <div class="config-item">
-        <label class="config-label">
-          <span class="label-text">参数权重</span>
-          <span class="label-desc">通用参数特征的权重值（如：4-20mA、0-10V）</span>
+          <span class="label-text">通用参数权重</span>
+          <span class="label-desc">通用参数特征的权重值（如：4-20mA、0-10V）- 区分度较低</span>
         </label>
         <div class="config-control">
           <input 
@@ -100,7 +127,7 @@
             type="number" 
             step="0.1"
             min="0"
-            max="10"
+            max="5"
             class="number-input"
             @input="emitChange"
           />
@@ -108,7 +135,7 @@
             v-model.number="localValue.parameter_weight" 
             type="range" 
             min="0" 
-            max="10" 
+            max="5" 
             step="0.1"
             class="range-input"
             @input="emitChange"
@@ -118,12 +145,26 @@
 
       <div class="weight-summary">
         <h3>权重说明</h3>
-        <ul>
-          <li><strong>品牌权重</strong>：推荐值 3.0，品牌是重要的识别特征</li>
-          <li><strong>型号权重</strong>：推荐值 3.0，型号通常是唯一标识</li>
-          <li><strong>设备类型权重</strong>：推荐值 5.0，设备类型是最重要的区分特征</li>
-          <li><strong>参数权重</strong>：推荐值 1.0，通用参数区分度较低</li>
-        </ul>
+        <div class="summary-section">
+          <h4>推荐配置（已优化）</h4>
+          <ul>
+            <li><strong>设备类型权重</strong>：推荐值 <span class="highlight">20.0</span>，设备类型是最核心的匹配参数，权重最高</li>
+            <li><strong>关键参数权重（key_params）</strong>：推荐值 <span class="highlight">15.0</span>，关键参数是次核心的匹配参数</li>
+            <li><strong>品牌权重</strong>：推荐值 <span class="highlight">10.0</span>，品牌是重要的识别特征</li>
+            <li><strong>型号权重</strong>：推荐值 <span class="highlight">5.0</span>，型号通常是唯一标识</li>
+            <li><strong>通用参数权重</strong>：推荐值 <span class="highlight">1.0</span>，通用参数区分度较低</li>
+          </ul>
+        </div>
+        <div class="summary-section">
+          <h4>权重作用</h4>
+          <p>这些权重控制添加设备到设备库时生成匹配规则的特征权重。权重越高，该类型特征在匹配时的重要性越大。</p>
+          <p><strong>注意</strong>：修改权重后，需要重新生成现有设备的规则才能生效。新添加的设备会自动使用新权重。</p>
+        </div>
+        <div class="summary-section">
+          <h4>核心参数优先</h4>
+          <p><strong>设备类型</strong>和<strong>关键参数（key_params）</strong>是匹配的核心，建议保持高权重以确保匹配准确性。</p>
+          <p>添加设备时，请务必填写设备类型字段，并将最重要的参数（如量程、输出信号）填写在关键参数（key_params）中。</p>
+        </div>
       </div>
     </div>
   </div>
@@ -138,9 +179,10 @@ export default {
     modelValue: {
       type: Object,
       default: () => ({
-        brand_weight: 3.0,
-        model_weight: 3.0,
-        device_type_weight: 5.0,
+        device_type_weight: 20.0,
+        key_params_weight: 15.0,
+        brand_weight: 10.0,
+        model_weight: 5.0,
         parameter_weight: 1.0
       })
     }
@@ -149,15 +191,18 @@ export default {
   setup(props, { emit }) {
     const localValue = ref({ ...props.modelValue })
 
-    // 确保所有字段有默认值
+    // 确保所有字段有默认值（使用新的推荐值）
+    if (localValue.value.device_type_weight === undefined) {
+      localValue.value.device_type_weight = 20.0
+    }
+    if (localValue.value.key_params_weight === undefined) {
+      localValue.value.key_params_weight = 15.0
+    }
     if (localValue.value.brand_weight === undefined) {
-      localValue.value.brand_weight = 3.0
+      localValue.value.brand_weight = 10.0
     }
     if (localValue.value.model_weight === undefined) {
-      localValue.value.model_weight = 3.0
-    }
-    if (localValue.value.device_type_weight === undefined) {
-      localValue.value.device_type_weight = 5.0
+      localValue.value.model_weight = 5.0
     }
     if (localValue.value.parameter_weight === undefined) {
       localValue.value.parameter_weight = 1.0
@@ -207,6 +252,17 @@ export default {
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   margin-bottom: 15px;
+}
+
+.config-item.highlight-item {
+  background: #fffbf0;
+  border: 2px solid #ffa726;
+  box-shadow: 0 2px 8px rgba(255, 167, 38, 0.1);
+}
+
+.config-item.highlight-item .label-text {
+  color: #f57c00;
+  font-weight: 600;
 }
 
 .config-label {
@@ -260,6 +316,28 @@ export default {
   color: #333;
 }
 
+.weight-summary h4 {
+  margin: 15px 0 10px 0;
+  font-size: 14px;
+  color: #555;
+  font-weight: 600;
+}
+
+.summary-section {
+  margin-bottom: 20px;
+}
+
+.summary-section:last-child {
+  margin-bottom: 0;
+}
+
+.summary-section p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .weight-summary ul {
   margin: 0;
   padding-left: 20px;
@@ -274,5 +352,11 @@ export default {
 
 .weight-summary strong {
   color: #333;
+}
+
+.highlight {
+  color: #2196f3;
+  font-weight: 600;
+  font-size: 15px;
 }
 </style>

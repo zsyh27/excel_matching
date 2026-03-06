@@ -2,42 +2,62 @@
   <div class="statistics-dashboard-view">
     <el-card class="header-card">
       <h2>统计仪表板</h2>
-      <p>查看设备库的统计信息和数据分析</p>
+      <p>查看系统运行数据、匹配日志和规则统计</p>
     </el-card>
 
-    <div v-loading="loading" class="dashboard-content">
-      <!-- 概览卡片 -->
-      <SummaryCards :statistics="statistics" />
+    <el-tabs v-model="activeTab" type="border-card" class="dashboard-tabs">
+      <!-- Tab 1: 系统概览 -->
+      <el-tab-pane label="系统概览" name="overview">
+        <div v-loading="loading" class="dashboard-content">
+          <!-- 概览卡片 -->
+          <SummaryCards :statistics="statistics" />
 
-      <!-- 图表区域 -->
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <BrandChart :data="brandData" @brand-click="handleBrandClick" />
-        </el-col>
-        <el-col :span="12">
-          <PriceChart :data="priceData" @range-click="handleRangeClick" />
-        </el-col>
-      </el-row>
+          <!-- 图表区域 -->
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <BrandChart :data="brandData" @brand-click="handleBrandClick" />
+            </el-col>
+            <el-col :span="12">
+              <PriceChart :data="priceData" @range-click="handleRangeClick" />
+            </el-col>
+          </el-row>
 
-      <!-- 列表区域 -->
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <RecentDevices
-            :devices="recentDevices"
-            :loading="loadingRecent"
-            @view="handleViewDevice"
-          />
-        </el-col>
-        <el-col :span="12">
-          <DevicesWithoutRules
-            :devices="devicesWithoutRules"
-            :loading="loadingWithoutRules"
-            @view="handleViewDevice"
-            @generated="handleRulesGenerated"
-          />
-        </el-col>
-      </el-row>
-    </div>
+          <!-- 列表区域 -->
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <RecentDevices
+                :devices="recentDevices"
+                :loading="loadingRecent"
+                @view="handleViewDevice"
+              />
+            </el-col>
+            <el-col :span="12">
+              <DevicesWithoutRules
+                :devices="devicesWithoutRules"
+                :loading="loadingWithoutRules"
+                @view="handleViewDevice"
+                @generated="handleRulesGenerated"
+              />
+            </el-col>
+          </el-row>
+        </div>
+      </el-tab-pane>
+
+      <!-- Tab 2: 匹配日志（从规则管理迁移） -->
+      <el-tab-pane label="匹配日志" name="logs">
+        <MatchLogs />
+      </el-tab-pane>
+
+      <!-- Tab 3: 规则统计（从规则管理迁移） -->
+      <el-tab-pane label="规则统计" name="rules">
+        <RuleStatistics />
+      </el-tab-pane>
+
+      <!-- Tab 4: 匹配统计 -->
+      <el-tab-pane label="匹配统计" name="matching">
+        <MatchingStatistics />
+      </el-tab-pane>
+    </el-tabs>
 
     <!-- 设备详情对话框 -->
     <DeviceDetail
@@ -52,13 +72,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import SummaryCards from '../components/Statistics/SummaryCards.vue'
 import BrandChart from '../components/Statistics/BrandChart.vue'
 import PriceChart from '../components/Statistics/PriceChart.vue'
 import RecentDevices from '../components/Statistics/RecentDevices.vue'
 import DevicesWithoutRules from '../components/Statistics/DevicesWithoutRules.vue'
 import DeviceDetail from '../components/DeviceManagement/DeviceDetail.vue'
+import MatchLogs from '../components/Statistics/MatchLogs.vue'
+import RuleStatistics from '../components/Statistics/RuleStatistics.vue'
+import MatchingStatistics from '../components/Statistics/MatchingStatistics.vue'
 import {
   getStatistics,
   getBrandDistribution,
@@ -68,6 +91,10 @@ import {
 } from '../api/database'
 
 const router = useRouter()
+const route = useRoute()
+
+// 当前激活的标签页
+const activeTab = ref('overview')
 
 // 数据状态
 const loading = ref(false)
@@ -228,7 +255,15 @@ const handleRulesGenerated = () => {
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadAllData()
+  // 从URL查询参数获取初始标签页
+  if (route.query.tab) {
+    activeTab.value = route.query.tab
+  }
+  
+  // 只在概览标签页时加载数据
+  if (activeTab.value === 'overview') {
+    loadAllData()
+  }
 })
 </script>
 
@@ -251,6 +286,10 @@ onMounted(() => {
   margin: 0;
   color: #909399;
   font-size: 14px;
+}
+
+.dashboard-tabs {
+  margin-bottom: 20px;
 }
 
 .dashboard-content {

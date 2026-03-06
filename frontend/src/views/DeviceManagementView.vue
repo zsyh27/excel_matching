@@ -10,6 +10,7 @@
         ref="deviceListRef"
         @view="handleViewDevice"
         @edit="handleEditDevice"
+        @copy="handleCopyDevice"
         @add="handleAddDevice"
         @batch-import="handleBatchImport"
         @consistency-check="handleConsistencyCheck"
@@ -82,6 +83,27 @@ const handleEditDevice = (device) => {
   formDialogVisible.value = true
 }
 
+// 复制设备
+const handleCopyDevice = (device) => {
+  // 创建设备副本，清空device_id，修改设备名称
+  const deviceCopy = {
+    ...device,
+    device_id: '', // 清空ID，让系统自动生成
+    device_name: `${device.device_name} (副本)`,
+    spec_model: device.spec_model ? `${device.spec_model}-COPY` : '',
+    // 保留其他所有字段
+    brand: device.brand,
+    device_type: device.device_type,
+    key_params: device.key_params ? JSON.parse(JSON.stringify(device.key_params)) : null,
+    detailed_params: device.detailed_params,
+    unit_price: device.unit_price,
+    input_method: 'manual'
+  }
+  
+  currentDevice.value = deviceCopy
+  formDialogVisible.value = true
+}
+
 // 从详情对话框编辑
 const handleEditFromDetail = (device) => {
   currentDevice.value = device
@@ -145,22 +167,33 @@ const handleViewRule = (rule) => {
 
 <style scoped>
 .device-management-view {
-  max-width: 1400px;
-  margin: 0 auto;
+  /* 移除最大宽度限制，与配置管理页面一致 */
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .header-card {
   margin-bottom: 20px;
+  flex-shrink: 0; /* 防止卡片被压缩 */
 }
 
 .header-card h2 {
   margin: 0 0 10px 0;
   color: #303133;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .header-card p {
   margin: 0;
   color: #909399;
   font-size: 14px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+  min-height: 20px; /* 确保有最小高度 */
 }
 </style>

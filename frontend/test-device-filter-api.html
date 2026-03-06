@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备筛选API测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #409eff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+        button:hover {
+            background: #66b1ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>设备筛选API测试</h1>
+    
+    <div class="section">
+        <h2>1. 测试品牌列表API</h2>
+        <button onclick="testBrandsAPI()">测试品牌API</button>
+        <div id="brands-result" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. 测试设备类型列表API</h2>
+        <button onclick="testDeviceTypesAPI()">测试设备类型API</button>
+        <div id="device-types-result" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. 测试完整流程</h2>
+        <button onclick="testFullFlow()">测试完整流程</button>
+        <div id="full-flow-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000/api';
+        
+        async function testBrandsAPI() {
+            const resultDiv = document.getElementById('brands-result');
+            resultDiv.innerHTML = '正在测试品牌API...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/devices/brands?include_count=true`);
+                const data = await response.json();
+                
+                let result = `状态码: ${response.status}\n`;
+                result += `成功: ${data.success}\n`;
+                result += `品牌数量: ${data.brands ? data.brands.length : 0}\n\n`;
+                
+                if (data.brands) {
+                    result += '品牌列表:\n';
+                    data.brands.forEach(brand => {
+                        const count = data.counts ? data.counts[brand] : 0;
+                        result += `  - ${brand}: ${count} 个设备\n`;
+                    });
+                }
+                
+                resultDiv.innerHTML = result;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.innerHTML = `错误: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testDeviceTypesAPI() {
+            const resultDiv = document.getElementById('device-types-result');
+            resultDiv.innerHTML = '正在测试设备类型API...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/devices/device-types?include_count=true`);
+                const data = await response.json();
+                
+                let result = `状态码: ${response.status}\n`;
+                result += `成功: ${data.success}\n`;
+                result += `设备类型数量: ${data.device_types ? data.device_types.length : 0}\n\n`;
+                
+                if (data.device_types) {
+                    result += '设备类型列表:\n';
+                    data.device_types.forEach(type => {
+                        const count = data.counts ? data.counts[type] : 0;
+                        result += `  - ${type}: ${count} 个设备\n`;
+                    });
+                }
+                
+                resultDiv.innerHTML = result;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.innerHTML = `错误: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testFullFlow() {
+            const resultDiv = document.getElementById('full-flow-result');
+            resultDiv.innerHTML = '正在测试完整流程...\n\n';
+            
+            try {
+                // 1. 测试品牌API
+                resultDiv.innerHTML += '步骤1: 获取品牌列表...\n';
+                const brandsResponse = await fetch(`${API_BASE_URL}/devices/brands?include_count=true`);
+                const brandsData = await brandsResponse.json();
+                resultDiv.innerHTML += `✓ 品牌API成功，获取 ${brandsData.brands ? brandsData.brands.length : 0} 个品牌\n\n`;
+                
+                // 2. 测试设备类型API
+                resultDiv.innerHTML += '步骤2: 获取设备类型列表...\n';
+                const typesResponse = await fetch(`${API_BASE_URL}/devices/device-types?include_count=true`);
+                const typesData = await typesResponse.json();
+                resultDiv.innerHTML += `✓ 设备类型API成功，获取 ${typesData.device_types ? typesData.device_types.length : 0} 个类型\n\n`;
+                
+                // 3. 显示详细信息
+                resultDiv.innerHTML += '详细信息:\n';
+                resultDiv.innerHTML += '品牌: ' + (brandsData.brands ? brandsData.brands.join(', ') : '无') + '\n';
+                resultDiv.innerHTML += '设备类型: ' + (typesData.device_types ? typesData.device_types.join(', ') : '无') + '\n\n';
+                
+                // 4. 测试设备列表API（使用筛选）
+                if (brandsData.brands && brandsData.brands.length > 0) {
+                    const testBrand = brandsData.brands[0];
+                    resultDiv.innerHTML += `步骤3: 测试品牌筛选 (${testBrand})...\n`;
+                    const devicesResponse = await fetch(`${API_BASE_URL}/devices?brand=${encodeURIComponent(testBrand)}&page=1&page_size=10`);
+                    const devicesData = await devicesResponse.json();
+                    resultDiv.innerHTML += `✓ 设备列表API成功，找到 ${devicesData.total || 0} 个设备\n\n`;
+                }
+                
+                if (typesData.device_types && typesData.device_types.length > 0) {
+                    const testType = typesData.device_types[0];
+                    resultDiv.innerHTML += `步骤4: 测试设备类型筛选 (${testType})...\n`;
+                    const devicesResponse = await fetch(`${API_BASE_URL}/devices?device_type=${encodeURIComponent(testType)}&page=1&page_size=10`);
+                    const devicesData = await devicesResponse.json();
+                    resultDiv.innerHTML += `✓ 设备列表API成功，找到 ${devicesData.total || 0} 个设备\n\n`;
+                }
+                
+                resultDiv.innerHTML += '\n✓ 所有测试通过！';
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.innerHTML += `\n✗ 错误: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // 页面加载时自动运行测试
+        window.onload = function() {
+            console.log('页面加载完成，准备测试API...');
+        };
+    </script>
+</body>
+</html>

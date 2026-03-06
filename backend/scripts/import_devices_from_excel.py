@@ -345,17 +345,21 @@ class DeviceImporter:
             'unit_price': unit_price
         }
     
-    def import_to_database(self, devices: List[Dict], batch_size: int = 100) -> None:
+    def import_to_database(self, devices: List[Dict], batch_size: int = 100, auto_generate_rules: bool = True) -> None:
         """
         批量导入设备到数据库
         
-        验证需求: 2.5, 2.6
+        验证需求: 2.5, 2.6, 2.1, 3.1-3.5
         
         Args:
             devices: 设备数据列表
             batch_size: 批量大小
+            auto_generate_rules: 是否自动生成规则
         """
         logger.info(f"开始导入设备到数据库，共 {len(devices)} 个设备")
+        
+        if auto_generate_rules:
+            logger.info("将在导入后自动生成匹配规则")
         
         total_batches = (len(devices) + batch_size - 1) // batch_size
         
@@ -366,18 +370,19 @@ class DeviceImporter:
             
             logger.info(f"处理批次 {batch_idx + 1}/{total_batches} ({len(batch)} 个设备)")
             
-            self._import_batch(batch)
+            self._import_batch(batch, auto_generate_rules)
         
         logger.info("设备导入完成")
     
-    def _import_batch(self, batch: List[Dict]) -> None:
+    def _import_batch(self, batch: List[Dict], auto_generate_rules: bool = True) -> None:
         """
         导入一批设备
         
-        验证需求: 2.5, 2.6
+        验证需求: 2.5, 2.6, 3.1-3.5
         
         Args:
             batch: 设备数据批次
+            auto_generate_rules: 是否自动生成规则
         """
         try:
             with self.db_manager.session_scope() as session:
@@ -421,10 +426,117 @@ class DeviceImporter:
                         logger.error(error_msg)
                         self.stats['error_details'].append(error_msg)
                         # 继续处理下一个设备
+                
+                # 提交设备数据
+                session.commit()
+                
+                # 如果启用自动生成规则，为新插入的设备生成规则
+                if auto_generate_rules and self.stats['inserted'] > 0:
+                    self._generate_rules_for_batch(session, batch)
                         
         except Exception as e:
             logger.error(f"批次导入失败: {e}")
             raise
+    
+    def _generate_rules_for_batch(self, session, batch: List[Dict]) -> None:
+        """
+        为批次中的设备生成匹配规则
+        
+        验证需求: 3.1-3.5
+        
+        Args:
+            session: 数据库会话
+            batch: 设备数据批次
+        """
+        try:
+            # 导入规则生成器
+            from modules.rule_generator import RuleGenerator
+            from modules.text_preprocessor import TextPreprocessor
+            from modules.data_loader import Device, Rule
+            from modules.models import Rule as RuleModel
+            
+            # 加载配置
+            import json
+            config_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'static_config.json')
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+            else:
+                config = {'default_match_threshold': 5.0}
+            
+            # 初始化预处理器和规则生成器
+            preprocessor = TextPreprocessor(config)
+            rule_generator = RuleGenerator(
+                preprocessor=preprocessor,
+                default_threshold=config.get('default_match_threshold', 5.0),
+                config=config
+            )
+            
+            rules_generated = 0
+            rules_failed = 0
+            
+            for device_data in batch:
+                try:
+                    device_id = device_data['device_id']
+                    
+                    # 检查规则是否已存在
+                    rule_id = f"R_{device_id}"
+                    existing_rule = session.query(RuleModel).filter_by(rule_id=rule_id).first()
+                    
+                    if existing_rule:
+                        logger.debug(f"规则已存在，跳过: {rule_id}")
+                        continue
+                    
+                    # 创建设备对象
+                    device = Device(
+                        device_id=device_id,
+                        brand=device_data['brand'],
+                        device_name=device_data['device_name'],
+                        spec_model=device_data['spec_model'],
+                        detailed_params=device_data['detailed_params'],
+                        unit_price=device_data['unit_price']
+                    )
+                    
+                    # 生成规则
+                    rule = rule_generator.generate_rule(device)
+                    
+                    if rule:
+                        # 将规则保存到数据库
+                        rule_model = RuleModel(
+                            rule_id=rule.rule_id,
+                            target_device_id=rule.target_device_id,
+                            auto_extracted_features=rule.auto_extracted_features,
+                            feature_weights=rule.feature_weights,
+                            match_threshold=rule.match_threshold,
+                            remark=rule.remark if hasattr(rule, 'remark') else ''
+                        )
+                        session.add(rule_model)
+                        rules_generated += 1
+                        logger.debug(f"生成规则: {rule_id}")
+                    else:
+                        rules_failed += 1
+                        logger.warning(f"规则生成失败: {device_id}")
+                        
+                except Exception as e:
+                    rules_failed += 1
+                    logger.warning(f"为设备 {device_data.get('device_id', 'UNKNOWN')} 生成规则失败: {e}")
+            
+            # 提交规则
+            session.commit()
+            
+            if rules_generated > 0:
+                logger.info(f"批次规则生成完成: 成功 {rules_generated}, 失败 {rules_failed}")
+            
+            # 更新统计信息
+            if not hasattr(self.stats, 'rules_generated'):
+                self.stats['rules_generated'] = 0
+                self.stats['rules_failed'] = 0
+            self.stats['rules_generated'] += rules_generated
+            self.stats['rules_failed'] += rules_failed
+            
+        except Exception as e:
+            logger.error(f"批次规则生成失败: {e}")
+            # 规则生成失败不影响设备导入，只记录错误
     
     def print_report(self) -> None:
         """
@@ -441,6 +553,13 @@ class DeviceImporter:
         print(f"插入设备数:       {self.stats['inserted']}")
         print(f"更新设备数:       {self.stats['updated']}")
         print(f"错误数:           {self.stats['errors']}")
+        
+        # 如果生成了规则，显示规则统计
+        if 'rules_generated' in self.stats:
+            print("-" * 80)
+            print(f"生成规则数:       {self.stats['rules_generated']}")
+            print(f"规则生成失败:     {self.stats['rules_failed']}")
+        
         print("=" * 80)
         
         if self.stats['error_details']:
@@ -474,11 +593,17 @@ def main():
         default=100,
         help='批量导入大小'
     )
+    parser.add_argument(
+        '--no-rules',
+        action='store_true',
+        help='不自动生成匹配规则'
+    )
     
     args = parser.parse_args()
     
     # 获取数据库URL
     db_url = args.db_url if args.db_url else Config.DATABASE_URL
+    auto_generate_rules = not args.no_rules
     
     print("=" * 80)
     print("Excel设备数据导入工具")
@@ -486,6 +611,7 @@ def main():
     print(f"Excel文件: {args.excel}")
     print(f"数据库URL: {db_url}")
     print(f"批量大小: {args.batch_size}")
+    print(f"自动生成规则: {'是' if auto_generate_rules else '否'}")
     print("=" * 80)
     print()
     
@@ -505,7 +631,7 @@ def main():
             return
         
         # 导入到数据库
-        importer.import_to_database(devices, batch_size=args.batch_size)
+        importer.import_to_database(devices, batch_size=args.batch_size, auto_generate_rules=auto_generate_rules)
         
         # 打印报告
         importer.print_report()

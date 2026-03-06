@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-03-05T15:41:17.136860",
+  "total_devices": 2,
+  "success": [],
+  "failed": [
+    {
+      "device_id": "_____V5011P2036_1772692671801_",
+      "brand": "霍尼韦尔",
+      "device_type": "电动调节阀",
+      "reason": "'DataLoader' object has no attribute 'save_rule'"
+    },
+    {
+      "device_id": "_____V5011P2002_1772695068467_",
+      "brand": "霍尼韦尔",
+      "device_type": "电动调节阀",
+      "reason": "'DataLoader' object has no attribute 'save_rule'"
+    }
+  ],
+  "success_count": 0,
+  "fail_count": 2
+}

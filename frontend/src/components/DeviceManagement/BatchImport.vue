@@ -9,6 +9,17 @@
     <div class="batch-import">
       <!-- 文件上传区域 -->
       <div v-if="!fileUploaded" class="upload-section">
+        <el-alert
+          type="info"
+          :closable="false"
+          show-icon
+          style="margin-bottom: 15px"
+        >
+          <template #title>
+            请上传包含设备信息的Excel文件（支持.xlsx和.xls格式）
+          </template>
+        </el-alert>
+        
         <el-upload
           ref="uploadRef"
           :auto-upload="false"
@@ -55,13 +66,33 @@
           style="width: 100%"
           max-height="400"
         >
-          <el-table-column prop="device_id" label="设备ID" width="120" />
-          <el-table-column prop="brand" label="品牌" width="100" />
+          <el-table-column prop="brand" label="品牌" width="120" />
+          <el-table-column prop="device_type" label="设备类型" width="120">
+            <template #default="{ row }">
+              <span v-if="row.device_type">{{ row.device_type }}</span>
+              <span v-else style="color: #909399">-</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="device_name" label="设备名称" width="150" />
           <el-table-column prop="spec_model" label="规格型号" width="150" />
           <el-table-column prop="unit_price" label="单价" width="100">
             <template #default="{ row }">
               ¥{{ row.unit_price }}
+            </template>
+          </el-table-column>
+          <el-table-column label="其他参数" min-width="200">
+            <template #default="{ row }">
+              <div v-if="row.key_params && Object.keys(row.key_params).length > 0">
+                <el-tag
+                  v-for="(value, key) in row.key_params"
+                  :key="key"
+                  size="small"
+                  style="margin: 2px"
+                >
+                  {{ key }}: {{ value }}
+                </el-tag>
+              </div>
+              <span v-else style="color: #909399">-</span>
             </template>
           </el-table-column>
         </el-table>
@@ -119,6 +150,7 @@ import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { batchImportDevices } from '../../api/database'
+import * as XLSX from 'xlsx'
 
 const props = defineProps({
   modelValue: {
@@ -187,26 +219,74 @@ const handlePreview = async () => {
     return
   }
   
-  // 这里简化处理，实际应该调用后端API解析Excel
-  // 为了演示，我们模拟一些预览数据
   ElMessage.info('正在解析文件...')
   
-  // 模拟解析延迟
-  setTimeout(() => {
-    previewData.value = [
-      {
-        device_id: 'D001',
-        brand: '霍尼韦尔',
-        device_name: '温度传感器',
-        spec_model: 'T7350A1008',
-        detailed_params: '测量范围: -40~120℃',
-        unit_price: 450.0
-      },
-      // 更多预览数据...
-    ]
-    fileUploaded.value = true
-    ElMessage.success('文件解析成功')
-  }, 1000)
+  try {
+    // 读取Excel文件
+    const file = selectedFile.value.raw
+    const reader = new FileReader()
+    
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result)
+        const workbook = XLSX.read(data, { type: 'array' })
+        
+        // 获取第一个工作表
+        const firstSheetName = workbook.SheetNames[0]
+        const worksheet = workbook.Sheets[firstSheetName]
+        
+        // 将工作表转换为JSON
+        const jsonData = XLSX.utils.sheet_to_json(worksheet)
+        
+        if (jsonData.length === 0) {
+          ElMessage.warning('Excel文件中没有数据')
+          return
+        }
+        
+        // 映射Excel列名到系统字段名
+        previewData.value = jsonData.map(row => {
+          const device = {
+            brand: row['品牌'] || '',
+            device_type: row['设备类型'] || '',
+            device_name: row['设备名称'] || '',
+            spec_model: row['规格型号'] || '',
+            unit_price: row['单价'] || 0
+          }
+          
+          // 收集其他列作为key_params
+          const excludeKeys = ['品牌', '设备类型', '设备名称', '规格型号', '单价']
+          const keyParams = {}
+          
+          for (const [key, value] of Object.entries(row)) {
+            if (!excludeKeys.includes(key) && value !== undefined && value !== null && value !== '') {
+              keyParams[key] = value
+            }
+          }
+          
+          if (Object.keys(keyParams).length > 0) {
+            device.key_params = keyParams
+          }
+          
+          return device
+        })
+        
+        fileUploaded.value = true
+        ElMessage.success(`文件解析成功，共 ${previewData.value.length} 条数据`)
+      } catch (error) {
+        console.error('解析Excel失败:', error)
+        ElMessage.error('解析Excel文件失败，请检查文件格式')
+      }
+    }
+    
+    reader.onerror = () => {
+      ElMessage.error('读取文件失败')
+    }
+    
+    reader.readAsArrayBuffer(file)
+  } catch (error) {
+    console.error('预览失败:', error)
+    ElMessage.error('预览失败，请稍后重试')
+  }
 }
 
 // 重新选择文件

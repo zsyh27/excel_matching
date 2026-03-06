@@ -1,0 +1,12 @@
+{
+  "total_devices": 741,
+  "devices_with_rules": 741,
+  "devices_without_rules": 0,
+  "total_rules": 741,
+  "valid_rules": 72,
+  "invalid_rules": 669,
+  "errors": [
+    "739 个设备数据不完整",
+    "669 个规则数据无效"
+  ]
+}

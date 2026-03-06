@@ -1,0 +1,4663 @@
+[
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RA",
+    "unit_price": 213.2197,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RB",
+    "unit_price": 192.6085,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RP",
+    "unit_price": 254.4082,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM2A",
+    "unit_price": 623.9973,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM2B",
+    "unit_price": 623.9973,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM2P",
+    "unit_price": 675.9999,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM3A",
+    "unit_price": 468.0008,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM3B",
+    "unit_price": 468.0008,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM3P",
+    "unit_price": 483.5948,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM5A",
+    "unit_price": 415.9982,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM5B",
+    "unit_price": 415.9982,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM5P",
+    "unit_price": 431.6035,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV2A",
+    "unit_price": 623.9973,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV2B",
+    "unit_price": 623.9973,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV2P",
+    "unit_price": 675.9999,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV3A",
+    "unit_price": 468.0008,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV3B",
+    "unit_price": 468.0008,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV3P",
+    "unit_price": 483.5948,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV5A",
+    "unit_price": 415.9982,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV5B",
+    "unit_price": 415.9982,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV5P",
+    "unit_price": 431.6035,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组1"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "风管温度传感器",
+    "spec_model": "HST-DA",
+    "unit_price": 186.224,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "风管温度传感器",
+    "spec_model": "HST-DB",
+    "unit_price": 186.224,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "风管温度传感器",
+    "spec_model": "HST-DP",
+    "unit_price": 256.058,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM2A",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM2B",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM2P",
+    "unit_price": 716.872,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM3A",
+    "unit_price": 493.584,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM3B",
+    "unit_price": 493.584,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM3P",
+    "unit_price": 540.592,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM5A",
+    "unit_price": 470.08,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM5B",
+    "unit_price": 470.08,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM5P",
+    "unit_price": 517.088,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV2A",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV2B",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV2P",
+    "unit_price": 716.872,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV3A",
+    "unit_price": 493.584,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV3B",
+    "unit_price": 493.584,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV3P",
+    "unit_price": 540.592,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV5A",
+    "unit_price": 470.08,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 10K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV5B",
+    "unit_price": 470.08,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV5P",
+    "unit_price": 517.088,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组2"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EM3B",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组3"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EV3B",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "温度信号类型": {
+        "value": "NTC 20K",
+        "required": false
+      },
+      "湿度信号类型": {
+        "value": "0-10V",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3.0%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组3"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM2M-P",
+    "unit_price": 775.632,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM2M-E",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM3M-P",
+    "unit_price": 599.352,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM3M-E",
+    "unit_price": 493.584,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM5M-P",
+    "unit_price": 575.848,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DM5M-E",
+    "unit_price": 470.08,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV2V-P",
+    "unit_price": 775.632,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV2V-E",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV3V-P",
+    "unit_price": 599.352,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV3V-E",
+    "unit_price": 493.584,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV5V-P",
+    "unit_price": 575.848,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "风管温湿度传感器",
+    "spec_model": "HSH-DV5V-E",
+    "unit_price": 470.08,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EM2M-P",
+    "unit_price": 881.4,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EM2M-E",
+    "unit_price": 799.136,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EM3M-E",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EV2V-P",
+    "unit_price": 881.4,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EV3V-E",
+    "unit_price": 658.112,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室外温湿度传感器",
+    "spec_model": "HSH-EV5V-E",
+    "unit_price": 634.608,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "风管温度传感器",
+    "spec_model": "HST-DM-P",
+    "unit_price": 419.004,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "风管温度传感器",
+    "spec_model": "HST-DM-E",
+    "unit_price": 325.892,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "风管温度传感器",
+    "spec_model": "HST-DV-P",
+    "unit_price": 465.56,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "风管温度传感器",
+    "spec_model": "HST-DV-E",
+    "unit_price": 372.448,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "风管",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室外温度传感器",
+    "spec_model": "HST-EM-P",
+    "unit_price": 488.838,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室外温度传感器",
+    "spec_model": "HST-EM-E",
+    "unit_price": 419.004,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室外温度传感器",
+    "spec_model": "HST-EV-P",
+    "unit_price": 488.838,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室外温度传感器",
+    "spec_model": "HST-EV-E",
+    "unit_price": 419.004,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室外",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM2M-P",
+    "unit_price": 728.624,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM2M-E",
+    "unit_price": 611.104,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM3M-P",
+    "unit_price": 524.1618,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM3M-E",
+    "unit_price": 441.8752,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM5M-P",
+    "unit_price": 469.5602,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM5M-E",
+    "unit_price": 387.816,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV2V-P",
+    "unit_price": 728.624,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV2V-E",
+    "unit_price": 611.104,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV3V-P",
+    "unit_price": 524.1618,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV3V-E",
+    "unit_price": 441.8752,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV5V-P",
+    "unit_price": 469.5602,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV5V-E",
+    "unit_price": 387.816,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM2ML-P",
+    "unit_price": 846.144,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM2ML-E",
+    "unit_price": 728.624,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM3ML-P",
+    "unit_price": 655.1966,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM3ML-E",
+    "unit_price": 537.6766,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM5ML-P",
+    "unit_price": 600.6063,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RM5ML-E",
+    "unit_price": 518.2632,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV2VL-P",
+    "unit_price": 846.144,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV2VL-E",
+    "unit_price": 728.624,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±2%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV3VL-P",
+    "unit_price": 655.1966,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV3VL-E",
+    "unit_price": 537.6766,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±3%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV5VL-P",
+    "unit_price": 600.6063,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温湿度传感器",
+    "device_name": "室内温湿度传感器",
+    "spec_model": "HSH-RV5VL-E",
+    "unit_price": 518.2632,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "湿度精度": {
+        "value": "±5%",
+        "unit": "%",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      },
+      "湿度量程": {
+        "value": "0-100%RH",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RM-P",
+    "unit_price": 384.087,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RM-E",
+    "unit_price": 314.253,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RV-P",
+    "unit_price": 384.087,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RV-E",
+    "unit_price": 314.253,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RML-P",
+    "unit_price": 500.477,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RML-E",
+    "unit_price": 430.643,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "4-20mA",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RVL-P",
+    "unit_price": 500.477,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "Pt1000",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "温度传感器",
+    "device_name": "室内温度传感器",
+    "spec_model": "HST-RVL-E",
+    "unit_price": 430.643,
+    "key_params": {
+      "检测对象": {
+        "value": "温度",
+        "required": true
+      },
+      "安装位置": {
+        "value": "室内墙装",
+        "required": false
+      },
+      "输出信号": {
+        "value": "0-10V",
+        "required": false
+      },
+      "温度传感器类型": {
+        "value": "电子式",
+        "required": false
+      },
+      "温度量程": {
+        "value": "-20~60℃",
+        "required": false
+      }
+    },
+    "source_group": "分组4"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "空气质量传感器",
+    "device_name": "室内空气质量传感器",
+    "spec_model": "HAQ61L",
+    "unit_price": 2567.1566,
+    "key_params": {
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "面板颜色": {
+        "value": "黑色",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内空气质量传感器，带显示屏，显示状态长暗，面板黑色"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "空气质量传感器",
+    "device_name": "室内空气质量传感器",
+    "spec_model": "HAQ61B",
+    "unit_price": 2459.1625,
+    "key_params": {
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "面板颜色": {
+        "value": "黑色",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内空气质量传感器，无显示屏，显示状态无，面板黑色"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "空气质量传感器",
+    "device_name": "室内空气质量传感器",
+    "spec_model": "HAQ61L-NL",
+    "unit_price": 2567.1566,
+    "key_params": {
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "面板颜色": {
+        "value": "黑色",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内空气质量传感器，带显示屏，显示状态长亮，面板黑色"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "空气质量传感器",
+    "device_name": "室内空气质量传感器",
+    "spec_model": "HAQ61BW",
+    "unit_price": 2459.1625,
+    "key_params": {
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "面板颜色": {
+        "value": "白色",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内空气质量传感器，无显示屏，显示状态无，面板白色"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HAQ41L",
+    "unit_price": 1299.5,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度+二氧化碳+PM2.5",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "面板颜色": {
+        "value": "黑色",
+        "required": false
+      },
+      "电源": {
+        "value": "24VDC",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "温度，湿度，二氧化碳，PM2.5"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HAQ41BW",
+    "unit_price": 1243,
+    "key_params": {
+      "检测对象": {
+        "value": "温度+湿度+二氧化碳+PM2.5",
+        "required": true
+      },
+      "面板颜色": {
+        "value": "白色",
+        "required": false
+      },
+      "电源": {
+        "value": "24VDC",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "温度，湿度，二氧化碳，PM2.5"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HAQ21L",
+    "unit_price": 1186.5,
+    "key_params": {
+      "检测对象": {
+        "value": "二氧化碳+PM2.5",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "面板颜色": {
+        "value": "黑色",
+        "required": false
+      },
+      "电源": {
+        "value": "24VDC",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "二氧化碳，PM2.5"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HAQ21BW",
+    "unit_price": 1130,
+    "key_params": {
+      "检测对象": {
+        "value": "二氧化碳+PM2.5",
+        "required": true
+      },
+      "面板颜色": {
+        "value": "白色",
+        "required": false
+      },
+      "电源": {
+        "value": "24VDC",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "二氧化碳，PM2.5"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "传感器",
+    "device_name": "传感器",
+    "spec_model": "C6000A001",
+    "unit_price": 1554.3602,
+    "key_params": {
+      "检测对象": {
+        "value": "一氧化碳",
+        "required": true
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "一氧化碳传感器，4~20mA/2~10V 输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "C8000W001",
+    "unit_price": 1873.9694,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO2 transmitter, wall mounted, accuracy ±40ppm, ±3%二氧化碳传感器"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "C8000D001",
+    "unit_price": 1982.0652,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO2 transmitter, duct mounted, accuracy ±40ppm, ±3%二氧化碳传感器"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R100U",
+    "unit_price": 766.14,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-100",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-100PPM,4-20mA/0-10V/2-10V信号,无显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R100UL",
+    "unit_price": 893.83,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-100",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-100PPM,4-20mA/0-10V/2-10V信号,带显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R100US",
+    "unit_price": 893.83,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-100",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "有继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-100PPM,4-20mA/0-10V/2-10V信号,无显示，带继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R100ULS",
+    "unit_price": 995.982,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-100",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "有继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-100PPM,4-20mA/0-10V/2-10V信号,带显示，带继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R100M",
+    "unit_price": 893.83,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-100",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-100PPM,Modbus RTU,无显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R100ML",
+    "unit_price": 995.982,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-100",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-100PPM,Modbus RTU,带显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R400U",
+    "unit_price": 957.675,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-400",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-400PPM,4-20mA/0-10V/2-10V信号,无显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R400UL",
+    "unit_price": 1085.365,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-400",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-400PPM,4-20mA/0-10V/2-10V信号,带显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R400US",
+    "unit_price": 1085.365,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-400",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "有继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-400PPM,4-20mA/0-10V/2-10V信号,无显示，带继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R400ULS",
+    "unit_price": 1187.517,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-400",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "有继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-400PPM,4-20mA/0-10V/2-10V信号,带显示，带继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R400M",
+    "unit_price": 1085.365,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-400",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "显示屏": {
+        "value": "无显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-400PPM,Modbus RTU,无显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO传感器",
+    "device_name": "CO传感器",
+    "spec_model": "HSCM-R400ML",
+    "unit_price": 1187.517,
+    "key_params": {
+      "检测对象": {
+        "value": "CO",
+        "required": true
+      },
+      "量程": {
+        "value": "0-400",
+        "unit": "ppm",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      },
+      "继电器": {
+        "value": "无继电器",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "CO传感器 0-400PPM,Modbus RTU,带显示，无继电器输出"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-D1U",
+    "unit_price": 983.213,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "单通道",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "风管单通道CO2，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-D1UL",
+    "unit_price": 1085.365,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "单通道",
+        "required": false
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "风管单通道CO2,带显示，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-D2U",
+    "unit_price": 1149.21,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "风管双通道CO2，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-D2UL",
+    "unit_price": 1251.362,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "风管双通道CO2,带显示，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-D2M",
+    "unit_price": 1276.9,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "风管双通道CO2,Modbus RTU"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-D2ML",
+    "unit_price": 1379.052,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "风管双通道CO2,带显示,Modbus RTU"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-R1U",
+    "unit_price": 893.83,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "单通道",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内单通道CO2，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-R1UL",
+    "unit_price": 995.982,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "单通道",
+        "required": false
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内单通道CO2,带显示，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-R2U",
+    "unit_price": 1085.365,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内双通道CO2，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-R2UL",
+    "unit_price": 1187.517,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "0-10V/2-10V/4-20mA",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内双通道CO2,带显示，4-20mA/0-10V/2-10V信号"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-R2M",
+    "unit_price": 1213.055,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内双通道CO2,Modbus RTU"
+  },
+  {
+    "brand": "霍尼韦尔",
+    "device_type": "CO2传感器",
+    "device_name": "CO2传感器",
+    "spec_model": "HSCD-R2ML",
+    "unit_price": 1315.207,
+    "key_params": {
+      "检测对象": {
+        "value": "CO2+CO",
+        "required": true
+      },
+      "输出信号": {
+        "value": "Modbus/Modbus RTU",
+        "required": true
+      },
+      "通道数": {
+        "value": "双通道",
+        "required": false
+      },
+      "显示屏": {
+        "value": "带显示",
+        "required": false
+      }
+    },
+    "source_group": "分组5",
+    "original_description": "室内双通道CO2,带显示,Modbus RTU"
+  }
+]

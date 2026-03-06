@@ -1,0 +1,1313 @@
+{
+  "brand_keywords": [
+    "霍尼韦尔",
+    "西门子",
+    "江森自控",
+    "施耐德",
+    "明纬",
+    "欧姆龙",
+    "丹佛斯",
+    "贝尔莫",
+    "台达",
+    "正泰",
+    "德力西"
+  ],
+  "default_feature_weights": {
+    "brand": 0.3,
+    "detailed_params": 0.2,
+    "device_name": 0.3,
+    "spec_model": 0.2
+  },
+  "default_match_threshold": {
+    "value": 0.6
+  },
+  "device_params": {
+    "CO2传感器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0-2000ppm",
+          "name": "量程",
+          "required": true,
+          "unit": "ppm"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA",
+          "name": "输出信号",
+          "required": true,
+          "unit": "mA"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±50ppm",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "DDC": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：16点",
+          "name": "输入点数",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：12点",
+          "name": "输出点数",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：BACnet、LonWorks",
+          "name": "通讯协议",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "传感器": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "根据具体类型填写",
+          "name": "量程",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA",
+          "name": "输出信号",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "根据具体类型填写",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "压力传感器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0-1.6MPa",
+          "name": "量程",
+          "required": true,
+          "unit": "MPa"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA",
+          "name": "输出信号",
+          "required": true,
+          "unit": "mA"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±0.5%FS",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "压差开关": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0.5-5kPa",
+          "name": "设定范围",
+          "required": false,
+          "unit": "kPa"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：5A",
+          "name": "触点容量",
+          "required": false,
+          "unit": "A"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：空气、水",
+          "name": "介质",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "变送器": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：温度、压力、流量",
+          "name": "测量类型",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "根据类型填写",
+          "name": "量程",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA",
+          "name": "输出信号",
+          "required": false,
+          "unit": "mA"
+        }
+      ]
+    },
+    "变频器": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：7.5kW",
+          "name": "功率",
+          "required": true,
+          "unit": "kW"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：380V",
+          "name": "电压",
+          "required": false,
+          "unit": "V"
+        },
+        {
+          "data_type": "range",
+          "hint": "例如：0-50Hz",
+          "name": "频率范围",
+          "required": false,
+          "unit": "Hz"
+        }
+      ]
+    },
+    "差压传感器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0-10kPa",
+          "name": "量程",
+          "required": true,
+          "unit": "kPa"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA",
+          "name": "输出信号",
+          "required": true,
+          "unit": "mA"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±0.5%",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "座阀": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN15, DN20",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：PN16",
+          "name": "压力等级",
+          "required": false,
+          "unit": "bar"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：Kvs 6.3",
+          "name": "流量系数",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "开关": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：压差开关、液位开关",
+          "name": "类型",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "根据类型填写",
+          "name": "设定范围",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：5A",
+          "name": "触点容量",
+          "required": false,
+          "unit": "A"
+        }
+      ]
+    },
+    "执行器": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：10N·m",
+          "name": "扭矩",
+          "required": false,
+          "unit": "N·m"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：90秒",
+          "name": "行程时间",
+          "required": false,
+          "unit": "s"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：0-10V或开关量",
+          "name": "控制信号",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "探测器": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：烟感、温感",
+          "name": "探测类型",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：DC24V",
+          "name": "工作电压",
+          "required": false,
+          "unit": "V"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：开关量",
+          "name": "输出方式",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "控制器": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：8点",
+          "name": "输入点数",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：6点",
+          "name": "输出点数",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：Modbus、BACnet",
+          "name": "通讯协议",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "控制柜": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：800×600×2000",
+          "name": "尺寸",
+          "required": false,
+          "unit": "mm"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：IP54",
+          "name": "防护等级",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：冷轧钢板",
+          "name": "材质",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "模块": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：AI、AO、DI、DO",
+          "name": "类型",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：8通道",
+          "name": "通道数",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：RS485",
+          "name": "通讯方式",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "水泵": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：50m³/h",
+          "name": "流量",
+          "required": false,
+          "unit": "m³/h"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：32m",
+          "name": "扬程",
+          "required": false,
+          "unit": "m"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：7.5kW",
+          "name": "功率",
+          "required": false,
+          "unit": "kW"
+        }
+      ]
+    },
+    "水阀": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN15, DN20",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：PN16",
+          "name": "压力等级",
+          "required": false,
+          "unit": "bar"
+        },
+        {
+          "data_type": "range",
+          "hint": "例如：0-100℃",
+          "name": "介质温度",
+          "required": false,
+          "unit": "℃"
+        }
+      ]
+    },
+    "流量传感器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0-100m³/h",
+          "name": "量程",
+          "required": true,
+          "unit": "m³/h"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA或脉冲",
+          "name": "输出信号",
+          "required": true,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±1%",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "流量计": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0-100m³/h",
+          "name": "量程",
+          "required": true,
+          "unit": "m³/h"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA或脉冲",
+          "name": "输出信号",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±1%",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "液位传感器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0-5m",
+          "name": "量程",
+          "required": true,
+          "unit": "m"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA或开关量",
+          "name": "输出信号",
+          "required": true,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±5mm",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "液位开关": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：浮球式、电极式",
+          "name": "类型",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：5A",
+          "name": "触点容量",
+          "required": false,
+          "unit": "A"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：水、油",
+          "name": "介质",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "温度传感器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：-20~60℃",
+          "name": "量程",
+          "required": true,
+          "unit": "℃"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA或PT1000",
+          "name": "输出信号",
+          "required": true,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±0.5℃",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "温控器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：5-35℃",
+          "name": "控制范围",
+          "required": false,
+          "unit": "℃"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：开关量、模拟量",
+          "name": "输出类型",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：液晶显示",
+          "name": "显示方式",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "湿度传感器": {
+      "params": [
+        {
+          "data_type": "range",
+          "hint": "例如：0-100%RH",
+          "name": "量程",
+          "required": true,
+          "unit": "%RH"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA",
+          "name": "输出信号",
+          "required": true,
+          "unit": "mA"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：±3%RH",
+          "name": "精度",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "球阀": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN15, DN20",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：PN16",
+          "name": "压力等级",
+          "required": false,
+          "unit": "bar"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：黄铜、不锈钢",
+          "name": "阀体材质",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "电动阀": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN15, DN20",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：PN16",
+          "name": "压力等级",
+          "required": false,
+          "unit": "bar"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：开关型、调节型",
+          "name": "控制方式",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "电源": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：AC220V",
+          "name": "输入电压",
+          "required": false,
+          "unit": "V"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：DC24V",
+          "name": "输出电压",
+          "required": false,
+          "unit": "V"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：100W",
+          "name": "功率",
+          "required": false,
+          "unit": "W"
+        }
+      ]
+    },
+    "电磁阀": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN15, DN20",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：220V",
+          "name": "工作电压",
+          "required": false,
+          "unit": "V"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：0.8MPa",
+          "name": "工作压力",
+          "required": false,
+          "unit": "MPa"
+        }
+      ]
+    },
+    "继电器": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：DC24V",
+          "name": "线圈电压",
+          "required": false,
+          "unit": "V"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：10A",
+          "name": "触点容量",
+          "required": false,
+          "unit": "A"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4组常开",
+          "name": "触点数量",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "网关": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：Modbus转BACnet",
+          "name": "通讯协议",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：RS485、以太网",
+          "name": "接口类型",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：128点",
+          "name": "转换点数",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "蝶阀": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN50, DN100",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：PN10",
+          "name": "压力等级",
+          "required": false,
+          "unit": "bar"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：铸铁、不锈钢",
+          "name": "阀体材质",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "调节阀": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN15, DN20",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：Kvs 6.3",
+          "name": "流量系数",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：4-20mA",
+          "name": "控制信号",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "阀门": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：DN15, DN20",
+          "name": "通径",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：PN16",
+          "name": "压力等级",
+          "required": false,
+          "unit": "bar"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：铸铁、不锈钢",
+          "name": "阀体材质",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    },
+    "风机": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：10000m³/h",
+          "name": "风量",
+          "required": false,
+          "unit": "m³/h"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：500Pa",
+          "name": "风压",
+          "required": false,
+          "unit": "Pa"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：5.5kW",
+          "name": "功率",
+          "required": false,
+          "unit": "kW"
+        }
+      ]
+    },
+    "风机盘管": {
+      "params": [
+        {
+          "data_type": "number",
+          "hint": "例如：3.5kW",
+          "name": "制冷量",
+          "required": false,
+          "unit": "kW"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：4.0kW",
+          "name": "制热量",
+          "required": false,
+          "unit": "kW"
+        },
+        {
+          "data_type": "number",
+          "hint": "例如：600m³/h",
+          "name": "风量",
+          "required": false,
+          "unit": "m³/h"
+        }
+      ]
+    },
+    "风阀": {
+      "params": [
+        {
+          "data_type": "string",
+          "hint": "例如：600×400",
+          "name": "尺寸",
+          "required": true,
+          "unit": "mm"
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：电动、手动",
+          "name": "控制方式",
+          "required": false,
+          "unit": ""
+        },
+        {
+          "data_type": "string",
+          "hint": "例如：镀锌钢板",
+          "name": "材质",
+          "required": false,
+          "unit": ""
+        }
+      ]
+    }
+  },
+  "device_row_recognition": {
+    "industry_keywords": {
+      "brands": [
+        "霍尼韦尔",
+        "西门子",
+        "江森自控",
+        "施耐德",
+        "明纬",
+        "欧姆龙",
+        "ABB",
+        "丹佛斯",
+        "贝尔莫",
+        "Honeywell",
+        "Siemens",
+        "Johnson",
+        "Schneider",
+        "OMRON",
+        "Danfoss",
+        "Belimo",
+        "Delta",
+        "台达",
+        "正泰",
+        "德力西"
+      ],
+      "device_types": [
+        "传感器",
+        "控制器",
+        "DDC",
+        "阀门",
+        "执行器",
+        "控制柜",
+        "电源",
+        "继电器",
+        "网关",
+        "模块",
+        "探测器",
+        "开关",
+        "变送器",
+        "温控器",
+        "风阀",
+        "水阀",
+        "电动阀",
+        "调节阀",
+        "压力传感器",
+        "温度传感器",
+        "湿度传感器",
+        "CO2传感器",
+        "流量计",
+        "压差开关",
+        "液位开关",
+        "风机",
+        "水泵"
+      ],
+      "model_patterns": [
+        "[A-Z]{2,}-[A-Z0-9]+",
+        "[A-Z]+\\d{3,}",
+        "\\d{4}[A-Z]+",
+        "[A-Z]+-\\d+"
+      ],
+      "parameters": [
+        "PPM",
+        "ppm",
+        "℃",
+        "摄氏度",
+        "Pa",
+        "pa",
+        "%RH",
+        "%rh",
+        "m/s",
+        "MPa",
+        "mA",
+        "4-20mA",
+        "0-10V",
+        "2-10V",
+        "AC220V",
+        "DC24V",
+        "DN",
+        "dn",
+        "AI",
+        "AO",
+        "DI",
+        "DO",
+        "点位",
+        "通道",
+        "路",
+        "个",
+        "V",
+        "A",
+        "W",
+        "Hz",
+        "kW",
+        "kg",
+        "mm",
+        "cm",
+        "m"
+      ]
+    },
+    "probability_thresholds": {
+      "high": 50,
+      "medium": 30
+    },
+    "scoring_weights": {
+      "data_type": 0.3,
+      "industry": 0.35,
+      "structure": 0.35
+    }
+  },
+  "device_type_keywords": [
+    "传感器",
+    "控制器",
+    "DDC",
+    "阀门",
+    "执行器",
+    "控制柜",
+    "电源",
+    "继电器",
+    "网关",
+    "模块",
+    "探测器",
+    "开关",
+    "变送器",
+    "温控器",
+    "风阀",
+    "水阀",
+    "电动阀",
+    "调节阀",
+    "座阀",
+    "球阀",
+    "蝶阀",
+    "流量计",
+    "压差开关",
+    "液位开关",
+    "风机",
+    "水泵"
+  ],
+  "feature_split_chars": [
+    "+",
+    "|",
+    "；",
+    "\n"
+  ],
+  "feature_weight_config": {
+    "brand_weight": 1,
+    "device_type_weight": 3,
+    "model_weight": 1,
+    "parameter_weight": 3
+  },
+  "global_config": {
+    "default_match_threshold": 5,
+    "fullwidth_to_halfwidth": true,
+    "min_feature_length": 1,
+    "min_feature_length_chinese": 1,
+    "remove_whitespace": true,
+    "unify_lowercase": true
+  },
+  "ignore_keywords": [
+    "施工要求",
+    "验收",
+    "图纸",
+    "规范",
+    "清单",
+    "调试",
+    "安装",
+    "含税",
+    "不含税",
+    "备注",
+    "说明",
+    "要求",
+    "标准",
+    "国标",
+    "进口",
+    "国产",
+    "品牌",
+    "厂家",
+    "供货",
+    "交货",
+    "质保",
+    "系列",
+    "传输",
+    "传输方式"
+  ],
+  "intelligent_extraction": {
+    "complex_parameter_decomposition": {
+      "enabled": true,
+      "patterns": [
+        {
+          "description": "提取精度、温度、湿度、量程中的数值（归一化后的格式）",
+          "name": "精度规格",
+          "pattern": "±(\\d+)%?@(\\d+)c\\.?(\\d+)%?rh\\((\\d+)[-~](\\d+)"
+        }
+      ]
+    },
+    "enabled": true,
+    "feature_quality_scoring": {
+      "enabled": true,
+      "min_quality_score": 50,
+      "scoring_rules": {
+        "appropriate_length": 5,
+        "has_number": 10,
+        "has_unit": 10,
+        "in_device_keywords": 15,
+        "is_common_word": -20,
+        "is_metadata_label": -30,
+        "is_pure_number": -5,
+        "is_pure_punctuation": -30,
+        "is_technical_term": 20,
+        "too_short": -20
+      }
+    },
+    "metadata_label_patterns": [
+      "\\d+\\.?名称[:：]",
+      "\\d+\\.?施工要求[:：]"
+    ],
+    "technical_term_expansion": {
+      "0-10V": [
+        "0-10V",
+        "电压输出"
+      ],
+      "4-20mA": [
+        "4-20mA",
+        "电流输出"
+      ],
+      "485通讯": [
+        "RS485",
+        "485"
+      ],
+      "CO2": [
+        "CO2",
+        "二氧化碳",
+        "co2"
+      ],
+      "DDC": [
+        "DDC",
+        "直接数字控制器"
+      ]
+    },
+    "text_cleaning": {
+      "enabled": true,
+      "noise_section_patterns": [
+        {
+          "description": "删除按照图纸规范的描述",
+          "pattern": "按照.*?(?:图纸|规范|清单).*?(?:要求|配置)"
+        },
+        {
+          "description": "删除验收相关描述",
+          "pattern": "(?:达到|满足|通过).*?验收"
+        },
+        {
+          "description": "删除采购运输相关描述",
+          "pattern": "(?:采购|运输|保管|转运).*?(?:施工|验收)"
+        }
+      ],
+      "truncate_delimiters": [
+        {
+          "description": "在施工要求处截断",
+          "pattern": "\\d+\\.?施工要求[:：]"
+        },
+        {
+          "description": "在数字序列处截断",
+          "pattern": ",个,\\d+,\\d+,"
+        },
+        {
+          "description": "在采购说明处截断",
+          "pattern": "含该项施工内容"
+        }
+      ]
+    }
+  },
+  "location_words": [
+    "室内",
+    "室外",
+    "管道",
+    "风管",
+    "水管",
+    "回风",
+    "送风",
+    "新风",
+    "排风"
+  ],
+  "metadata_keywords": [
+    "型号",
+    "通径",
+    "阀体类型",
+    "适用介质",
+    "品牌",
+    "规格",
+    "参数",
+    "名称",
+    "类型",
+    "尺寸",
+    "材质",
+    "范围",
+    "输出",
+    "输入",
+    "信号",
+    "接口",
+    "安装",
+    "防护",
+    "等级",
+    "规格参数",
+    "工作原理",
+    "量程",
+    "输出信号",
+    "精度",
+    "压力",
+    "温度",
+    "功率",
+    "传输方式"
+  ],
+  "normalization_map": {
+    "DN": "dn",
+    "IP": "ip",
+    "Nm": "nm",
+    "PN": "pn",
+    "PPM": "ppm",
+    "Pa": "pa",
+    "VAC": "V",
+    "VDC": "V",
+    "Vac": "V",
+    "Vdc": "V",
+    "mA DC": "mA",
+    "mADC": "mA",
+    "~": "-",
+    "°C": "",
+    "±": "",
+    "—": "-",
+    "℃": "",
+    "公斤": "kg",
+    "到": "-",
+    "千克": "kg",
+    "厘米": "cm",
+    "帕": "pa",
+    "扭矩": "nm",
+    "毫米": "mm",
+    "牛米": "nm",
+    "相对湿度": "%rh",
+    "米": "m",
+    "米/秒": "m/s",
+    "米每秒": "m/s",
+    "至": "-"
+  },
+  "performance_config": {
+    "match_timeout_seconds": 10,
+    "max_rows_per_file": 10000,
+    "parse_timeout_seconds": 5
+  },
+  "python_test_config": {
+    "test_enabled": false,
+    "test_value": 456
+  },
+  "synonym_map": {
+    "co": "一氧化碳",
+    "co2": "二氧化碳",
+    "阀": "阀门"
+  },
+  "system_version": {
+    "version": "1.0.0"
+  },
+  "ui_config": {
+    "default_export_format": "xlsx",
+    "max_file_size_mb": 10,
+    "supported_formats": [
+      "xls",
+      "xlsm",
+      "xlsx"
+    ]
+  },
+  "unit_removal": {
+    "enabled": true,
+    "units": [
+      "ppm",
+      "ma",
+      "v",
+      "w",
+      "a",
+      "pa",
+      "hz",
+      "kw",
+      "kg",
+      "mm",
+      "cm",
+      "m",
+      "%rh",
+      "c",
+      "f"
+    ]
+  }
+}

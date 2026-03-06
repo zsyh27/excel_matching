@@ -213,6 +213,155 @@
       </div>
     </div>
 
+    <!-- 复杂参数分解配置 -->
+    <div class="config-section" v-if="localConfig.enabled">
+      <div class="section-header">
+        <h3>复杂参数分解（技术规格拆分）</h3>
+        <p class="section-description">
+          将复杂的技术参数拆分为简单的数值特征，提高匹配灵活性。例如："ntc 10k" → ["ntc", "10k"]
+        </p>
+      </div>
+
+      <!-- 启用复杂参数分解 -->
+      <div class="form-group">
+        <label class="switch-label">
+          <input 
+            type="checkbox" 
+            v-model="localConfig.complex_parameter_decomposition.enabled"
+            @change="emitChange"
+          />
+          <span class="switch-text">启用复杂参数分解</span>
+        </label>
+      </div>
+
+      <!-- 分解模式配置 -->
+      <div class="subsection" v-if="localConfig.complex_parameter_decomposition.enabled">
+        <h4>分解模式</h4>
+        <p class="help-text">
+          配置需要分解的参数模式（使用正则表达式）。系统会自动提取匹配模式中的数值和文本部分。
+        </p>
+        
+        <div class="rule-list">
+          <div 
+            v-for="(pattern, index) in localConfig.complex_parameter_decomposition.patterns" 
+            :key="'decompose-pattern-' + index"
+            class="rule-item"
+          >
+            <div class="rule-content">
+              <input 
+                v-model="pattern.description" 
+                placeholder="模式描述（如：温度范围、电阻值）"
+                class="rule-input"
+                @input="emitChange"
+              />
+              <input 
+                v-model="pattern.pattern" 
+                placeholder="正则表达式（如：-?\d+~-?\d+℃）"
+                class="rule-input pattern-input"
+                @input="emitChange"
+              />
+            </div>
+            <button 
+              @click="removeDecomposePattern(index)" 
+              class="btn-remove"
+              title="删除模式"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+        
+        <button @click="addDecomposePattern" class="btn-add">
+          + 添加分解模式
+        </button>
+      </div>
+
+      <div class="info-note" style="margin-top: 15px;">
+        <strong>💡 示例</strong>：
+        <ul>
+          <li><strong>"ntc 10k"</strong> → 拆分为 ["ntc", "10k"]</li>
+          <li><strong>"-20~60℃"</strong> → 拆分为 ["-20", "60"]（数值部分）</li>
+          <li><strong>"0-10V"</strong> → 拆分为 ["0", "10", "v"]</li>
+          <li><strong>"DN15"</strong> → 拆分为 ["dn", "15"]</li>
+        </ul>
+        <p style="margin-top: 8px; color: #666;">
+          <strong>注意</strong>：此功能在匹配阶段生效，设备录入阶段保持数据完整性。
+        </p>
+      </div>
+    </div>
+
+    <!-- 技术术语扩展配置 -->
+    <div class="config-section" v-if="localConfig.enabled">
+      <div class="section-header">
+        <h3>技术术语扩展</h3>
+        <p class="section-description">
+          为技术术语配置同义词和缩写，提高匹配召回率。例如："485通讯" → ["RS485", "485"]
+        </p>
+      </div>
+
+      <!-- 术语映射配置 -->
+      <div class="subsection">
+        <h4>术语映射</h4>
+        <p class="help-text">
+          为技术术语配置扩展词汇（一个术语可以映射到多个词汇）
+        </p>
+        
+        <div class="term-list">
+          <div 
+            v-for="(expansions, term) in technicalTerms" 
+            :key="'term-' + term"
+            class="term-item"
+          >
+            <div class="term-content">
+              <div class="term-label">{{ term }}</div>
+              <input 
+                :value="Array.isArray(expansions) ? expansions.join(', ') : ''" 
+                placeholder="扩展词汇（用逗号分隔，如：RS485, 485）"
+                class="term-input"
+                @input="updateTermExpansions(term, $event.target.value)"
+              />
+            </div>
+            <button 
+              @click="removeTerm(term)" 
+              class="btn-remove"
+              title="删除术语"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+        
+        <div class="add-term-box">
+          <input 
+            v-model="newTerm" 
+            placeholder="新术语（如：485通讯）"
+            class="term-input-new"
+            @keyup.enter="addTerm"
+          />
+          <input 
+            v-model="newTermExpansions" 
+            placeholder="扩展词汇（用逗号分隔，如：RS485, 485）"
+            class="term-input-new"
+            @keyup.enter="addTerm"
+          />
+          <button @click="addTerm" class="btn-add-term">添加</button>
+        </div>
+      </div>
+
+      <div class="info-note" style="margin-top: 15px;">
+        <strong>💡 示例</strong>：
+        <ul>
+          <li><strong>"485通讯"</strong> → ["RS485", "485"]</li>
+          <li><strong>"4-20mA"</strong> → ["4-20mA", "电流输出"]</li>
+          <li><strong>"NTC"</strong> → ["NTC", "负温度系数", "热敏电阻"]</li>
+          <li><strong>"DDC"</strong> → ["DDC", "直接数字控制器"]</li>
+        </ul>
+        <p style="margin-top: 8px; color: #666;">
+          <strong>注意</strong>：术语扩展在匹配阶段生效，可以提高对不同写法的识别能力。
+        </p>
+      </div>
+    </div>
+
     <!-- 特征质量评分配置 -->
     <div class="config-section" v-if="localConfig.enabled">
       <div class="section-header">
@@ -315,6 +464,11 @@ export default {
     const ignoreKeywords = ref([])
     const newKeyword = ref('')
     
+    // 技术术语扩展
+    const technicalTerms = ref({})
+    const newTerm = ref('')
+    const newTermExpansions = ref('')
+    
     // 初始化 ignore_keywords
     const initIgnoreKeywords = () => {
       // 从 fullConfig 中获取 ignore_keywords
@@ -326,11 +480,45 @@ export default {
       console.log('初始化 ignore_keywords:', ignoreKeywords.value)
     }
     
+    // 初始化技术术语
+    const initTechnicalTerms = () => {
+      if (localConfig.value.technical_term_expansion) {
+        technicalTerms.value = { ...localConfig.value.technical_term_expansion }
+      } else {
+        technicalTerms.value = {}
+      }
+    }
+    
+    // 确保配置结构完整
+    const ensureConfigStructure = () => {
+      // 确保 complex_parameter_decomposition 存在
+      if (!localConfig.value.complex_parameter_decomposition) {
+        localConfig.value.complex_parameter_decomposition = {
+          enabled: false,
+          patterns: []
+        }
+      }
+      
+      // 确保 technical_term_expansion 存在
+      if (!localConfig.value.technical_term_expansion) {
+        localConfig.value.technical_term_expansion = {}
+      }
+      
+      // 确保 patterns 是数组
+      if (!Array.isArray(localConfig.value.complex_parameter_decomposition.patterns)) {
+        localConfig.value.complex_parameter_decomposition.patterns = []
+      }
+    }
+    
     initIgnoreKeywords()
+    ensureConfigStructure()
+    initTechnicalTerms()
 
     // 监听外部变化
     watch(() => props.modelValue, (newValue) => {
       localConfig.value = JSON.parse(JSON.stringify(newValue))
+      ensureConfigStructure()
+      initTechnicalTerms()
     }, { deep: true })
     
     // 监听 fullConfig 变化
@@ -406,6 +594,57 @@ export default {
       localConfig.value.text_cleaning.noise_section_patterns.splice(index, 1)
       emitChange()
     }
+    
+    // 添加复杂参数分解模式
+    const addDecomposePattern = () => {
+      if (!localConfig.value.complex_parameter_decomposition.patterns) {
+        localConfig.value.complex_parameter_decomposition.patterns = []
+      }
+      localConfig.value.complex_parameter_decomposition.patterns.push({
+        description: '',
+        pattern: ''
+      })
+      emitChange()
+    }
+    
+    // 删除复杂参数分解模式
+    const removeDecomposePattern = (index) => {
+      localConfig.value.complex_parameter_decomposition.patterns.splice(index, 1)
+      emitChange()
+    }
+    
+    // 添加技术术语
+    const addTerm = () => {
+      const term = newTerm.value.trim()
+      const expansions = newTermExpansions.value.trim()
+      
+      if (term && expansions) {
+        // 将逗号分隔的字符串转换为数组
+        const expansionArray = expansions.split(',').map(e => e.trim()).filter(e => e)
+        
+        technicalTerms.value[term] = expansionArray
+        localConfig.value.technical_term_expansion = { ...technicalTerms.value }
+        
+        newTerm.value = ''
+        newTermExpansions.value = ''
+        emitChange()
+      }
+    }
+    
+    // 删除技术术语
+    const removeTerm = (term) => {
+      delete technicalTerms.value[term]
+      localConfig.value.technical_term_expansion = { ...technicalTerms.value }
+      emitChange()
+    }
+    
+    // 更新技术术语扩展
+    const updateTermExpansions = (term, value) => {
+      const expansionArray = value.split(',').map(e => e.trim()).filter(e => e)
+      technicalTerms.value[term] = expansionArray
+      localConfig.value.technical_term_expansion = { ...technicalTerms.value }
+      emitChange()
+    }
 
     // 获取评分规则标签
     const getScoringRuleLabel = (key) => {
@@ -428,11 +667,19 @@ export default {
       localConfig,
       ignoreKeywords,
       newKeyword,
+      technicalTerms,
+      newTerm,
+      newTermExpansions,
       emitChange,
       addTruncateRule,
       removeTruncateRule,
       addNoiseRule,
       removeNoiseRule,
+      addDecomposePattern,
+      removeDecomposePattern,
+      addTerm,
+      removeTerm,
+      updateTermExpansions,
       getScoringRuleLabel,
       updateIgnoreKeywords,
       addKeyword,
@@ -781,5 +1028,80 @@ export default {
 
 .info-note strong {
   color: #856404;
+}
+
+.term-list {
+  margin-bottom: 15px;
+}
+
+.term-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.term-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.term-label {
+  min-width: 120px;
+  font-weight: 500;
+  color: #333;
+  font-size: 13px;
+}
+
+.term-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background: white;
+}
+
+.add-term-box {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  border: 1px dashed #ddd;
+}
+
+.term-input-new {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.term-input-new:focus {
+  outline: none;
+  border-color: #2196f3;
+}
+
+.btn-add-term {
+  padding: 8px 16px;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-add-term:hover {
+  background: #1976d2;
 }
 </style>

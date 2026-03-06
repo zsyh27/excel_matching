@@ -38,19 +38,6 @@
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card class="nav-card" shadow="hover" @click="navigateTo('/rule-management')">
-            <div class="nav-card-content">
-              <el-icon :size="40" color="#F56C6C">
-                <setting />
-              </el-icon>
-              <h3>匹配规则管理</h3>
-              <p>管理和优化设备匹配规则</p>
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px;">
-        <el-col :span="6">
           <el-card class="nav-card" shadow="hover" @click="navigateTo('/config-management')">
             <div class="nav-card-content">
               <el-icon :size="40" color="#9C27B0">
@@ -58,6 +45,19 @@
               </el-icon>
               <h3>配置管理</h3>
               <p>管理系统配置参数和预处理规则</p>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style="margin-top: 20px;">
+        <el-col :span="6">
+          <el-card class="nav-card" shadow="hover" @click="navigateTo('/match-tester')">
+            <div class="nav-card-content">
+              <el-icon :size="40" color="#F56C6C">
+                <setting />
+              </el-icon>
+              <h3>匹配测试</h3>
+              <p>测试和验证设备匹配效果</p>
             </div>
           </el-card>
         </el-col>

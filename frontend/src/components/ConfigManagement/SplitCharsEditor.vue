@@ -1,10 +1,121 @@
 <template>
   <div class="split-chars-editor">
     <div class="editor-header">
-      <h2>处理分隔符</h2>
+      <h2>处理分隔符与智能拆分</h2>
       <p class="description">
-        定义用于拆分特征的分隔符。这些字符将被用来分割设备描述文本。
+        配置文本拆分规则，包括分隔符和智能拆分功能，用于匹配阶段的特征提取。
       </p>
+    </div>
+
+    <!-- 智能拆分配置 -->
+    <div class="config-section">
+      <div class="section-header">
+        <h3>智能拆分（匹配阶段）</h3>
+        <p class="section-description">
+          在匹配阶段自动拆分复合词和技术规格，提高匹配灵活性。例如："室内墙装" → ["室内", "墙装"]
+        </p>
+      </div>
+
+      <el-alert
+        type="warning"
+        :closable="false"
+        show-icon
+        class="config-explanation"
+      >
+        <template #title>
+          <strong>重要说明</strong>
+        </template>
+        <div class="explanation-content">
+          <p><strong>智能拆分仅在匹配阶段生效</strong></p>
+          <ul>
+            <li><strong>设备录入阶段</strong>：保持数据完整性，不拆分（如"室内墙装"保持完整）</li>
+            <li><strong>匹配阶段</strong>：智能拆分，提高灵活性（如"室内墙装" → ["室内", "墙装"]）</li>
+          </ul>
+          <p class="tip">💡 这种设计既保证了数据完整性，又提高了匹配召回率</p>
+        </div>
+      </el-alert>
+
+      <!-- 启用智能拆分 -->
+      <div class="form-group">
+        <label class="switch-label">
+          <input 
+            type="checkbox" 
+            v-model="intelligentSplitting.enabled"
+            @change="emitIntelligentSplittingChange"
+          />
+          <span class="switch-text">启用智能拆分</span>
+        </label>
+        <p class="help-text">
+          启用后，系统会在匹配阶段自动拆分复合词、技术规格等，提高匹配灵活性
+        </p>
+      </div>
+
+      <!-- 拆分选项 -->
+      <div class="subsection" v-if="intelligentSplitting.enabled">
+        <h4>拆分选项</h4>
+        
+        <div class="form-group">
+          <label class="switch-label">
+            <input 
+              type="checkbox" 
+              v-model="intelligentSplitting.split_compound_words"
+              @change="emitIntelligentSplittingChange"
+            />
+            <span class="switch-text">拆分复合词</span>
+          </label>
+          <p class="help-text">
+            自动拆分复合词，例如："室内墙装" → ["室内", "墙装"]
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="switch-label">
+            <input 
+              type="checkbox" 
+              v-model="intelligentSplitting.split_technical_specs"
+              @change="emitIntelligentSplittingChange"
+            />
+            <span class="switch-text">拆分技术规格</span>
+          </label>
+          <p class="help-text">
+            自动拆分技术规格，例如："ntc 10k" → ["ntc", "10k"]，"DN15" → ["dn", "15"]
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="switch-label">
+            <input 
+              type="checkbox" 
+              v-model="intelligentSplitting.split_by_space"
+              @change="emitIntelligentSplittingChange"
+            />
+            <span class="switch-text">按空格拆分</span>
+          </label>
+          <p class="help-text">
+            按空格拆分特征，例如："ntc 10k" → ["ntc", "10k"]
+          </p>
+        </div>
+      </div>
+
+      <div class="info-note" style="margin-top: 15px;">
+        <strong>💡 示例效果</strong>：
+        <ul>
+          <li><strong>"室内墙装"</strong> → 拆分为 ["室内", "墙装"]，可以匹配"室内吊装"</li>
+          <li><strong>"ntc 10k"</strong> → 拆分为 ["ntc", "10k"]，可以匹配"NTC10K"</li>
+          <li><strong>"DN15"</strong> → 拆分为 ["dn", "15"]，可以匹配"通径15"</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 分隔符配置 -->
+    <div class="config-section">
+      <div class="section-header">
+        <h3>分隔符配置</h3>
+        <p class="section-description">
+          定义用于拆分特征的分隔符。这些字符将被用来分割设备描述文本。
+        </p>
+      </div>
+
       <el-alert
         type="info"
         :closable="false"
@@ -28,9 +139,7 @@
           <p class="tip">💡 <strong>建议：</strong>大多数情况下，只需保留默认的 <code>+</code> 作为标准分隔符即可</p>
         </div>
       </el-alert>
-    </div>
 
-    <div class="editor-body">
       <div class="toolbar">
         <input 
           v-model="newChar" 
@@ -71,12 +180,33 @@ export default {
     modelValue: {
       type: Array,
       default: () => []
+    },
+    fullConfig: {
+      type: Object,
+      default: () => ({})
     }
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
     const localValue = ref([...props.modelValue])
     const newChar = ref('')
+    
+    // 智能拆分配置
+    const intelligentSplitting = ref({
+      enabled: false,
+      split_compound_words: true,
+      split_technical_specs: true,
+      split_by_space: true
+    })
+    
+    // 初始化智能拆分配置
+    const initIntelligentSplitting = () => {
+      if (props.fullConfig && props.fullConfig.intelligent_splitting) {
+        intelligentSplitting.value = { ...props.fullConfig.intelligent_splitting }
+      }
+    }
+    
+    initIntelligentSplitting()
 
     // 计算标准分隔符（第一个分隔符）
     const standardSeparator = computed(() => {
@@ -120,20 +250,35 @@ export default {
       emit('update:modelValue', localValue.value)
       emit('change')
     }
+    
+    // 发送智能拆分配置变更
+    const emitIntelligentSplittingChange = () => {
+      // 直接修改fullConfig中的intelligent_splitting
+      if (props.fullConfig) {
+        props.fullConfig.intelligent_splitting = { ...intelligentSplitting.value }
+      }
+      emit('change')
+    }
 
     // 监听外部变化
     watch(() => props.modelValue, (newVal) => {
       localValue.value = [...newVal]
     })
+    
+    watch(() => props.fullConfig, () => {
+      initIntelligentSplitting()
+    }, { deep: true })
 
     return {
       localValue,
       newChar,
+      intelligentSplitting,
       standardSeparator,
       displayChar,
       getCharCode,
       addChar,
-      removeChar
+      removeChar,
+      emitIntelligentSplittingChange
     }
   }
 }
@@ -141,7 +286,7 @@ export default {
 
 <style scoped>
 .split-chars-editor {
-  max-width: 800px;
+  max-width: 900px;
 }
 
 .editor-header h2 {
@@ -155,6 +300,72 @@ export default {
   color: #666;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.config-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.section-header {
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.section-description {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.subsection {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 6px;
+}
+
+.subsection h4 {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.switch-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.switch-label input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.switch-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.help-text {
+  margin: 8px 0 0 28px;
+  font-size: 12px;
+  color: #999;
+  line-height: 1.5;
 }
 
 .config-explanation {
@@ -196,6 +407,28 @@ export default {
   border-radius: 4px;
 }
 
+.info-note {
+  padding: 12px;
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #856404;
+}
+
+.info-note strong {
+  color: #856404;
+}
+
+.info-note ul {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+}
+
+.info-note li {
+  margin: 4px 0;
+}
+
 .toolbar {
   display: flex;
   gap: 10px;
@@ -214,6 +447,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 15px;
 }
 
 .char-item {

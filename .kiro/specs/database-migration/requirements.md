@@ -407,3 +407,249 @@
 6. WHEN 用户进行危险操作时 THEN System SHALL 显示二次确认对话框
 7. WHEN 页面数据更新时 THEN System SHALL 平滑过渡而不是突然刷新
 8. WHEN 用户输入搜索关键词时 THEN System SHALL 实现防抖（500ms）以减少请求次数
+
+
+### 需求 30
+
+**用户故事:** 作为系统管理员,我希望数据库支持设备类型字段,以便实现动态表单录入功能。
+
+#### 验收标准
+
+1. WHEN 创建设备时 THEN System SHALL 支持指定设备类型(device_type)字段
+2. WHEN 设备类型字段存在时 THEN System SHALL 为该字段创建索引以提高查询性能
+3. WHEN 查询设备时 THEN System SHALL 支持按设备类型过滤
+4. WHEN 设备类型为空时 THEN System SHALL 允许设备保存(向后兼容旧数据)
+5. WHEN 统计设备时 THEN System SHALL 支持按设备类型分组统计
+
+### 需求 31
+
+**用户故事:** 作为系统管理员,我希望数据库支持规范化的关键参数存储,以便提高特征提取的准确性。
+
+#### 验收标准
+
+1. WHEN 保存设备时 THEN System SHALL 支持以JSON格式存储关键参数(key_params)
+2. WHEN key_params存储时 THEN System SHALL 验证JSON格式的有效性
+3. WHEN key_params包含参数时 THEN System SHALL 确保每个参数包含value、data_type、unit等字段
+4. WHEN 查询设备时 THEN System SHALL 正确解析key_params的JSON数据
+5. WHEN key_params为空时 THEN System SHALL 允许设备保存(向后兼容)
+
+### 需求 32
+
+**用户故事:** 作为系统管理员,我希望数据库记录设备的录入方式,以便追溯数据来源。
+
+#### 验收标准
+
+1. WHEN 创建设备时 THEN System SHALL 记录录入方式(input_method)字段
+2. WHEN input_method字段存在时 THEN System SHALL 支持manual、intelligent、excel三种值
+3. WHEN input_method未指定时 THEN System SHALL 默认设置为manual
+4. WHEN 查询设备时 THEN System SHALL 支持按录入方式过滤
+5. WHEN 统计设备时 THEN System SHALL 支持按录入方式分组统计
+
+### 需求 33
+
+**用户故事:** 作为系统管理员,我希望数据库记录设备的创建和更新时间,以便追溯数据变更历史。
+
+#### 验收标准
+
+1. WHEN 创建设备时 THEN System SHALL 自动记录创建时间(created_at)
+2. WHEN 更新设备时 THEN System SHALL 自动更新更新时间(updated_at)
+3. WHEN 查询设备时 THEN System SHALL 返回创建时间和更新时间
+4. WHEN 按时间排序时 THEN System SHALL 支持按创建时间或更新时间排序
+5. WHEN 统计设备时 THEN System SHALL 支持按时间范围筛选
+
+### 需求 34
+
+**用户故事:** 作为系统管理员,我希望detailed_params字段改为可选,以便支持新的key_params结构化存储方式。
+
+#### 验收标准
+
+1. WHEN 创建设备时 THEN System SHALL 允许detailed_params字段为空
+2. WHEN detailed_params为空且key_params有值时 THEN System SHALL 正常保存设备
+3. WHEN detailed_params和key_params都有值时 THEN System SHALL 优先使用key_params进行特征提取
+4. WHEN 旧设备只有detailed_params时 THEN System SHALL 仍然能够正常进行特征提取
+5. WHEN 查询设备时 THEN System SHALL 正确返回detailed_params字段(可能为空)
+
+### 需求 35
+
+**用户故事:** 作为系统管理员,我希望能够获取所有设备类型及其参数配置,以便前端实现动态表单。
+
+#### 验收标准
+
+1. WHEN 调用GET /api/device-types接口时 THEN System SHALL 返回所有设备类型列表
+2. WHEN 返回设备类型时 THEN System SHALL 包含每个类型的参数配置信息
+3. WHEN 参数配置包含时 THEN System SHALL 包含参数名称、数据类型、单位、是否必填等信息
+4. WHEN 配置文件更新时 THEN System SHALL 返回最新的配置信息
+5. WHEN 接口调用失败时 THEN System SHALL 返回明确的错误信息
+
+### 需求 36
+
+**用户故事:** 作为系统管理员,我希望设备表单能够根据选择的设备类型动态显示对应的参数输入字段,以便提高录入效率和准确性。
+
+#### 验收标准
+
+1. WHEN 选择设备类型时 THEN System SHALL 动态显示该类型对应的参数输入字段
+2. WHEN 切换设备类型时 THEN System SHALL 清空之前输入的参数并显示新类型的参数字段
+3. WHEN 参数为必填时 THEN System SHALL 在字段标签上显示必填标识
+4. WHEN 参数有单位时 THEN System SHALL 在输入框中显示单位提示
+5. WHEN 提交表单时 THEN System SHALL 验证必填参数已填写
+6. WHEN 保存设备时 THEN System SHALL 将参数以规范化的JSON格式存储到key_params字段
+7. WHEN 编辑设备时 THEN System SHALL 根据device_type加载对应的参数模板并回填key_params数据
+
+### 需求 37
+
+**用户故事:** 作为系统管理员,我希望能够为旧设备数据推断设备类型,以便统一数据结构。
+
+#### 验收标准
+
+1. WHEN 执行设备类型推断脚本时 THEN System SHALL 查询所有device_type为空的设备
+2. WHEN 推断设备类型时 THEN System SHALL 根据设备名称中的关键词匹配设备类型
+3. WHEN 推断成功时 THEN System SHALL 更新设备的device_type字段
+4. WHEN 推断失败时 THEN System SHALL 保持device_type为空并记录日志
+5. WHEN 推断完成时 THEN System SHALL 输出推断统计信息(成功数量、失败数量)
+
+### 需求 38
+
+**用户故事:** 作为开发者,我希望特征提取逻辑能够优先使用key_params,以便提高匹配准确度。
+
+#### 验收标准
+
+1. WHEN 设备有key_params时 THEN System SHALL 优先从key_params提取特征
+2. WHEN 从key_params提取特征时 THEN System SHALL 为不同参数分配合适的权重
+3. WHEN 设备类型存在时 THEN System SHALL 将设备类型作为高权重特征
+4. WHEN key_params为空但detailed_params有值时 THEN System SHALL 回退到使用detailed_params提取特征
+5. WHEN 生成规则时 THEN System SHALL 使用优化后的特征提取逻辑
+
+
+### 需求 39
+
+**用户故事:** 作为系统管理员,我希望设备库管理页面整合所有设备录入功能,以便在一个统一的界面完成所有设备管理操作。
+
+#### 验收标准
+
+1. WHEN 访问设备库管理页面时 THEN System SHALL 保留所有现有功能(列表、搜索、编辑、删除)
+2. WHEN 点击"添加设备"按钮时 THEN System SHALL 打开升级后的动态表单
+3. WHEN 在添加设备表单中时 THEN System SHALL 支持手动填写和智能解析两种模式切换
+4. WHEN 选择手动填写模式时 THEN System SHALL 显示动态表单(根据设备类型)
+5. WHEN 选择智能解析模式时 THEN System SHALL 显示文本输入框供用户输入设备描述
+6. WHEN 智能解析成功时 THEN System SHALL 自动填充表单字段并允许用户修改
+7. WHEN 智能解析失败时 THEN System SHALL 提示用户切换到手动填写模式
+
+### 需求 40
+
+**用户故事:** 作为系统管理员,我希望设备表单支持快速录入功能,以便提高批量录入效率。
+
+#### 验收标准
+
+1. WHEN 成功添加一个设备后 THEN System SHALL 提供"继续添加"选项
+2. WHEN 点击"继续添加"时 THEN System SHALL 保留上一条设备的品牌和设备类型
+3. WHEN 点击"复制上一条"按钮时 THEN System SHALL 复制上一条设备的所有信息(除设备ID外)
+4. WHEN 录入多个相同类型设备时 THEN System SHALL 自动保持设备类型选择
+5. WHEN 保存设备模板时 THEN System SHALL 允许用户保存常用设备的参数模板
+6. WHEN 加载设备模板时 THEN System SHALL 快速填充表单字段
+
+### 需求 41
+
+**用户故事:** 作为系统管理员,我希望设备表单能够智能验证参数格式,以便减少录入错误。
+
+#### 验收标准
+
+1. WHEN 输入量程参数时 THEN System SHALL 验证格式是否符合"数字-数字 单位"格式
+2. WHEN 输入输出信号参数时 THEN System SHALL 验证格式是否符合预定义格式
+3. WHEN 输入数值参数时 THEN System SHALL 验证是否为有效数字
+4. WHEN 参数格式错误时 THEN System SHALL 在字段下方显示具体的错误提示
+5. WHEN 参数格式正确时 THEN System SHALL 显示绿色对勾标识
+6. WHEN 提交表单时 THEN System SHALL 验证所有必填参数已填写且格式正确
+
+### 需求 42
+
+**用户故事:** 作为系统管理员,我希望设备表单支持参数单位自动识别,以便简化录入过程。
+
+#### 验收标准
+
+1. WHEN 输入带单位的参数值时 THEN System SHALL 自动识别并分离单位
+2. WHEN 识别到单位时 THEN System SHALL 自动填充到单位字段
+3. WHEN 单位与配置不匹配时 THEN System SHALL 提示用户确认
+4. WHEN 用户输入"0-2000ppm"时 THEN System SHALL 自动识别为量程"0-2000"单位"ppm"
+5. WHEN 用户输入"4-20mA"时 THEN System SHALL 自动识别为输出信号"4-20 mA"
+
+### 需求 43
+
+**用户故事:** 作为系统管理员,我希望设备库管理页面支持Excel批量导入增强功能,以便更灵活地导入设备数据。
+
+#### 验收标准
+
+1. WHEN 上传Excel文件时 THEN System SHALL 自动识别表头行
+2. WHEN 表头包含设备类型列时 THEN System SHALL 自动映射到device_type字段
+3. WHEN 表头包含参数列时 THEN System SHALL 尝试解析到key_params结构
+4. WHEN 导入预览时 THEN System SHALL 显示识别到的设备类型和参数
+5. WHEN 导入数据有问题时 THEN System SHALL 允许用户在预览界面手动修正
+6. WHEN 确认导入时 THEN System SHALL 支持选择是否自动生成规则
+7. WHEN 导入完成时 THEN System SHALL 显示详细的导入报告(成功、失败、警告)
+
+### 需求 44
+
+**用户故事:** 作为系统管理员,我希望设备详情页面能够显示更丰富的信息,以便全面了解设备状态。
+
+#### 验收标准
+
+1. WHEN 查看设备详情时 THEN System SHALL 显示设备类型信息
+2. WHEN 设备有key_params时 THEN System SHALL 以结构化方式显示关键参数
+3. WHEN 设备有raw_description时 THEN System SHALL 显示原始描述文本
+4. WHEN 设备有confidence_score时 THEN System SHALL 显示置信度评分
+5. WHEN 查看设备详情时 THEN System SHALL 显示录入方式(手动/智能/Excel)
+6. WHEN 查看设备详情时 THEN System SHALL 显示创建时间和最后更新时间
+7. WHEN 设备有关联规则时 THEN System SHALL 显示规则使用的特征和权重
+
+### 需求 45
+
+**用户故事:** 作为系统管理员,我希望设备列表支持更多的筛选和排序选项,以便快速找到目标设备。
+
+#### 验收标准
+
+1. WHEN 查看设备列表时 THEN System SHALL 支持按设备类型筛选
+2. WHEN 查看设备列表时 THEN System SHALL 支持按录入方式筛选
+3. WHEN 查看设备列表时 THEN System SHALL 支持按置信度范围筛选
+4. WHEN 查看设备列表时 THEN System SHALL 支持按创建时间范围筛选
+5. WHEN 查看设备列表时 THEN System SHALL 支持按是否有规则筛选
+6. WHEN 查看设备列表时 THEN System SHALL 支持按创建时间排序
+7. WHEN 查看设备列表时 THEN System SHALL 支持按更新时间排序
+8. WHEN 查看设备列表时 THEN System SHALL 支持按置信度排序
+
+### 需求 46
+
+**用户故事:** 作为系统管理员,我希望设备表单支持参数提示和帮助信息,以便正确填写设备参数。
+
+#### 验收标准
+
+1. WHEN 鼠标悬停在参数字段上时 THEN System SHALL 显示参数说明和示例
+2. WHEN 参数有特定格式要求时 THEN System SHALL 在字段下方显示格式说明
+3. WHEN 参数有推荐值时 THEN System SHALL 提供快速选择选项
+4. WHEN 用户不确定如何填写时 THEN System SHALL 提供"查看示例"按钮
+5. WHEN 点击"查看示例"时 THEN System SHALL 显示该设备类型的填写示例
+
+### 需求 47
+
+**用户故事:** 作为系统管理员,我希望设备库管理页面支持批量操作,以便高效管理大量设备。
+
+#### 验收标准
+
+1. WHEN 选择多个设备时 THEN System SHALL 显示批量操作工具栏
+2. WHEN 点击"批量删除"时 THEN System SHALL 显示确认对话框并提示影响范围
+3. WHEN 点击"批量生成规则"时 THEN System SHALL 为选中的设备批量生成规则
+4. WHEN 点击"批量导出"时 THEN System SHALL 导出选中设备的Excel文件
+5. WHEN 点击"批量修改"时 THEN System SHALL 允许批量修改品牌或设备类型
+6. WHEN 执行批量操作时 THEN System SHALL 显示进度条和实时状态
+7. WHEN 批量操作完成时 THEN System SHALL 显示操作结果统计
+
+### 需求 48
+
+**用户故事:** 作为系统管理员,我希望设备表单支持草稿保存功能,以便中断后继续录入。
+
+#### 验收标准
+
+1. WHEN 填写设备表单时 THEN System SHALL 自动保存草稿(每30秒)
+2. WHEN 关闭表单时 THEN System SHALL 提示是否保存草稿
+3. WHEN 重新打开添加设备表单时 THEN System SHALL 提示是否恢复草稿
+4. WHEN 选择恢复草稿时 THEN System SHALL 自动填充上次未完成的表单
+5. WHEN 成功提交设备后 THEN System SHALL 自动清除草稿
+6. WHEN 查看草稿列表时 THEN System SHALL 显示所有未完成的设备草稿

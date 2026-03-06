@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试白名单添加按钮</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 16px;
+            margin: 5px;
+        }
+        .tag button {
+            background: none;
+            color: #2e7d32;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .tag button:hover {
+            background: rgba(46, 125, 50, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>测试白名单添加按钮</h1>
+        
+        <div class="test-section">
+            <h2>白名单特征</h2>
+            <div class="input-group">
+                <input 
+                    v-model="newFeature" 
+                    type="text" 
+                    placeholder="输入特征后按回车或点击添加"
+                    @keyup.enter="addFeature"
+                />
+                <button @click="addFeature">添加</button>
+            </div>
+            
+            <div>
+                <span 
+                    v-for="(feature, index) in features" 
+                    :key="index"
+                    class="tag"
+                >
+                    {{ feature }}
+                    <button @click="removeFeature(index)">×</button>
+                </span>
+            </div>
+            
+            <p>共 {{ features.length }} 个特征</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>调试信息</h2>
+            <p>输入值: {{ newFeature }}</p>
+            <p>特征列表: {{ JSON.stringify(features) }}</p>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                const features = ref(['水', '气', '阀']);
+                const newFeature = ref('');
+
+                const addFeature = () => {
+                    console.log('addFeature called, newFeature:', newFeature.value);
+                    const feature = newFeature.value.trim();
+                    console.log('trimmed feature:', feature);
+                    
+                    if (feature && !features.value.includes(feature)) {
+                        console.log('adding feature:', feature);
+                        features.value.push(feature);
+                        newFeature.value = '';
+                        console.log('features after add:', features.value);
+                    } else {
+                        console.log('feature not added, reason:', 
+                            !feature ? 'empty' : 'duplicate');
+                    }
+                };
+
+                const removeFeature = (index) => {
+                    console.log('removeFeature called, index:', index);
+                    features.value.splice(index, 1);
+                    console.log('features after remove:', features.value);
+                };
+
+                return {
+                    features,
+                    newFeature,
+                    addFeature,
+                    removeFeature
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

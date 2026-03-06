@@ -3,8 +3,6 @@ import FileUploadView from '../views/FileUploadView.vue'
 import DataRangeSelectionView from '../views/DataRangeSelectionView.vue'
 import DeviceRowAdjustmentView from '../views/DeviceRowAdjustmentView.vue'
 import MatchingView from '../views/MatchingView.vue'
-import RuleManagementView from '../views/RuleManagementView.vue'
-import RuleEditorView from '../views/RuleEditorView.vue'
 import MatchTesterView from '../views/MatchTesterView.vue'
 import DeviceManagementView from '../views/DeviceManagementView.vue'
 import StatisticsDashboardView from '../views/StatisticsDashboardView.vue'
@@ -57,19 +55,37 @@ const routes = [
   },
   {
     path: '/rule-management',
-    name: 'RuleManagement',
-    component: RuleManagementView,
+    redirect: '/database/devices',
     meta: {
-      title: '规则管理'
+      title: '规则管理（已迁移）'
+    }
+  },
+  {
+    path: '/rule-management/logs',
+    redirect: to => {
+      return { path: '/statistics', query: { tab: 'logs' } }
+    },
+    meta: {
+      title: '匹配日志（已迁移）'
+    }
+  },
+  {
+    path: '/rule-management/statistics',
+    redirect: to => {
+      return { path: '/statistics', query: { tab: 'rules' } }
+    },
+    meta: {
+      title: '规则统计（已迁移）'
     }
   },
   {
     path: '/rule-editor/:ruleId',
-    name: 'RuleEditor',
-    component: RuleEditorView,
-    props: true,
+    redirect: to => {
+      // Redirect to device management with the device ID
+      return { path: '/database/devices', query: { deviceId: to.params.ruleId } }
+    },
     meta: {
-      title: '编辑规则'
+      title: '编辑规则（已迁移）'
     }
   },
   {
@@ -91,6 +107,14 @@ const routes = [
   {
     path: '/database/statistics',
     name: 'DatabaseStatistics',
+    component: StatisticsDashboardView,
+    meta: {
+      title: '统计仪表板'
+    }
+  },
+  {
+    path: '/statistics',
+    name: 'Statistics',
     component: StatisticsDashboardView,
     meta: {
       title: '统计仪表板'

@@ -90,3 +90,11 @@ export const findSimilarDevices = (deviceId, limit = 20) => {
     params: { limit }
   })
 }
+
+/**
+ * 获取设备类型配置
+ * @returns {Promise} 设备类型配置
+ */
+export const getDeviceTypes = () => {
+  return api.get('/device-types')
+}

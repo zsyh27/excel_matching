@@ -15,17 +15,39 @@ class Device(Base):
     """设备模型"""
     __tablename__ = 'devices'
     
+    # 基础字段
     device_id = Column(String(100), primary_key=True)
     brand = Column(String(50), nullable=False, index=True)
     device_name = Column(String(100), nullable=False, index=True)
     spec_model = Column(String(200), nullable=False)
-    detailed_params = Column(Text, nullable=False)
+    
+    # ✅ 新增: 设备类型字段 - 支持动态表单 (验证需求 30.1)
+    device_type = Column(String(50), nullable=True, index=True, 
+                        comment='设备类型,如:CO2传感器、座阀、温度传感器等')
+    
+    # ✅ 修改: detailed_params改为可选 - 避免与key_params重复 (验证需求 34.1)
+    detailed_params = Column(Text, nullable=True, 
+                            comment='详细参数文本描述(可选,主要用于向后兼容)')
+    
     unit_price = Column(Float, nullable=False)
     
-    # 智能设备录入系统新增字段
+    # 智能设备录入字段
     raw_description = Column(Text, nullable=True, comment='用户输入的原始设备描述文本')
-    key_params = Column(JSON, nullable=True, comment='根据设备类型提取的关键参数（JSON格式）')
-    confidence_score = Column(Float, nullable=True, index=True, comment='解析结果的置信度评分（0.0-1.0）')
+    
+    # ✅ 规范化: key_params结构 - 支持结构化参数存储 (验证需求 31.1)
+    key_params = Column(JSON, nullable=True, 
+                       comment='根据设备类型提取的关键参数(JSON格式)')
+    
+    confidence_score = Column(Float, nullable=True, index=True, 
+                             comment='解析结果的置信度评分(0.0-1.0)')
+    
+    # ✅ 新增: 数据来源标识 - 追溯数据来源 (验证需求 32.1)
+    input_method = Column(String(20), nullable=True, default='manual', index=True,
+                         comment='录入方式: manual(手动), intelligent(智能解析), excel(Excel导入)')
+    
+    # ✅ 新增: 创建和更新时间 - 追溯数据变更历史 (验证需求 33.1)
+    created_at = Column(DateTime, nullable=True, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # 关联规则 - 级联删除
     rules = relationship("Rule", back_populates="device", cascade="all, delete-orphan")

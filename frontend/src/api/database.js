@@ -49,6 +49,15 @@ export const deleteDevice = (deviceId) => {
 }
 
 /**
+ * 批量删除设备
+ * @param {Array<string>} deviceIds - 设备ID数组
+ * @returns {Promise}
+ */
+export const batchDeleteDevices = (deviceIds) => {
+  return api.post('/devices/batch-delete', { device_ids: deviceIds })
+}
+
+/**
  * 批量导入设备
  * @param {FormData} formData - 包含Excel文件的表单数据
  * @returns {Promise}
@@ -132,4 +141,23 @@ export const getDevicesWithoutRules = () => {
  */
 export const batchGenerateRules = (options) => {
   return api.post('/rules/generate', options)
+}
+
+/**
+ * 更新设备规则
+ * @param {string} deviceId - 设备ID
+ * @param {Object} ruleData - 规则数据
+ * @returns {Promise}
+ */
+export const updateDeviceRule = (deviceId, ruleData) => {
+  return api.put(`/devices/${deviceId}/rule`, ruleData)
+}
+
+/**
+ * 重新生成设备规则
+ * @param {string} deviceId - 设备ID
+ * @returns {Promise}
+ */
+export const regenerateDeviceRule = (deviceId) => {
+  return api.post(`/devices/${deviceId}/rule/regenerate`)
 }

@@ -355,9 +355,13 @@ class MatchEngine:
         
         return weight_score, matched_features
     
-    def _find_synonym_match(self, feature: str, rule_features: set, synonym_map: Dict[str, str]) -> Optional[str]:
+    def _find_synonym_match(self, feature: str, rule_features: set, synonym_map: Dict) -> Optional[str]:
         """
         查找特征的同义词是否在规则特征中
+        
+        支持两种同义词格式：
+        1. 字符串映射：'co2' -> '二氧化碳'
+        2. 列表映射：'温度传感器' -> ['温度探头', '温度探测器', '温度检测器']
         
         Args:
             feature: 输入特征
@@ -370,14 +374,30 @@ class MatchEngine:
         # 检查特征是否是同义词映射的键（原词）
         if feature in synonym_map:
             synonym = synonym_map[feature]
-            if synonym in rule_features:
-                return synonym
+            
+            # 处理字符串类型的同义词
+            if isinstance(synonym, str):
+                if synonym in rule_features:
+                    return synonym
+            
+            # 处理列表类型的同义词
+            elif isinstance(synonym, list):
+                for syn in synonym:
+                    if syn in rule_features:
+                        return syn
         
         # 检查特征是否是同义词映射的值（目标词）
         # 反向查找：如果输入是目标词，查找是否有原词在规则中
         for original, target in synonym_map.items():
-            if feature == target and original in rule_features:
-                return original
+            # 处理字符串类型的目标词
+            if isinstance(target, str):
+                if feature == target and original in rule_features:
+                    return original
+            
+            # 处理列表类型的目标词
+            elif isinstance(target, list):
+                if feature in target and original in rule_features:
+                    return original
         
         return None
     

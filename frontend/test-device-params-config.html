@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试设备参数配置</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .device-type {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 4px;
+        }
+        .param {
+            margin-left: 20px;
+            padding: 5px;
+            background: white;
+            margin-top: 5px;
+            border-left: 3px solid #2196f3;
+            padding-left: 10px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #4caf50;
+            color: white;
+        }
+        .status.error {
+            background: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>设备参数配置测试</h1>
+    
+    <div class="section">
+        <h2>1. API 测试</h2>
+        <div id="api-status"></div>
+        <pre id="api-response"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>2. device_params 数据</h2>
+        <div id="device-params-status"></div>
+        <div id="device-params-content"></div>
+    </div>
+    
+    <script>
+        async function testAPI() {
+            try {
+                const response = await fetch('http://localhost:5000/api/config');
+                const data = await response.json();
+                
+                // 显示API状态
+                const statusEl = document.getElementById('api-status');
+                if (data.success) {
+                    statusEl.innerHTML = '<span class="status success">✓ API 调用成功</span>';
+                } else {
+                    statusEl.innerHTML = '<span class="status error">✗ API 调用失败</span>';
+                }
+                
+                // 显示完整响应
+                document.getElementById('api-response').textContent = JSON.stringify(data, null, 2);
+                
+                // 检查 device_params
+                const config = data.config || {};
+                const deviceParamsStatusEl = document.getElementById('device-params-status');
+                const deviceParamsContentEl = document.getElementById('device-params-content');
+                
+                if ('device_params' in config) {
+                    deviceParamsStatusEl.innerHTML = '<span class="status success">✓ device_params 存在</span>';
+                    
+                    const deviceParams = config.device_params;
+                    const deviceTypes = Object.keys(deviceParams);
+                    
+                    if (deviceTypes.length === 0) {
+                        deviceParamsContentEl.innerHTML = '<p style="color: orange;">⚠️ device_params 为空对象</p>';
+                    } else {
+                        let html = `<p>设备类型数量: ${deviceTypes.length}</p>`;
+                        
+                        deviceTypes.forEach(typeName => {
+                            const typeConfig = deviceParams[typeName];
+                            const params = typeConfig.params || [];
+                            
+                            html += `<div class="device-type">`;
+                            html += `<strong>${typeName}</strong> (${params.length}个参数)`;
+                            
+                            params.forEach((param, index) => {
+                                const required = param.required ? '必填' : '可选';
+                                const unit = param.unit ? ` (${param.unit})` : '';
+                                html += `<div class="param">`;
+                                html += `${index + 1}. ${param.name}${unit} - ${required}`;
+                                html += `<br><small style="color: #666;">${param.hint || '无提示'}</small>`;
+                                html += `</div>`;
+                            });
+                            
+                            html += `</div>`;
+                        });
+                        
+                        deviceParamsContentEl.innerHTML = html;
+                    }
+                } else {
+                    deviceParamsStatusEl.innerHTML = '<span class="status error">✗ device_params 不存在</span>';
+                    deviceParamsContentEl.innerHTML = '<p style="color: red;">配置中没有 device_params 字段</p>';
+                }
+                
+            } catch (error) {
+                document.getElementById('api-status').innerHTML = '<span class="status error">✗ 请求失败</span>';
+                document.getElementById('api-response').textContent = error.message;
+            }
+        }
+        
+        // 页面加载时执行测试
+        testAPI();
+    </script>
+</body>
+</html>
