@@ -1,10 +1,51 @@
+/**
+ * ⚠️ DEPRECATED - 此组件已废弃
+ * 
+ * 此配置已合并到 GlobalConfigEditor.vue
+ * 智能拆分功能现在在全局配置中管理
+ * 
+ * 废弃日期：2026-03-07
+ * 原因：配置简化和合并（阶段2）
+ */
+
 <template>
   <div class="split-chars-editor">
     <div class="editor-header">
-      <h2>处理分隔符与智能拆分</h2>
+      <h2>处理分隔符</h2>
       <p class="description">
-        配置文本拆分规则，包括分隔符和智能拆分功能，用于匹配阶段的特征提取。
+        配置文本拆分规则，定义用于拆分设备描述的分隔符，将文本拆分为独立特征。
       </p>
+      
+      <ConfigInfoCard
+        stage="preprocessing"
+        stage-icon="🔍"
+        stage-name="预处理配置 - 特征提取"
+        stage-description="此配置在特征提取时生效，定义用于拆分设备描述的分隔符，将文本拆分为独立特征。"
+      >
+        <template #usage>
+          <p>配置分隔符列表，系统会使用这些分隔符将设备描述拆分为多个特征。</p>
+          <ul>
+            <li><strong>常用分隔符</strong>：空格、逗号、分号、斜杠</li>
+            <li><strong>中文分隔符</strong>：、，；</li>
+            <li><strong>特殊分隔符</strong>：+、-、_、|</li>
+            <li><strong>智能拆分</strong>：在匹配阶段自动拆分复合词（如"室内墙装" → ["室内", "墙装"]）</li>
+          </ul>
+        </template>
+        <template #examples>
+          <ul>
+            <li>常用分隔符：空格、逗号、分号、斜杠</li>
+            <li>中文分隔符：、，；</li>
+            <li>特殊分隔符：+、-、_、|</li>
+          </ul>
+        </template>
+        <template #notes>
+          <ul>
+            <li>分隔符会影响特征的粒度</li>
+            <li>过多的分隔符可能导致特征过于细碎</li>
+            <li>建议根据实际数据格式调整</li>
+          </ul>
+        </template>
+      </ConfigInfoCard>
     </div>
 
     <!-- 智能拆分配置 -->
@@ -173,9 +214,13 @@
 
 <script>
 import { ref, watch, computed } from 'vue'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 export default {
   name: 'SplitCharsEditor',
+  components: {
+    ConfigInfoCard
+  },
   props: {
     modelValue: {
       type: Array,
@@ -188,7 +233,7 @@ export default {
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
-    const localValue = ref([...props.modelValue])
+    const localValue = ref([...(props.modelValue || [])])
     const newChar = ref('')
     
     // 智能拆分配置
@@ -262,7 +307,7 @@ export default {
 
     // 监听外部变化
     watch(() => props.modelValue, (newVal) => {
-      localValue.value = [...newVal]
+      localValue.value = [...(newVal || [])]
     })
     
     watch(() => props.fullConfig, () => {

@@ -359,9 +359,13 @@ watch(() => formData.brand, () => {
 })
 
 // 监听 modelValue 变化
-watch(() => props.modelValue, (val) => {
+watch(() => props.modelValue, async (val) => {
   visible.value = val
   if (val) {
+    // 确保设备类型配置已加载
+    if (Object.keys(deviceTypesConfig.value).length === 0) {
+      await loadDeviceTypes()
+    }
     initForm()
   }
 })

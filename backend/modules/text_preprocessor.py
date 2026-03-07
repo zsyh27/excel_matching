@@ -93,7 +93,16 @@ class TextPreprocessor:
                    ignore_keywords, global_config, synonym_map, brand_keywords, device_type_keywords
         """
         self.config = config
-        self.normalization_map = config.get('normalization_map', {})
+        
+        # 处理 normalization_map：支持列表和字典两种格式
+        normalization_map_raw = config.get('normalization_map', {})
+        if isinstance(normalization_map_raw, list):
+            # 列表格式：[{"from": "旧值", "to": "新值"}, ...]
+            self.normalization_map = {item['from']: item['to'] for item in normalization_map_raw if 'from' in item and 'to' in item}
+        else:
+            # 字典格式：{"旧值": "新值", ...}
+            self.normalization_map = normalization_map_raw
+        
         self.feature_split_chars = config.get('feature_split_chars', [])
         self.ignore_keywords = config.get('ignore_keywords', [])
         self.global_config = config.get('global_config', {})

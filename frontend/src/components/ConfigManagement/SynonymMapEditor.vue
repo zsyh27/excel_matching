@@ -1,21 +1,11 @@
 <template>
   <div class="synonym-map-editor">
     <div class="editor-header">
-      <h2>同义词映射与技术术语</h2>
+      <h2>同义词映射与单位归一化</h2>
       <p class="description">
-        配置同义词映射和技术术语扩展，用于匹配阶段的词汇扩展。系统在匹配时会自动识别同义词和技术术语，提高召回率。
+        配置同义词映射、技术术语扩展和单位归一化规则，用于匹配阶段的词汇扩展和格式统一。系统在匹配时会自动识别同义词、技术术语和单位变体，提高召回率。
       </p>
-      <div class="info-box">
-        <div class="info-title">💡 工作原理</div>
-        <ul class="info-list">
-          <li><strong>同义词映射</strong>：用于一般词汇的同义词扩展（如：阀 ↔ 阀门）</li>
-          <li><strong>技术术语</strong>：用于技术缩写的扩展（如：DDC ↔ 直接数字控制器）</li>
-          <li><strong>匹配阶段</strong>：使用映射进行模糊匹配，支持双向匹配</li>
-        </ul>
-        <div class="info-note">
-          <strong>优势</strong>：统一管理词汇映射，灵活的匹配策略，提高召回率
-        </div>
-      </div>
+      <ConfigInfoCard config-id="synonym-map" />
     </div>
 
     <div class="editor-body">
@@ -40,6 +30,12 @@
           >
             技术术语 ({{ technicalCount }})
           </button>
+          <button 
+            :class="['filter-btn', { active: filterType === 'unit' }]"
+            @click="filterType = 'unit'"
+          >
+            单位归一化 ({{ unitCount }})
+          </button>
         </div>
       </div>
 
@@ -48,18 +44,19 @@
         <select v-model="newType" class="type-select">
           <option value="synonym">同义词</option>
           <option value="technical">技术术语</option>
+          <option value="unit">单位归一化</option>
         </select>
         <input 
           v-model="newSource" 
           type="text" 
-          :placeholder="newType === 'synonym' ? '原词...' : '缩写...'"
+          :placeholder="getSourcePlaceholder()"
           class="input-field"
         />
         <span class="arrow">→</span>
         <input 
           v-model="newTarget" 
           type="text" 
-          :placeholder="newType === 'synonym' ? '目标词...' : '完整术语...'"
+          :placeholder="getTargetPlaceholder()"
           class="input-field"
         />
         <button @click="addMapping" class="btn btn-primary">添加</button>
@@ -82,7 +79,7 @@
         >
           <div class="col-type">
             <span :class="['type-badge', mapping.type]">
-              {{ mapping.type === 'synonym' ? '同义词' : '技术术语' }}
+              {{ getTypeName(mapping.type) }}
             </span>
           </div>
           <div class="col-source">{{ mapping.source }}</div>
@@ -101,12 +98,20 @@
           </div>
         </div>
         <div v-if="filteredMappings.length === 0" class="empty-state">
-          <p>暂无{{ filterType === 'all' ? '' : filterType === 'synonym' ? '同义词' : '技术术语' }}映射</p>
+          <p>暂无{{ getFilterTypeName() }}映射</p>
         </div>
       </div>
 
       <div class="stats">
         <span>显示 {{ filteredMappings.length }} / {{ mappings.length }} 个映射</span>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button @click="saveConfig" :disabled="saving" class="btn btn-primary">
+          {{ saving ? '保存中...' : '保存配置' }}
+        </button>
+        <button @click="loadConfig" class="btn btn-secondary">重置</button>
       </div>
     </div>
 
@@ -123,14 +128,15 @@
             <select v-model="editForm.type" class="form-control">
               <option value="synonym">同义词</option>
               <option value="technical">技术术语</option>
+              <option value="unit">单位归一化</option>
             </select>
           </div>
           <div class="form-group">
-            <label>{{ editForm.type === 'synonym' ? '原词' : '缩写' }}</label>
+            <label>{{ getSourceLabel(editForm.type) }}</label>
             <input v-model="editForm.source" type="text" class="form-control" />
           </div>
           <div class="form-group">
-            <label>{{ editForm.type === 'synonym' ? '目标词' : '完整术语' }}</label>
+            <label>{{ getTargetLabel(editForm.type) }}</label>
             <input v-model="editForm.target" type="text" class="form-control" />
           </div>
           <div class="form-group">
@@ -150,10 +156,15 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 export default {
   name: 'SynonymMapEditor',
+  components: {
+    ConfigInfoCard
+  },
   props: {
     modelValue: {
       type: [Object, Array],
@@ -198,6 +209,64 @@ export default {
       type: 'synonym',
       enabled: true
     })
+    const saving = ref(false)
+
+    // Load config from API
+    const loadConfig = async () => {
+      try {
+        const response = await fetch('/api/config')
+        const data = await response.json()
+        
+        if (data.success && data.config) {
+          const synonymMap = data.config.synonym_map || {}
+          mappings.value = convertToArray(synonymMap)
+        }
+      } catch (error) {
+        ElMessage.error('加载配置失败: ' + error.message)
+      }
+    }
+
+    // Save config to API
+    const saveConfig = async () => {
+      saving.value = true
+      try {
+        // 获取当前完整配置
+        const response = await fetch('/api/config')
+        const data = await response.json()
+        
+        if (!data.success) {
+          throw new Error('获取当前配置失败')
+        }
+        
+        // 更新同义词映射配置
+        const fullConfig = data.config
+        fullConfig.synonym_map = mappings.value
+        
+        // 保存配置
+        const saveResponse = await fetch('/api/config/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            config: fullConfig,
+            remark: '更新同义词映射配置'
+          })
+        })
+        
+        const saveData = await saveResponse.json()
+        
+        if (saveData.success) {
+          ElMessage.success('配置保存成功')
+        } else {
+          throw new Error(saveData.error_message || '保存失败')
+        }
+      } catch (error) {
+        ElMessage.error('保存配置失败: ' + error.message)
+      } finally {
+        saving.value = false
+      }
+    }
 
     // Computed properties
     const filteredMappings = computed(() => {
@@ -214,6 +283,61 @@ export default {
     const technicalCount = computed(() => {
       return mappings.value.filter(m => m.type === 'technical').length
     })
+
+    const unitCount = computed(() => {
+      return mappings.value.filter(m => m.type === 'unit').length
+    })
+
+    // Helper methods
+    const getTypeName = (type) => {
+      const typeNames = {
+        'synonym': '同义词',
+        'technical': '技术术语',
+        'unit': '单位归一化'
+      }
+      return typeNames[type] || type
+    }
+
+    const getFilterTypeName = () => {
+      if (filterType.value === 'all') return ''
+      return getTypeName(filterType.value)
+    }
+
+    const getSourcePlaceholder = () => {
+      const placeholders = {
+        'synonym': '原词...',
+        'technical': '缩写...',
+        'unit': '原单位（如：℃、°C）...'
+      }
+      return placeholders[newType.value] || '原词...'
+    }
+
+    const getTargetPlaceholder = () => {
+      const placeholders = {
+        'synonym': '目标词...',
+        'technical': '完整术语...',
+        'unit': '标准单位（可为空表示删除）...'
+      }
+      return placeholders[newType.value] || '目标词...'
+    }
+
+    const getSourceLabel = (type) => {
+      const labels = {
+        'synonym': '原词',
+        'technical': '缩写',
+        'unit': '原单位'
+      }
+      return labels[type] || '原词'
+    }
+
+    const getTargetLabel = (type) => {
+      const labels = {
+        'synonym': '目标词',
+        'technical': '完整术语',
+        'unit': '标准单位'
+      }
+      return labels[type] || '目标词'
+    }
 
     // Methods
     const addMapping = () => {
@@ -286,6 +410,11 @@ export default {
       mappings.value = convertToArray(newVal)
     }, { deep: true })
 
+    // Load config on mount
+    onMounted(() => {
+      loadConfig()
+    })
+
     return {
       mappings,
       filterType,
@@ -294,19 +423,30 @@ export default {
       newType,
       editingMapping,
       editForm,
+      saving,
       filteredMappings,
       synonymCount,
       technicalCount,
+      unitCount,
+      getTypeName,
+      getFilterTypeName,
+      getSourcePlaceholder,
+      getTargetPlaceholder,
+      getSourceLabel,
+      getTargetLabel,
       addMapping,
       removeMapping,
       toggleEnabled,
       editMapping,
       saveEdit,
-      cancelEdit
+      cancelEdit,
+      saveConfig,
+      loadConfig
     }
   }
 }
 </script>
+
 
 <style scoped>
 .synonym-map-editor {
@@ -324,42 +464,6 @@ export default {
   color: #666;
   font-size: 14px;
   line-height: 1.6;
-}
-
-.info-box {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: #f0f9ff;
-  border-left: 4px solid #2196f3;
-  border-radius: 4px;
-}
-
-.info-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1976d2;
-  margin-bottom: 10px;
-}
-
-.info-list {
-  margin: 10px 0;
-  padding-left: 20px;
-  font-size: 13px;
-  line-height: 1.8;
-  color: #555;
-}
-
-.info-list li {
-  margin: 5px 0;
-}
-
-.info-note {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #e3f2fd;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #1565c0;
 }
 
 /* Filter toolbar */
@@ -489,6 +593,11 @@ export default {
   color: #f57c00;
 }
 
+.type-badge.unit {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
 /* Buttons */
 .btn {
   padding: 8px 16px;
@@ -504,8 +613,13 @@ export default {
   color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: #1976d2;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
@@ -555,6 +669,14 @@ export default {
   margin-top: 15px;
   font-size: 13px;
   color: #666;
+}
+
+/* Action buttons */
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 /* Modal */

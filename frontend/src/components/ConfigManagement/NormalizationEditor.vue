@@ -1,3 +1,13 @@
+/**
+ * ⚠️ DEPRECATED - 此组件已废弃
+ * 
+ * 此配置已合并到 SynonymMapEditor.vue
+ * 单位归一化功能现在在同义词映射中管理
+ * 
+ * 废弃日期：2026-03-07
+ * 原因：配置简化和合并（阶段2）
+ */
+
 <template>
   <div class="normalization-editor">
     <div class="editor-header">
@@ -5,17 +15,37 @@
       <p class="description">
         将各种格式的字符统一转换为标准格式，在预处理阶段应用。这是特征提取前的关键步骤。
       </p>
-      <div class="info-box">
-        <div class="info-title">🔄 典型应用</div>
-        <ul class="info-list">
-          <li><strong>单位统一</strong>：℃ → (空)、°C → (空)、Pa → pa</li>
-          <li><strong>符号标准化</strong>：~ → -、± → (空)、— → -</li>
-          <li><strong>格式转换</strong>：全角 → 半角、大写 → 小写</li>
-        </ul>
-        <div class="info-note">
-          <strong>处理时机</strong>：在删除无关关键词之后、特征拆分之前执行，确保文本格式统一
-        </div>
-      </div>
+      
+      <ConfigInfoCard
+        stage="preprocessing"
+        stage-icon="🔍"
+        stage-name="预处理配置 - 归一化映射"
+        stage-description="此配置在特征提取前生效，用于将不同的表达方式统一为标准形式，提高匹配准确性。"
+      >
+        <template #usage>
+          <p>配置同义词映射规则，将多种表达方式归一化为统一的标准词。</p>
+          <ul>
+            <li><strong>单位统一</strong>：℃ → (空)、°C → (空)、Pa → pa</li>
+            <li><strong>符号标准化</strong>：~ → -、± → (空)、— → -</li>
+            <li><strong>格式转换</strong>：全角 → 半角、大写 → 小写</li>
+            <li><strong>处理时机</strong>：在删除无关关键词之后、特征拆分之前执行</li>
+          </ul>
+        </template>
+        <template #examples>
+          <ul>
+            <li>温度 → 温度：温度、温湿度、测温</li>
+            <li>压力 → 压力：压力、压强、气压</li>
+            <li>阀门 → 阀：阀门、阀、电磁阀</li>
+          </ul>
+        </template>
+        <template #notes>
+          <ul>
+            <li>归一化在特征提取前执行</li>
+            <li>有助于提高不同表达方式的匹配率</li>
+            <li>建议添加常见的同义词和缩写</li>
+          </ul>
+        </template>
+      </ConfigInfoCard>
     </div>
 
     <div class="editor-body">
@@ -69,9 +99,13 @@
 
 <script>
 import { ref, watch } from 'vue'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 export default {
   name: 'NormalizationEditor',
+  components: {
+    ConfigInfoCard
+  },
   props: {
     modelValue: {
       type: Object,

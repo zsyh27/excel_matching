@@ -5,6 +5,40 @@
       <p class="description">
         控制规则生成时不同类型特征的权重，影响匹配准确性。权重越高，该类型特征在匹配时的重要性越大。
       </p>
+      
+      <ConfigInfoCard
+        stage="pre-entry"
+        stage-icon="📝"
+        stage-name="设备信息录入前配置"
+        stage-description="此配置在设备信息录入前生效，定义不同特征类型在匹配时的权重，影响匹配得分计算。"
+      >
+        <template #usage>
+          <p>为不同类型的特征设置权重值，权重越高的特征在匹配时影响越大。</p>
+          <ul>
+            <li><strong>设备类型权重</strong>：设备类型特征的权重（如传感器、控制器、阀门）</li>
+            <li><strong>品牌权重</strong>：品牌特征的权重</li>
+            <li><strong>规格型号权重</strong>：规格型号特征的权重</li>
+            <li><strong>参数权重</strong>：技术参数特征的权重</li>
+            <li><strong>其他特征权重</strong>：其他类型特征的权重</li>
+          </ul>
+        </template>
+        <template #examples>
+          <ul>
+            <li>设备类型：权重5（最重要）</li>
+            <li>品牌：权重4</li>
+            <li>规格型号：权重3</li>
+            <li>参数：权重2</li>
+            <li>其他特征：权重1</li>
+          </ul>
+        </template>
+        <template #notes>
+          <ul>
+            <li>权重范围：0.5-10，数值越大权重越高</li>
+            <li>权重会直接影响匹配得分</li>
+            <li>建议根据实际业务重要性调整权重</li>
+          </ul>
+        </template>
+      </ConfigInfoCard>
     </div>
 
     <div class="editor-body">
@@ -172,9 +206,13 @@
 
 <script>
 import { ref, watch } from 'vue'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 export default {
   name: 'FeatureWeightEditor',
+  components: {
+    ConfigInfoCard
+  },
   props: {
     modelValue: {
       type: Object,

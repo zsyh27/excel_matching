@@ -5,17 +5,37 @@
       <p class="description">
         在预处理的第一步，删除这些与设备匹配无关的关键词，提高匹配准确性。
       </p>
-      <div class="info-box">
-        <div class="info-title">📋 使用场景</div>
-        <ul class="info-list">
-          <li><strong>施工要求</strong>：如"施工要求"、"验收"、"调试"等</li>
-          <li><strong>商务信息</strong>：如"含税"、"不含税"、"质保"等</li>
-          <li><strong>通用描述</strong>：如"品牌"、"厂家"、"国标"等</li>
-        </ul>
-        <div class="info-note">
-          <strong>处理时机</strong>：在智能清理之后、归一化之前执行，确保这些关键词不会影响特征提取
-        </div>
-      </div>
+      
+      <ConfigInfoCard
+        stage="preprocessing"
+        stage-icon="🔍"
+        stage-name="预处理配置 - 文本清理"
+        stage-description="此配置在特征提取前生效，用于过滤设备描述中的噪音词汇，提高特征质量。"
+      >
+        <template #usage>
+          <p>配置需要过滤的噪音关键词，这些词会在特征提取时被移除。</p>
+          <ul>
+            <li><strong>施工要求</strong>：如"施工要求"、"验收"、"调试"等</li>
+            <li><strong>商务信息</strong>：如"含税"、"不含税"、"质保"等</li>
+            <li><strong>通用描述</strong>：如"品牌"、"厂家"、"国标"等</li>
+            <li><strong>处理时机</strong>：在智能清理之后、归一化之前执行</li>
+          </ul>
+        </template>
+        <template #examples>
+          <ul>
+            <li>无意义词：的、了、等、个、只</li>
+            <li>冗余词：设备、产品、货物</li>
+            <li>格式词：详见、参考、附件</li>
+          </ul>
+        </template>
+        <template #notes>
+          <ul>
+            <li>过滤词会在特征提取前被移除</li>
+            <li>不要添加有意义的技术词汇</li>
+            <li>支持中英文关键词</li>
+          </ul>
+        </template>
+      </ConfigInfoCard>
     </div>
 
     <div class="editor-body">
@@ -50,9 +70,13 @@
 
 <script>
 import { ref, watch } from 'vue'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 export default {
   name: 'IgnoreKeywordsEditor',
+  components: {
+    ConfigInfoCard
+  },
   props: {
     modelValue: {
       type: Array,
@@ -61,7 +85,7 @@ export default {
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
-    const localValue = ref([...props.modelValue])
+    const localValue = ref([...(props.modelValue || [])])
     const newKeyword = ref('')
 
     // 添加关键词
@@ -88,7 +112,7 @@ export default {
 
     // 监听外部变化
     watch(() => props.modelValue, (newVal) => {
-      localValue.value = [...newVal]
+      localValue.value = [...(newVal || [])]
     })
 
     return {
@@ -117,42 +141,6 @@ export default {
   color: #666;
   font-size: 14px;
   line-height: 1.6;
-}
-
-.info-box {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: #fff8e1;
-  border-left: 4px solid #ffc107;
-  border-radius: 4px;
-}
-
-.info-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #f57c00;
-  margin-bottom: 10px;
-}
-
-.info-list {
-  margin: 10px 0;
-  padding-left: 20px;
-  font-size: 13px;
-  line-height: 1.8;
-  color: #555;
-}
-
-.info-list li {
-  margin: 5px 0;
-}
-
-.info-note {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #fff3e0;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #e65100;
 }
 
 .toolbar {

@@ -5,6 +5,7 @@
       <p class="description">
         智能清理是预处理流程的第一步，用于在早期删除大量无关文本，提高后续处理效率。
       </p>
+      <ConfigInfoCard config-id="noise-filter" />
     </div>
 
     <!-- 启用/禁用开关 -->
@@ -442,9 +443,13 @@
 
 <script>
 import { ref, watch } from 'vue'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 export default {
   name: 'IntelligentCleaningEditor',
+  components: {
+    ConfigInfoCard
+  },
   props: {
     modelValue: {
       type: Object,
@@ -491,6 +496,27 @@ export default {
     
     // 确保配置结构完整
     const ensureConfigStructure = () => {
+      // 确保 enabled 存在
+      if (localConfig.value.enabled === undefined) {
+        localConfig.value.enabled = true
+      }
+      
+      // 确保 text_cleaning 存在
+      if (!localConfig.value.text_cleaning) {
+        localConfig.value.text_cleaning = {
+          enabled: true,
+          filter_row_numbers: true,
+          row_number_columns: 3,
+          truncate_delimiters: [],
+          noise_section_patterns: []
+        }
+      }
+      
+      // 确保 text_cleaning.enabled 存在
+      if (localConfig.value.text_cleaning.enabled === undefined) {
+        localConfig.value.text_cleaning.enabled = true
+      }
+      
       // 确保 complex_parameter_decomposition 存在
       if (!localConfig.value.complex_parameter_decomposition) {
         localConfig.value.complex_parameter_decomposition = {
@@ -504,9 +530,28 @@ export default {
         localConfig.value.technical_term_expansion = {}
       }
       
+      // 确保 feature_quality_scoring 存在
+      if (!localConfig.value.feature_quality_scoring) {
+        localConfig.value.feature_quality_scoring = {
+          enabled: true,
+          min_quality_score: 50,
+          scoring_rules: {}
+        }
+      }
+      
       // 确保 patterns 是数组
       if (!Array.isArray(localConfig.value.complex_parameter_decomposition.patterns)) {
         localConfig.value.complex_parameter_decomposition.patterns = []
+      }
+      
+      // 确保 truncate_delimiters 是数组
+      if (!Array.isArray(localConfig.value.text_cleaning.truncate_delimiters)) {
+        localConfig.value.text_cleaning.truncate_delimiters = []
+      }
+      
+      // 确保 noise_section_patterns 是数组
+      if (!Array.isArray(localConfig.value.text_cleaning.noise_section_patterns)) {
+        localConfig.value.text_cleaning.noise_section_patterns = []
       }
     }
     

@@ -5,6 +5,36 @@
       <p class="description">
         控制Excel文件中设备行的智能识别，包括概率阈值和评分权重。
       </p>
+      
+      <ConfigInfoCard
+        stage="import"
+        stage-icon="📥"
+        stage-name="数据导入阶段"
+        stage-description="此配置在Excel数据导入时生效，用于智能识别哪些行是设备数据行，过滤掉标题、合计等非设备行。"
+      >
+        <template #usage>
+          <p>配置设备行的识别规则，系统会根据规则自动过滤非设备数据行。</p>
+          <ul>
+            <li><strong>概率阈值</strong>：设置高、中、低概率阈值，判断一行是否为设备行</li>
+            <li><strong>评分权重</strong>：设置不同特征的评分权重（设备类型、品牌、参数等）</li>
+            <li><strong>智能识别</strong>：基于机器学习模型自动识别设备行</li>
+          </ul>
+        </template>
+        <template #examples>
+          <ul>
+            <li>包含关键词：传感器、探测器、控制器、阀门等</li>
+            <li>排除关键词：合计、小计、总计、备注等</li>
+            <li>行号范围：跳过前N行标题</li>
+          </ul>
+        </template>
+        <template #notes>
+          <ul>
+            <li>识别规则会影响导入的设备数量</li>
+            <li>建议先测试识别效果再批量导入</li>
+            <li>可以通过预览功能查看识别结果</li>
+          </ul>
+        </template>
+      </ConfigInfoCard>
     </div>
 
     <div class="editor-body">
@@ -160,9 +190,13 @@
 
 <script>
 import { ref, computed, watch } from 'vue'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 export default {
   name: 'DeviceRowRecognitionEditor',
+  components: {
+    ConfigInfoCard
+  },
   props: {
     modelValue: {
       type: Object,

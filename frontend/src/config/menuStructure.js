@@ -79,99 +79,29 @@ export const MENU_STRUCTURE = [
     ]
   },
   {
-    id: 'preprocessing',
-    name: '预处理配置',
-    icon: '🔍',
+    id: 'intelligent-extraction',
+    name: '智能特征提取',
+    icon: '🧠',
     items: [
       {
-        id: 'text-cleaning',
-        name: '文本清理',
-        subItems: [
-          {
-            id: 'noise-filter',
-            name: '噪音过滤',
-            component: 'NoiseFilterEditor'
-          },
-          {
-            id: 'metadata',
-            name: '元数据处理',
-            component: 'MetadataEditor'
-          },
-          {
-            id: 'separator-unify',
-            name: '分隔符统一',
-            component: 'SeparatorUnifyEditor'
-          }
-        ]
+        id: 'device-type-patterns',
+        name: '设备类型模式',
+        component: 'DeviceTypePatternsEditor'
       },
       {
-        id: 'normalization',
-        name: '归一化映射',
-        component: 'NormalizationEditor'
+        id: 'parameter-extraction',
+        name: '参数提取模式',
+        component: 'ParameterExtractionEditor'
       },
       {
-        id: 'feature-extraction',
-        name: '特征提取',
-        subItems: [
-          {
-            id: 'separator-process',
-            name: '处理分隔符',
-            component: 'SeparatorProcessEditor'
-          },
-          {
-            id: 'param-decompose',
-            name: '复杂参数分解',
-            component: 'ParamDecomposeEditor'
-          },
-          {
-            id: 'smart-split',
-            name: '智能拆分',
-            component: 'SmartSplitEditor'
-          },
-          {
-            id: 'unit-remove',
-            name: '单位删除',
-            component: 'UnitRemoveEditor'
-          }
-        ]
+        id: 'auxiliary-info',
+        name: '辅助信息模式',
+        component: 'AuxiliaryInfoEditor'
       },
-      {
-        id: 'feature-quality',
-        name: '特征质量',
-        subItems: [
-          {
-            id: 'quality-score',
-            name: '质量评分',
-            component: 'QualityScoreEditor'
-          },
-          {
-            id: 'whitelist',
-            name: '白名单',
-            component: 'WhitelistEditor'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'matching',
-    name: '匹配配置阶段',
-    icon: '🎯',
-    items: [
       {
         id: 'synonym-map',
         name: '同义词映射',
         component: 'SynonymMapEditor'
-      },
-      {
-        id: 'device-type',
-        name: '设备类型关键词',
-        component: 'DeviceTypeEditor'
-      },
-      {
-        id: 'match-threshold',
-        name: '匹配阈值',
-        component: 'MatchThresholdEditor'
       }
     ]
   },

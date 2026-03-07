@@ -36,11 +36,13 @@
     <div class="content">
       <!-- 左侧导航 - 使用新的 MenuNavigation 组件 -->
       <div class="sidebar">
-        <MenuNavigation 
-          :menu-structure="menuStructure"
-          :active-item-id="activeTab"
-          @select="handleMenuSelect"
-        />
+        <div class="sidebar-menu">
+          <MenuNavigation 
+            :menu-structure="menuStructure"
+            :active-item-id="activeTab"
+            @select="handleMenuSelect"
+          />
+        </div>
         
         <div class="sidebar-footer">
           <button @click="showHistory = true" class="btn btn-link">
@@ -174,35 +176,35 @@ import configApi from '../api/config'
 import MenuNavigation from '../components/MenuNavigation.vue'
 import { MENU_STRUCTURE } from '../config/menuStructure'
 import MenuStateManager from '../utils/MenuStateManager'
-import IgnoreKeywordsEditor from '../components/ConfigManagement/IgnoreKeywordsEditor.vue'
 import SplitCharsEditor from '../components/ConfigManagement/SplitCharsEditor.vue'
 import SynonymMapEditor from '../components/ConfigManagement/SynonymMapEditor.vue'
 import NormalizationEditor from '../components/ConfigManagement/NormalizationEditor.vue'
 import GlobalConfigEditor from '../components/ConfigManagement/GlobalConfigEditor.vue'
 import BrandKeywordsEditor from '../components/ConfigManagement/BrandKeywordsEditor.vue'
-import DeviceTypeEditor from '../components/ConfigManagement/DeviceTypeEditor.vue'
 import FeatureWeightEditor from '../components/ConfigManagement/FeatureWeightEditor.vue'
-import AdvancedConfigEditor from '../components/ConfigManagement/AdvancedConfigEditor.vue'
 import DeviceRowRecognitionEditor from '../components/ConfigManagement/DeviceRowRecognitionEditor.vue'
-import IntelligentCleaningEditor from '../components/ConfigManagement/IntelligentCleaningEditor.vue'
 import DeviceParamsEditor from '../components/ConfigManagement/DeviceParamsEditor.vue'
+import MetadataRulesEditor from '../components/ConfigManagement/MetadataRulesEditor.vue'
+import DeviceTypePatternsEditor from '../components/ConfigManagement/DeviceTypePatternsEditor.vue'
+import ParameterExtractionEditor from '../components/ConfigManagement/ParameterExtractionEditor.vue'
+import AuxiliaryInfoEditor from '../components/ConfigManagement/AuxiliaryInfoEditor.vue'
 
 export default {
   name: 'ConfigManagementView',
   components: {
     MenuNavigation,
-    IgnoreKeywordsEditor,
     SplitCharsEditor,
     SynonymMapEditor,
     NormalizationEditor,
     GlobalConfigEditor,
     BrandKeywordsEditor,
-    DeviceTypeEditor,
     FeatureWeightEditor,
-    AdvancedConfigEditor,
     DeviceRowRecognitionEditor,
-    IntelligentCleaningEditor,
-    DeviceParamsEditor
+    DeviceParamsEditor,
+    MetadataRulesEditor,
+    DeviceTypePatternsEditor,
+    ParameterExtractionEditor,
+    AuxiliaryInfoEditor
   },
   setup() {
     // Load initial menu state from localStorage
@@ -246,31 +248,25 @@ export default {
         'device-params': 'DeviceParamsEditor',
         'feature-weights': 'FeatureWeightEditor',
         
+        // Intelligent Extraction Configuration
+        'device-type-patterns': 'DeviceTypePatternsEditor',
+        'parameter-extraction': 'ParameterExtractionEditor',
+        'auxiliary-info': 'AuxiliaryInfoEditor',
+        
         // Data Import Stage
         'device-row': 'DeviceRowRecognitionEditor',
         
         // Preprocessing Configuration - Text Cleaning
-        'noise-filter': 'IgnoreKeywordsEditor',
-        'metadata': 'AdvancedConfigEditor',
-        'separator-unify': 'SplitCharsEditor',
+        'metadata': 'MetadataRulesEditor',
         
         // Preprocessing Configuration - Normalization
         'normalization': 'NormalizationEditor',
         
         // Preprocessing Configuration - Feature Extraction
         'separator-process': 'SplitCharsEditor',
-        'param-decompose': 'AdvancedConfigEditor',
-        'smart-split': 'IntelligentCleaningEditor',
-        'unit-remove': 'AdvancedConfigEditor',
         
-        // Preprocessing Configuration - Feature Quality
-        'quality-score': 'AdvancedConfigEditor',
-        'whitelist': 'AdvancedConfigEditor',
-        
-        // Matching Configuration
+        // Matching Configuration (moved to intelligent extraction)
         'synonym-map': 'SynonymMapEditor',
-        'device-type': 'DeviceTypeEditor',
-        'match-threshold': 'AdvancedConfigEditor',
         
         // Global Configuration
         'global-settings': 'GlobalConfigEditor'
@@ -321,20 +317,22 @@ export default {
       'brand-keywords': 'brand_keywords',
       'device-params': 'device_params',
       'feature-weights': 'feature_weight_config',
+      'device-type-patterns': 'intelligent_extraction_device_type',
+      'parameter-extraction': 'intelligent_extraction_parameter',
+      'auxiliary-info': 'intelligent_extraction_auxiliary',
       'device-row': 'device_row_recognition',
       'noise-filter': 'ignore_keywords',
-      'metadata': 'metadata_keywords',
-      'separator-unify': 'feature_split_chars',
+      'metadata': 'text_cleaning',
       'normalization': 'normalization_map',
       'separator-process': 'feature_split_chars',
-      'param-decompose': 'metadata_keywords',
-      'smart-split': 'intelligent_extraction',
-      'unit-remove': 'metadata_keywords',
-      'quality-score': 'metadata_keywords',
-      'whitelist': 'metadata_keywords',
+      'param-decompose': 'intelligent_extraction',
+      'smart-split': 'intelligent_splitting',
+      'unit-remove': 'unit_removal',
+      'quality-score': 'feature_quality_scoring',
+      'whitelist': 'feature_whitelist',
       'synonym-map': 'synonym_map',
       'device-type': 'device_type_keywords',
-      'match-threshold': 'metadata_keywords',
+      'match-threshold': 'match_threshold_config',
       'global-settings': 'global_config'
     }
     
@@ -344,10 +342,119 @@ export default {
       if (!configKey) return null
       
       const value = config.value[configKey]
-      // 如果是device_type_keywords，需要提取嵌套的数组
+      
+      // 处理 device_type_keywords 的嵌套结构
       if (configKey === 'device_type_keywords' && value && typeof value === 'object' && 'device_type_keywords' in value) {
         return value.device_type_keywords
       }
+      
+      // 处理 text_cleaning.metadata_rules 的嵌套结构（元数据处理）
+      if (menuId === 'metadata') {
+        // 如果 value 是 text_cleaning 对象
+        if (value && typeof value === 'object' && 'metadata_rules' in value) {
+          return value.metadata_rules || []
+        }
+        // 如果 value 直接是数组（兼容旧格式）
+        if (Array.isArray(value)) {
+          return value
+        }
+        // 默认返回空数组
+        return []
+      }
+      
+      // 处理 intelligent_extraction 的嵌套结构（复杂参数分解）
+      if (menuId === 'param-decompose') {
+        if (value && typeof value === 'object') {
+          return {
+            enabled: value.enabled || false,
+            complex_parameter_decomposition: value.complex_parameter_decomposition || {}
+          }
+        }
+        return { enabled: false, complex_parameter_decomposition: {} }
+      }
+      
+      // 如果配置不存在，返回默认值以避免 undefined 错误
+      if (value === undefined || value === null) {
+        // 为不同的编辑器返回合适的默认值
+        if (menuId === 'noise-filter') {
+          return []
+        }
+        if (menuId === 'metadata') {
+          return []
+        }
+        if (menuId === 'separator-process') {
+          return []
+        }
+        if (menuId === 'smart-split') {
+          return { enabled: false, split_compound_words: false, split_technical_specs: false, split_by_space: false }
+        }
+        if (menuId === 'unit-remove') {
+          return { enabled: false, units: [] }
+        }
+        if (menuId === 'param-decompose') {
+          return { enabled: false, complex_parameter_decomposition: {} }
+        }
+        if (menuId === 'quality-score') {
+          return { enabled: false, min_length_chinese: 1, min_length_english: 2, threshold: 0.5 }
+        }
+        if (menuId === 'whitelist') {
+          return []
+        }
+        if (menuId === 'match-threshold') {
+          return { value: 5 }
+        }
+        if (menuId === 'brand-keywords') {
+          return []
+        }
+        if (menuId === 'normalization') {
+          return []
+        }
+        if (menuId === 'synonym-map') {
+          return {}
+        }
+        if (menuId === 'device-type') {
+          return []
+        }
+        if (menuId === 'device-params') {
+          return {}
+        }
+        if (menuId === 'feature-weights') {
+          return {}
+        }
+        if (menuId === 'device-row') {
+          return {}
+        }
+        if (menuId === 'global-settings') {
+          return {}
+        }
+        // 智能提取配置默认值
+        if (menuId === 'device-type-patterns') {
+          return { device_types: [], prefix_keywords: {}, main_types: {} }
+        }
+        if (menuId === 'parameter-extraction') {
+          return {
+            range: { enabled: true, labels: ['量程', '范围', '测量范围'] },
+            output: { enabled: true, labels: ['输出', '输出信号'] },
+            accuracy: { enabled: true, labels: ['精度', '准确度'] },
+            specs: { enabled: true, patterns: ['DN\\d+', 'PN\\d+', 'PT\\d+'] }
+          }
+        }
+        if (menuId === 'auxiliary-info') {
+          return {
+            brand: { enabled: true, keywords: ['西门子', '施耐德', '霍尼韦尔', 'ABB'] },
+            medium: { enabled: true, keywords: ['水', '气', '油', '蒸汽'] },
+            model: { enabled: true, pattern: '[A-Z]{2,}-[A-Z0-9]+' }
+          }
+        }
+        if (menuId === 'device-row') {
+          return {}
+        }
+        if (menuId === 'global-settings') {
+          return {}
+        }
+        return null
+      }
+      
       return value
     }
     
@@ -356,12 +463,24 @@ export default {
       const configKey = menuIdToConfigKey[menuId]
       if (!configKey) return
       
-      // 如果是device_type_keywords，需要保持嵌套结构
+      // 处理 device_type_keywords 的嵌套结构
       if (configKey === 'device_type_keywords') {
         config.value[configKey] = {
           device_type_keywords: newValue
         }
-      } else {
+      }
+      // 处理 text_cleaning.metadata_rules 的嵌套结构（元数据处理）
+      else if (menuId === 'metadata') {
+        if (!config.value[configKey]) {
+          config.value[configKey] = {}
+        }
+        config.value[configKey].metadata_rules = newValue
+      }
+      // 处理 intelligent_extraction 的嵌套结构（复杂参数分解）
+      else if (menuId === 'param-decompose') {
+        config.value[configKey] = newValue
+      }
+      else {
         config.value[configKey] = newValue
       }
       handleConfigChange()
@@ -647,7 +766,13 @@ export default {
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+}
+
+.sidebar-menu {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar-footer {
@@ -668,6 +793,30 @@ export default {
   overflow-y: auto;
   padding: 20px;
   background: white;
+}
+
+/* 强制所有编辑器组件占满整个宽度 */
+.editor-container :deep(.synonym-map-editor),
+.editor-container :deep(.split-chars-editor),
+.editor-container :deep(.normalization-editor),
+.editor-container :deep(.global-config-editor),
+.editor-container :deep(.brand-keywords-editor),
+.editor-container :deep(.feature-weight-editor),
+.editor-container :deep(.device-row-recognition-editor),
+.editor-container :deep(.device-params-editor),
+.editor-container :deep(.metadata-rules-editor),
+.editor-container :deep(.device-type-patterns-editor),
+.editor-container :deep(.parameter-extraction-editor),
+.editor-container :deep(.auxiliary-info-editor),
+.editor-container :deep(.whitelist-editor),
+.editor-container :deep(.unit-removal-editor),
+.editor-container :deep(.separator-mapping-editor),
+.editor-container :deep(.quality-score-editor),
+.editor-container :deep(.match-threshold-editor),
+.editor-container :deep(.intelligent-cleaning-editor),
+.editor-container :deep(.ignore-keywords-editor) {
+  max-width: none !important;
+  width: 100% !important;
 }
 
 .preview-container {

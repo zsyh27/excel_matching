@@ -196,7 +196,7 @@ export default {
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
-    const localValue = ref([...props.modelValue])
+    const localValue = ref([...(props.modelValue || [])])
     const newKeyword = ref('')
     
     // 从fullConfig中获取白名单
@@ -305,7 +305,7 @@ export default {
     }
 
     watch(() => props.modelValue, (newVal) => {
-      localValue.value = [...newVal]
+      localValue.value = [...(newVal || [])]
     }, { deep: true })
     
     watch(() => props.fullConfig, (newVal) => {

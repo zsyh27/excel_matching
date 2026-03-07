@@ -5,6 +5,8 @@
       <p class="description">
         配置每种设备类型对应的参数字段，用于动态表单生成。
       </p>
+      
+      <ConfigInfoCard config-id="device-params" />
     </div>
 
     <div class="editor-body">
@@ -259,6 +261,7 @@
 import { ref, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete, Edit, ArrowUp, ArrowDown, CopyDocument } from '@element-plus/icons-vue'
+import ConfigInfoCard from './ConfigInfoCard.vue'
 
 const props = defineProps({
   modelValue: {
@@ -506,9 +509,14 @@ watch(() => localValue.value, (newVal) => {
 
 <style scoped>
 .device-params-editor {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 600px;
+}
+
+.editor-header {
+  flex-shrink: 0;
+  margin-bottom: 20px;
 }
 
 .editor-header h2 {
@@ -518,7 +526,7 @@ watch(() => localValue.value, (newVal) => {
 }
 
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
   line-height: 1.6;
@@ -527,10 +535,12 @@ watch(() => localValue.value, (newVal) => {
 .editor-body {
   flex: 1;
   overflow: hidden;
+  min-height: 0;
 }
 
 .layout {
   display: flex;
+  min-height: 500px;
   height: 100%;
   gap: 20px;
 }
