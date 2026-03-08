@@ -133,9 +133,9 @@ features = [
 ```
 
 **device_params**（设备参数配置）：
-- 配置路径：`backend/config/device_params.yaml`
+- 配置键：`device_params`（存储在数据库 configs 表中）
 - 作用：定义每种设备类型有哪些参数
-- 用途：动态表单生成、参数验证
+- 用途：动态表单生成、参数验证、设备录入界面
 
 ### 匹配阶段配置（仅影响Excel匹配）
 
@@ -231,6 +231,266 @@ features = [
 - 配置文件（feature_weight_config等）
 - 权重配置
 
+## 添加新设备类型参数配置
+
+当批量导入新类型的设备时，需要先在配置管理中添加对应的设备类型参数配置。
+
+### 方法1：通过前端配置管理界面（推荐）
+
+1. 打开前端配置管理页面
+2. 进入"设备信息录入前配置" → "设备参数配置"
+3. 点击"添加设备类型"按钮
+4. 填写设备类型信息：
+   - 设备类型名称（如"蝶阀"、"开关型执行器"）
+   - 关键词列表（用于识别该设备类型）
+   - 参数列表（每个参数包含：名称、类型、是否必填、选项等）
+5. 保存配置
+
+### 方法2：通过Python脚本添加（批量操作）
+
+**步骤1：创建配置脚本**
+
+创建一个Python脚本（如 `add_new_device_type.py`）：
+
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""添加新设备类型参数配置"""
+
+import sys
+sys.path.insert(0, 'backend')
+
+from modules.database import DatabaseManager
+from modules.database_loader import DatabaseLoader
+
+# 1. 初始化数据库
+db_manager = DatabaseManager("sqlite:///data/devices.db")
+db_loader = DatabaseLoader(db_manager)
+
+# 2. 获取当前配置
+device_params = db_loader.get_config_by_key('device_params')
+
+if not device_params or 'device_types' not in device_params:
+    print("❌ device_params 配置不存在")
+    sys.exit(1)
+
+# 3. 定义新设备类型配置
+new_device_type_config = {
+    '新设备类型名称': {
+        'keywords': ['关键词1', '关键词2', '关键词3'],
+        'params': [
+            {
+                'name': '参数名称1',
+                'type': 'string',           # 数据类型：string/number/boolean
+                'required': True,           # 是否必填
+                'pattern': r'正则表达式',    # 可选：用于验证的正则表达式
+                'options': ['选项1', '选项2']  # 可选：下拉选项列表
+            },
+            {
+                'name': '参数名称2',
+                'type': 'string',
+                'required': False,
+                'options': ['选项A', '选项B', '选项C']
+            }
+            # 添加更多参数...
+        ]
+    }
+}
+
+# 4. 添加到配置中
+for device_type, config in new_device_type_config.items():
+    print(f"添加设备类型: {device_type}")
+    device_params['device_types'][device_type] = config
+    print(f"  参数数量: {len(config['params'])}")
+
+# 5. 保存到数据库
+success = db_loader.update_config('device_params', device_params)
+
+if success:
+    print("✅ 配置更新成功")
+else:
+    print("❌ 配置更新失败")
+```
+
+**步骤2：执行脚本**
+
+```bash
+python add_new_device_type.py
+```
+
+**步骤3：验证配置**
+
+```bash
+python check_device_params.py
+```
+
+### 配置结构说明
+
+每个设备类型的配置包含以下字段：
+
+```python
+{
+    '设备类型名称': {
+        'keywords': [           # 关键词列表（用于设备类型识别）
+            '关键词1',
+            '关键词2'
+        ],
+        'params': [             # 参数列表
+            {
+                'name': '参数名称',          # 参数名称（必填）
+                'type': 'string',           # 数据类型（必填）
+                                            # 可选值：string, number, boolean
+                'required': True,           # 是否必填（必填）
+                'pattern': r'正则表达式',    # 验证正则（可选）
+                'options': ['选项1', '选项2'] # 下拉选项（可选）
+            }
+        ]
+    }
+}
+```
+
+### 实际示例：添加蝶阀配置
+
+```python
+butterfly_valve_config = {
+    '蝶阀': {
+        'keywords': ['蝶阀', 'butterfly valve', '对夹式蝶阀'],
+        'params': [
+            {
+                'name': '公称通径',
+                'type': 'string',
+                'required': True,
+                'pattern': r'DN\d+',
+                'options': ['DN50', 'DN65', 'DN80', 'DN100', 'DN125', 'DN150']
+            },
+            {
+                'name': '公称压力',
+                'type': 'string',
+                'required': False,
+                'pattern': r'PN\d+',
+                'options': ['PN10', 'PN16', 'PN25']
+            },
+            {
+                'name': '连接方式',
+                'type': 'string',
+                'required': False,
+                'options': ['对夹式', '法兰式']
+            },
+            {
+                'name': '阀体材质',
+                'type': 'string',
+                'required': False,
+                'options': ['球墨铸铁', '铸铁', '不锈钢']
+            },
+            {
+                'name': '密封材质',
+                'type': 'string',
+                'required': False,
+                'options': ['EPDM', 'NBR', 'PTFE']
+            },
+            {
+                'name': '适用介质',
+                'type': 'string',
+                'required': False,
+                'options': ['冷/热水、乙二醇', '水', '蒸汽', '油']
+            },
+            {
+                'name': '介质温度',
+                'type': 'string',
+                'required': False,
+                'pattern': r'-?\d+℃～[+]?\d+℃'
+            }
+        ]
+    }
+}
+```
+
+### 组合设备类型配置
+
+对于组合设备（如"蝶阀+开关型执行器"），参数列表应包含所有组件的参数：
+
+```python
+combined_device_config = {
+    '蝶阀+开关型执行器': {
+        'keywords': ['蝶阀+开关型执行器', '蝶阀开关型'],
+        'params': [
+            # 蝶阀参数（7个）
+            {'name': '公称通径', 'type': 'string', 'required': True, ...},
+            {'name': '公称压力', 'type': 'string', 'required': False, ...},
+            {'name': '连接方式', 'type': 'string', 'required': False, ...},
+            {'name': '阀体材质', 'type': 'string', 'required': False, ...},
+            {'name': '密封材质', 'type': 'string', 'required': False, ...},
+            {'name': '适用介质', 'type': 'string', 'required': False, ...},
+            {'name': '介质温度', 'type': 'string', 'required': False, ...},
+            
+            # 执行器参数（7个）
+            {'name': '额定扭矩', 'type': 'string', 'required': False, ...},
+            {'name': '供电电压', 'type': 'string', 'required': False, ...},
+            {'name': '控制类型', 'type': 'string', 'required': False, ...},
+            {'name': '复位方式', 'type': 'string', 'required': False, ...},
+            {'name': '断电状态', 'type': 'string', 'required': False, ...},
+            {'name': '运行角度', 'type': 'string', 'required': False, ...},
+            {'name': '防护等级', 'type': 'string', 'required': False, ...}
+        ]
+    }
+}
+```
+
+### 配置添加后的操作
+
+1. **重启后端服务**（清除缓存）：
+   ```bash
+   # 清除Python缓存
+   rm -r backend/__pycache__
+   rm -r backend/modules/__pycache__
+   
+   # 重启后端
+   python backend/app.py
+   ```
+
+2. **刷新前端页面**：
+   - 刷新配置管理页面
+   - 在"设备参数配置"中查看新增的设备类型
+
+3. **测试设备录入**：
+   - 进入设备管理页面
+   - 选择新添加的设备类型
+   - 验证参数表单是否正确显示
+
+4. **同步到JSON文件**（可选）：
+   ```bash
+   python sync_config_db_to_json.py
+   ```
+
+### 注意事项
+
+1. **参数数量要准确**：
+   - 检查实际设备数据中有哪些参数
+   - 确保配置中的参数数量和实际数据一致
+   - 组合设备要包含所有组件的参数
+
+2. **关键词要全面**：
+   - 添加常见的别名和变体
+   - 包含中英文关键词
+   - 考虑用户可能的输入方式
+
+3. **选项要基于实际数据**：
+   - 从数据库中查询实际设备的参数值
+   - 将常见值添加到 options 列表
+   - 保持选项的一致性和规范性
+
+4. **验证配置正确性**：
+   - 使用验证脚本检查配置
+   - 在前端界面测试参数表单
+   - 确保必填参数标记正确
+
+### 相关脚本参考
+
+- `fix_actuator_params_final.py` - 修复执行器参数配置的完整示例
+- `add_butterfly_valve_config.py` - 添加蝶阀配置的完整示例
+- `check_butterfly_params.py` - 验证配置的脚本示例
+- `sync_config_db_to_json.py` - 同步配置到JSON文件
+
 ## 快速参考
 
 ### 权重优先级（从高到低）
@@ -254,9 +514,280 @@ features = [
 - ⚠️ 元数据关键词只在匹配阶段生效，不影响设备录入
 - ⚠️ key_params优先级高于detailed_params
 - ⚠️ 修改配置后必须重启服务并重新生成规则
+- ⚠️ 批量导入新设备前，必须先添加对应的设备类型参数配置
+- ⚠️ 组合设备的参数配置要包含所有组件的参数（如"蝶阀+执行器"需要蝶阀参数+执行器参数）
+
+## 完整设备导入流程（三步法）
+
+### 概述
+
+批量导入新设备时，必须按照以下三个步骤依次执行，缺一不可：
+
+```
+步骤1：配置设备参数 → 步骤2：导入设备数据 → 步骤3：生成匹配规则
+```
+
+### 步骤1：在设备参数配置页面中添加设备类型和参数
+
+**⚠️ 关键点**：必须在导入设备前完成此步骤！
+
+**操作方法**：
+1. 打开前端配置管理页面
+2. 进入"设备信息录入前配置" → "设备参数配置"
+3. 点击"添加设备类型"按钮
+4. 填写设备类型信息和参数列表
+5. 保存配置
+
+**配置要点**：
+- 设备类型名称要与Excel中的设备类型完全一致
+- 参数列表要包含所有需要的参数（不能遗漏）
+- 组合设备要包含所有组件的参数（如"蝶阀+执行器"需要蝶阀参数+执行器参数）
+- 参数顺序建议按照逻辑分组（先阀门参数，后执行器参数）
+
+**常见错误**：
+- ❌ 忘记添加配置就直接导入设备 → 导致参数无法正确存储到 key_params
+- ❌ 参数数量不完整 → 导致特征提取数量偏少
+- ❌ 组合设备只配置了一个组件的参数 → 导致缺少另一个组件的特征
+
+### 步骤2：导入设备数据
+
+**操作方法**：
+1. 准备Excel文件，确保包含所有必要字段
+2. 使用导入脚本或API导入设备数据
+3. 验证导入结果，检查 key_params 是否正确
+
+**验证要点**：
+```python
+# 检查导入的设备
+with db_manager.session_scope() as session:
+    device = session.query(Device).filter(
+        Device.device_type == '设备类型名称'
+    ).first()
+    
+    # 验证 key_params
+    if device.key_params:
+        print(f"参数数量: {len(device.key_params)}")
+        print(f"参数列表: {list(device.key_params.keys())}")
+    else:
+        print("⚠️ key_params 为空！")
+```
+
+**常见错误**：
+- ❌ Excel中的设备类型名称与配置不一致 → 导致参数无法匹配
+- ❌ Excel中缺少某些参数列 → 导致 key_params 不完整
+- ❌ 参数值格式不正确 → 导致验证失败或数据异常
+
+### 步骤3：生成匹配规则
+
+**操作方法**：
+```python
+# 方法1：使用API批量生成规则
+POST /api/rules/regenerate
+{"device_ids": null, "force_regenerate": true}
+
+# 方法2：使用Python脚本
+python regenerate_device_rules.py
+```
+
+**验证要点**：
+```python
+# 检查规则生成结果
+from modules.device_feature_extractor import DeviceFeatureExtractor
+
+feature_extractor = DeviceFeatureExtractor(config)
+features = feature_extractor.extract_features(device)
+
+print(f"提取特征数量: {len(features)}")
+print(f"预期特征数量: {4 + len(device.key_params)}")  # 4个基础特征 + 参数数量
+
+# 检查规则
+rule = session.query(RuleModel).filter(
+    RuleModel.target_device_id == device.device_id
+).first()
+
+if rule:
+    print(f"规则特征数量: {len(rule.auto_extracted_features)}")
+else:
+    print("⚠️ 规则不存在！")
+```
+
+**常见错误**：
+- ❌ 忘记生成规则 → 导致设备无法被匹配
+- ❌ 规则生成时 key_params 为空 → 导致特征数量偏少
+- ❌ 未验证规则是否正确 → 导致匹配效果差
+
+## 历史错误案例总结
+
+### 案例1：组合设备特征数量偏少（2026-03-08）
+
+**问题描述**：
+- "蝶阀+开关型执行器"和"蝶阀+调节型执行器"的特征提取数量偏少
+- 没有达到阀门与执行器特征之和
+
+**根本原因**：
+1. 部分设备的 key_params 中缺少"公称通径"参数
+2. 原始数据中，公称通径信息隐藏在规格型号中（如 V8BFW16-050），但没有显式存储
+
+**解决方案**：
+1. 从规格型号中提取公称通径（如 050 → DN50）
+2. 补充到 key_params 中
+3. 重新生成所有规则
+
+**经验教训**：
+- ✅ 导入设备前，必须确保所有参数都正确配置
+- ✅ 验证 key_params 的完整性，不能遗漏任何参数
+- ✅ 组合设备的参数数量 = 所有组件参数之和
+
+### 案例2：规格型号被截断（历史问题）
+
+**问题描述**：
+- 规格型号"HST-RA"被截断为"hst-r"
+- 导致匹配时无法正确识别型号
+
+**根本原因**：
+- 设备录入阶段错误使用了匹配阶段的 TextPreprocessor
+- TextPreprocessor 会删除单位后缀（如"A"被识别为安培）
+
+**解决方案**：
+- 创建独立的 DeviceFeatureExtractor，专门用于设备录入阶段
+- 不删除单位，保持原始数据完整性
+
+**经验教训**：
+- ✅ 设备录入阶段和匹配阶段要使用不同的特征提取器
+- ✅ 设备录入阶段要保持数据完整性，不做复杂处理
+
+### 案例3：设备类型被拆分（历史问题）
+
+**问题描述**：
+- "温度传感器"被拆分为"传感器"
+- 导致设备类型特征不准确
+
+**根本原因**：
+- 元数据关键词配置影响了设备录入阶段
+- "温度"被识别为元数据前缀并被删除
+
+**解决方案**：
+- 通过 mode 参数区分设备录入阶段和匹配阶段
+- 设备录入时跳过元数据关键词处理
+
+**经验教训**：
+- ✅ 设备录入阶段不应使用元数据关键词处理
+- ✅ 保持字段完整性，不做拆分
+
+### 案例4：权重分配错误（历史问题）
+
+**问题描述**：
+- 规格型号的权重是1而不是5
+- 导致匹配得分偏低
+
+**根本原因**：
+- 权重分配逻辑使用了关键词判断
+- 规格型号没有匹配到任何关键词，被分配了默认权重1
+
+**解决方案**：
+- 设备录入阶段只根据字段类型分配权重
+- 不使用关键词判断
+
+**经验教训**：
+- ✅ 设备录入阶段的权重分配要简单明确
+- ✅ 根据字段类型直接分配权重，不做复杂判断
+
+## 设备导入检查清单
+
+### 导入前检查
+
+- [ ] 已在配置管理中添加设备类型参数配置
+- [ ] 参数列表完整（包含所有需要的参数）
+- [ ] 组合设备包含所有组件的参数
+- [ ] Excel文件格式正确，包含所有必要字段
+- [ ] 设备类型名称与配置一致
+
+### 导入后检查
+
+- [ ] 设备数据已成功导入数据库
+- [ ] key_params 不为空
+- [ ] key_params 参数数量正确
+- [ ] 所有参数值都正确存储
+- [ ] 规则已成功生成
+- [ ] 规则特征数量 = 4个基础特征 + key_params参数数量
+
+### 验证脚本模板
+
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""验证设备导入结果"""
+
+import sys
+sys.path.insert(0, 'backend')
+
+from modules.database import DatabaseManager
+from modules.database_loader import DatabaseLoader
+from modules.models import Device, Rule as RuleModel
+from modules.device_feature_extractor import DeviceFeatureExtractor
+
+# 初始化
+db_manager = DatabaseManager("sqlite:///data/devices.db")
+db_loader = DatabaseLoader(db_manager)
+config = db_loader.load_config()
+feature_extractor = DeviceFeatureExtractor(config)
+
+# 设备类型
+device_type = "你的设备类型"
+
+with db_manager.session_scope() as session:
+    # 获取示例设备
+    device = session.query(Device).filter(
+        Device.device_type == device_type
+    ).first()
+    
+    if not device:
+        print(f"❌ 没有找到设备类型: {device_type}")
+        sys.exit(1)
+    
+    print(f"✅ 找到设备: {device.device_id}")
+    print(f"   设备名称: {device.device_name}")
+    print(f"   规格型号: {device.spec_model}")
+    
+    # 检查 key_params
+    if device.key_params:
+        print(f"✅ key_params 参数数量: {len(device.key_params)}")
+        print(f"   参数列表: {list(device.key_params.keys())}")
+    else:
+        print(f"❌ key_params 为空！")
+        sys.exit(1)
+    
+    # 检查特征提取
+    features = feature_extractor.extract_features(device)
+    expected_count = 4 + len(device.key_params)  # 4个基础特征 + 参数数量
+    
+    print(f"✅ 提取特征数量: {len(features)}")
+    print(f"   预期特征数量: {expected_count}")
+    
+    if len(features) != expected_count:
+        print(f"⚠️ 特征数量不匹配！")
+    
+    # 检查规则
+    rule = session.query(RuleModel).filter(
+        RuleModel.target_device_id == device.device_id
+    ).first()
+    
+    if rule:
+        print(f"✅ 规则已生成")
+        print(f"   规则特征数量: {len(rule.auto_extracted_features)}")
+        
+        if len(rule.auto_extracted_features) != len(features):
+            print(f"⚠️ 规则特征数量与提取特征数量不一致！")
+    else:
+        print(f"❌ 规则不存在！")
+        sys.exit(1)
+
+print("\n✅ 验证通过！")
+```
 
 ---
 
-**文档版本**：v1.0  
+**文档版本**：v2.0  
 **创建日期**：2026-03-07  
-**来源**：精简自 `信息录入.md`
+**最后更新**：2026-03-08  
+**更新内容**：添加完整设备导入流程、历史错误案例总结、检查清单

@@ -343,6 +343,11 @@ export default {
       
       const value = config.value[configKey]
       
+      // 处理 device_params 的嵌套结构
+      if (configKey === 'device_params' && value && typeof value === 'object' && 'device_types' in value) {
+        return value.device_types || {}
+      }
+      
       // 处理 device_type_keywords 的嵌套结构
       if (configKey === 'device_type_keywords' && value && typeof value === 'object' && 'device_type_keywords' in value) {
         return value.device_type_keywords
@@ -463,8 +468,16 @@ export default {
       const configKey = menuIdToConfigKey[menuId]
       if (!configKey) return
       
+      // 处理 device_params 的嵌套结构
+      if (configKey === 'device_params') {
+        // 保留 brands 和 model_patterns，只更新 device_types
+        if (!config.value[configKey]) {
+          config.value[configKey] = {}
+        }
+        config.value[configKey].device_types = newValue
+      }
       // 处理 device_type_keywords 的嵌套结构
-      if (configKey === 'device_type_keywords') {
+      else if (configKey === 'device_type_keywords') {
         config.value[configKey] = {
           device_type_keywords: newValue
         }

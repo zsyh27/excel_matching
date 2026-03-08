@@ -39,21 +39,21 @@ logger = logging.getLogger(__name__)
 class RuleGeneratorWrapper:
     """规则生成器包装器"""
     
-    def __init__(self, db_manager: DatabaseManager, preprocessor: TextPreprocessor, 
+    def __init__(self, db_manager: DatabaseManager, config: Dict, 
                  default_threshold: float = 2.0):
         """
         初始化规则生成器
         
         Args:
             db_manager: 数据库管理器实例
-            preprocessor: 文本预处理器实例
+            config: 配置字典
             default_threshold: 默认匹配阈值
         """
         self.db_manager = db_manager
-        self.preprocessor = preprocessor
+        self.config = config
         self.default_threshold = default_threshold
         # 使用模块中的 RuleGenerator
-        self.rule_generator = ModuleRuleGenerator(preprocessor, default_threshold)
+        self.rule_generator = ModuleRuleGenerator(config, default_threshold)
         self.stats = {
             'total_devices': 0,
             'devices_without_rules': 0,
@@ -332,11 +332,8 @@ def main():
         # 从配置中获取默认阈值
         default_threshold = config.get('global_config', {}).get('default_match_threshold', args.threshold)
         
-        # 初始化文本预处理器
-        preprocessor = TextPreprocessor(config)
-        
         # 创建规则生成器
-        generator = RuleGeneratorWrapper(db_manager, preprocessor, default_threshold)
+        generator = RuleGeneratorWrapper(db_manager, config, default_threshold)
         
         # 查找需要生成规则的设备
         if args.all:

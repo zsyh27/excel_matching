@@ -3,9 +3,9 @@
 配置管理器 - 智能设备录入系统
 
 管理设备类型参数映射和参数识别规则
+从数据库读取配置（不再使用YAML文件）
 """
 
-import yaml
 import logging
 from typing import Dict, List, Optional
 from dataclasses import dataclass
@@ -24,33 +24,41 @@ class ParamRule:
 
 
 class ConfigurationManager:
-    """配置管理器"""
+    """配置管理器 - 从数据库读取配置"""
     
-    def __init__(self, config_path: str):
+    def __init__(self, db_manager):
         """
         初始化配置管理器
         
         Args:
-            config_path: 配置文件路径
+            db_manager: DatabaseManager实例
         """
-        self.config_path = config_path
+        self.db_manager = db_manager
         self._config = None
         self._load_config()
     
     def _load_config(self) -> None:
-        """加载配置文件"""
+        """从数据库加载配置"""
         try:
-            with open(self.config_path, 'r', encoding='utf-8') as f:
-                self._config = yaml.safe_load(f)
-            logger.info(f"配置文件加载成功: {self.config_path}")
-        except FileNotFoundError:
-            logger.error(f"配置文件不存在: {self.config_path}")
-            raise
-        except yaml.YAMLError as e:
-            logger.error(f"配置文件格式错误: {e}")
-            raise
+            from modules.models import Config
+            
+            with self.db_manager.session_scope() as session:
+                config_record = session.query(Config).filter(
+                    Config.config_key == 'device_params'
+                ).first()
+                
+                if config_record:
+                    self._config = config_record.config_value
+                    logger.info("从数据库加载device_params配置成功")
+                else:
+                    logger.warning("数据库中未找到device_params配置，使用空配置")
+                    self._config = {
+                        'brands': {},
+                        'device_types': {},
+                        'model_patterns': []
+                    }
         except Exception as e:
-            logger.error(f"加载配置文件失败: {e}")
+            logger.error(f"从数据库加载配置失败: {e}")
             raise
     
     def get_brand_keywords(self) -> Dict[str, List[str]]:
@@ -121,8 +129,8 @@ class ConfigurationManager:
         return param_rules
     
     def reload(self) -> None:
-        """重新加载配置文件"""
-        logger.info("重新加载配置文件")
+        """重新加载配置（从数据库）"""
+        logger.info("重新加载配置（从数据库）")
         self._load_config()
     
     def get_model_patterns(self) -> List[str]:

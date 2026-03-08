@@ -1,0 +1,87 @@
+序号	型号	说明	价格
+二通水阀		
+1	V5011N1040/U	2-way, 1/2" (DN15), Application Water	2603
+2	V5011N1057/U	2-way, 3/4" (DN20), Application Water	2244
+3	V5011P1004	2-way, 1" (DN25), Application Water	1277
+4	V5011P1012	2-way, 1 1/4" (DN32), Application Water	1139
+5	V5011P1020	2-way, 1 1/2" (DN40), Application Water	1586
+6	V5011P1038	2-way, 2" (DN50), Application Water	1863
+7	V5211F1004	2-way, 2 1/2" (DN65), Application Water	4508
+8	V5211F1012	2-way, 3" (DN80), Application Water	5069
+9	V5011N1040/U+ML7420A8088-E	2-way, 1/2" (DN15), Application Water	4099
+10	V5011N1057/U+ML7420A8088-E	2-way, 3/4" (DN20), Application Water	3739
+11	V5011P1004+ML7420A8088-E	2-way, 1" (DN25), Application Water	2773
+12	V5011P1012+ML7420A8088-E	2-way, 1 1/4" (DN32), Application Water	2635
+13	V5011P1020+ML7420A8088-E	2-way, 1 1/2" (DN40), Application Water	3082
+14	V5011P1038+ML7420A8088-E	2-way, 2" (DN50), Application Water	3359
+15	V5211F1004+ML7420A8088-E	2-way, 2 1/2" (DN65), Application Water	6003
+16	V5211F1012+ML7420A8088-E	2-way, 3" (DN80), Application Water	6565
+17	V5011N1040/U+ML8824A0620	2-way, 1/2" (DN15), Application Water	4188
+18	V5011N1057/U+ML8824A0620	2-way, 3/4" (DN20), Application Water	3829
+19	V5011P1004+ML8824A0620	2-way, 1" (DN25), Application Water	2863
+20	V5011P1012+ML8824A0620	2-way, 1 1/4" (DN32), Application Water	2725
+21	V5011P1020+ML8824A0620	2-way, 1 1/2" (DN40), Application Water	3171
+22	V5011P1038+ML8824A0620	2-way, 2" (DN50), Application Water	3449
+23	V5211F1004+ML8824A0620	2-way, 2 1/2" (DN65), Application Water	6093
+24	V5211F1012+ML8824A0620	2-way, 3" (DN80), Application Water	6654
+三通水阀		
+1	V5013N1048/U	3-way, 1/2"(DN15), Cv 4.7, Mixing, NPT thread, stem up to close A-AB	3250
+2	V5013N1055/U	3-way, 3/4"(DN20), Cv 7.3, Mixing, NPT thread, stem up to close A-AB	2434
+3	V5013N1063/U	3-way, 1"(DN25), Cv 11.7, Mixing, NPT thread, stem up to close A-AB	2400
+4	V5013P1002	3-way, 1 1/4" (DN32)	2400
+5	V5013P1010	3-way, 1 1/2" (DN40)	2400
+6	V5013P1028	3-way, 2" (DN50)	2901
+7	V5013N1048/U+ML7420A8088-E	3-way, 1/2"(DN15), Cv 4.7, Mixing, NPT thread, stem up to close A-AB	4746
+8	V5013N1055/U+ML7420A8088-E	3-way, 3/4"(DN20), Cv 7.3, Mixing, NPT thread, stem up to close A-AB	3930
+9	V5013N1063/U+ML7420A8088-E	3-way, 1"(DN25), Cv 11.7, Mixing, NPT thread, stem up to close A-AB	4100
+10	V5013P1002+ML7421A8035-E	3-way, 1 1/4" (DN32)	4300
+11	V5013P1010+ML7421A8035-E	3-way, 1 1/2" (DN40)	4613
+12	V5013P1028+ML7421A8035-E	3-way, 2" (DN50)	5114
+13	V5013N1048/U+ML8824A0620	3-way, 1/2"(DN15), Cv 4.7, Mixing, NPT thread, stem up to close A-AB	4835
+14	V5013N1055/U+ML8824A0620	3-way, 3/4"(DN20), Cv 7.3, Mixing, NPT thread, stem up to close A-AB	4019
+15	V5013N1063/U+ML8824A0620	3-way, 1"(DN25), Cv 11.7, Mixing, NPT thread, stem up to close A-AB	4300
+16	V5013P1002+ML8824A1820	3-way, 1 1/4" (DN32)	4500
+17	V5013P1010+ML8824A1820	3-way, 1 1/2" (DN40)	4746
+18	V5013P1028+ML8824A1820	3-way, 2" (DN50)	5247
+蒸汽阀		
+1	V5011N2048/U	2-way, 1/2" (DN15), Application Steam	2199
+2	V5011N2055/U	2-way, 3/4" (DN20), Application Steam	2219
+3	V5011P2036	2-way, 1" (DN25), Application Steam	1392
+4	V5011P2002	2-way, 1 1/4" (DN32), Application Steam	1604
+5	V5011P2010	2-way, 1 1/2" (DN40), Application Steam	2233
+6	V5011P2028	2-way, 2" (DN50), Application Steam	2683
+7	V5211F2002	2-way, 2 1/2" (DN65), Application Steam	5025
+8	V5211F2010	2-way, 3" (DN80), Application Steam	8264
+9	V5011N2048/U+ML7420A8088-E 	2-way, 1/2" (DN15), Application Steam	3695
+10	V5011N2055/U+ML7420A8088-E	2-way, 3/4" (DN20), Application Steam	3714
+11	V5011P2036+ML7421A8035-E	2-way, 1" (DN25), Application Steam	3605
+12	V5011P2002+ML7421A8035-E	2-way, 1 1/4" (DN32), Application Steam	3817
+13	V5011P2010+ML7421A8035-E	2-way, 1 1/2" (DN40), Application Steam	4446
+14	V5011P2028+ML7421A8035-E	2-way, 2" (DN50), Application Steam	4897
+15	V5211F2002+ML7421A8035-E	2-way, 2 1/2" (DN65), Application Steam	7238
+16	V5211F2010+ML7421A8035-E	2-way, 3" (DN80), Application Steam	10477
+17	V5011N2048/U+ML8824A0620	2-way, 1/2" (DN15), Application Steam	3784
+18	V5011N2055/U+ML8824A0620	2-way, 3/4" (DN20), Application Steam	3804
+19	V5011P2036+ML8824A1820	2-way, 1" (DN25), Application Steam	3738
+20	V5011P2002+ML8824A1820	2-way, 1 1/4" (DN32), Application Steam	3950
+21	V5011P2010+ML8824A1820	2-way, 1 1/2" (DN40), Application Steam	4579
+22	V5011P2028+ML8824A1820	2-way, 2" (DN50), Application Steam	5030
+23	V5211F2002+ML8824A1820	2-way, 2 1/2" (DN65), Application Steam	7371
+24	V5211F2010+ML8824A1820	2-way, 3" (DN80), Application Steam	10610
+执行器		
+1	ML6420A3007-E	24Vac 50/60Hz, Non-Spring Return, Floating	1045
+2	ML7420A8088-E	24Vac 50/60Hz, Non-Spring Return, Modulating 	1496
+3	ML7421A8035-E	24Vac 50/60Hz, Non-Spring Return, Modulating with self-adapt function, 1800N, 20mm	2213
+4	ML7421B8012-E	24Vac 50/60Hz, Non-Spring Return, Modulating with self-adapt function, 1800N, 38mm	2213
+5	ML7425A8018-E	24Vac 50/60Hz, Spring Return, Modulating with self-adapt function, 600N, 20mm	2527
+6	ML8824-FS	断电复位控制器	1146
+7	ML8824A0620	Linear Valve Actuator, 600N, 20mm	1585
+8	ML8824A1820	Linear Valve Actuator, 1800N, 20mm	2346
+9	ML8824A1840	Linear Valve Actuator, 1800N, 40mm	2346
+10	ML8824A0620-BV	600N, for PICV 	1571
+11	ML8824A1840-BV	1800N, 40mm stroke, for PICV 	2325
+12	ML8824B0620	NFC,20mm,600N	2183
+13	ML8824B1820	NFC,20mm,1800N	3127
+14	ML8824B1840	NFC,40mm,1800N	3245
+15	ML8824B0620-BV	 Linear actuator 600N, 20mm stroke, NFC, for PICV 	2061
+16	ML8824B1840-BV	 Linear actuator 1800N, 40mm stroke,  NFC, for PICV 	3063

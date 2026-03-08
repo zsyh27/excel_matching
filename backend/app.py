@@ -99,9 +99,10 @@ try:
     # 9. 初始化设备行分类器
     device_row_classifier = DeviceRowClassifier(config)
     
-    # 10. 初始化智能设备录入系统组件
-    device_params_config = os.path.join(os.path.dirname(__file__), 'config', 'device_params.yaml')
-    intelligent_config_manager = ConfigurationManager(device_params_config)
+    # 10. 初始化智能设备录入系统组件（从数据库读取配置）
+    from modules.database import DatabaseManager
+    db_manager = DatabaseManager(Config.DATABASE_URL)
+    intelligent_config_manager = ConfigurationManager(db_manager)
     intelligent_parser = DeviceDescriptionParser(intelligent_config_manager)
     
     logger.info("系统组件初始化完成")
@@ -957,8 +958,19 @@ def get_device_types():
                 'error_message': '设备参数配置不存在'
             }), 404
         
+        # 提取device_types部分（修复：device_params包含brands、device_types、model_patterns）
+        device_types_config = device_params.get('device_types', {})
+        
+        if not device_types_config:
+            logger.error("device_params中未找到device_types配置")
+            return jsonify({
+                'success': False,
+                'error_code': 'CONFIG_NOT_FOUND',
+                'error_message': '设备类型配置不存在'
+            }), 404
+        
         # 提取设备类型列表
-        device_types = list(device_params.keys())
+        device_types = list(device_types_config.keys())
         
         # 返回配置信息
         logger.info(f"成功返回 {len(device_types)} 个设备类型配置")
@@ -966,7 +978,7 @@ def get_device_types():
             'success': True,
             'data': {
                 'device_types': device_types,
-                'params_config': device_params
+                'params_config': device_types_config
             }
         }), 200
     
@@ -1458,7 +1470,9 @@ def get_device_types_filter():
             return create_error_response('CONFIG_NOT_FOUND', '设备参数配置不存在')
         
         # 获取配置中定义的所有设备类型
-        config_device_types = list(device_params.keys())
+        # device_params 结构: {"device_types": {"温度传感器": {...}, "蝶阀": {...}}}
+        device_types_config = device_params.get('device_types', {})
+        config_device_types = list(device_types_config.keys())
         
         # 如果需要包含数量，统计每个类型在设备库中的设备数量
         if include_count:

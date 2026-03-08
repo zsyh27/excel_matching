@@ -1,0 +1,120 @@
+82 P7620C0042A 4516 4516 0...4 Bar, H-Port<20 Bar, L-Port<20 Bar, TC-0<0.08%, 4-20mA
+83 P7620C0042B 4516 4516 0...4 Bar, H-Port<20 Bar, L-Port<20 Bar, TC-0<0.08%, 0-10V
+84 P7620C0060A 5067 5067 0…6 Bar, H-Port<12 Bar, L-Port<12 Bar, TC-0<0.04%, 4-20mA
+85 P7620C0060B 3897 3897 0…6 Bar, H-Port<12 Bar, L-Port<12 Bar, TC-0<0.04%, 0-10V
+86 P7620C0160B 5067 5067 0…16 Bar, H-Port<32 Bar, L-Port<12 Bar, TC-0<0.04%, 0-10V
+87 WFS-8001-H 297 297 水流开关~Water flow switch，1MPa
+88 WFS-8002-H 568 568 水流开关~Water flow switch，2MPa
+89 L8000T001 2774 2774 液位传感器~Liquid level transmitter, -10 - +80 °C ,4-20mA,1m量程
+90 L8000T002 2774 2774 液位传感器~Liquid level transmitter, -10 - +80 °C ,4-20mA,2m量程
+91 L8000T003 2590 2590 液位传感器~Liquid level transmitter, -10 - +80 °C ,4-20mA,3m量程
+92 L8000T005 2719 2719 液位传感器~Liquid level transmitter, -10 - +80 °C ,4-20mA,5m量程
+93 L8000T010 2828 2828 液位传感器~Liquid level transmitter, -10 - +80 °C ,4-20mA,10m量程
+94 L8000T020 2941 2941 液位传感器~Liquid level transmitter, -10 - +80 °C ,4-20mA,20m量程
+95 L8000T050 3677 3677 液位传感器~Liquid level transmitter, -10 - +80 °C ,4-20mA,50m量程
+96 HSDP2-A500A1 729 729 空气压差变送器，最大量程0~500Pa，4-20mA
+97 HSDP2-A500V1 729 729 空气压差变送器，最大量程0~500Pa，0-10V
+98 HSDP2-A500A2 749 749 空气压差变送器，最大量程-500~500Pa，4-20mA
+99 HSDP2-A500V2 749 749 最大量程-500~500Pa，0-10V
+100 HSDP2-A1000A1 729 729 最大量程0~1000Pa，4-20mA
+101 HSDP2-A1000V1 729 729 最大量程0~1000Pa，0-10V
+102 HSDP2-A1000A2 749 749 最大量程-1000~1000Pa，4-20mA
+103 HSDP2-A1000V2 749 749 最大量程-1000~1000Pa，0-10V
+104 HSDP-A100U 973 973 最大量程-100~100Pa，0-10V，4-20mA，无显示
+105 HSDP-A1000U 973 973 最大量程-1000~1000Pa，0-10V，4-20mA，无显示
+106 HSDP-A10000U 973 973 最大量程-10000~10000Pa，0-10V，4-20mA，无显示
+107 HSDP-A100UL 1058 1058 最大量程-100~100Pa，0-10V，4-20mA，带显示
+108 HSDP-A1000UL 1058 1058 最大量程-1000~1000Pa，0-10V，4-20mA，带显示
+109 HSDP-A10000UL 1058 1058 最大量程-10000~10000Pa，0-10V，4-20mA，带显示
+110 HSDP-A100M 1095 1095 最大量程-100~100Pa，Modbus Rtu通讯，无显示
+111 HSDP-A1000M 1095 1095 最大量程-1000~1000Pa，Modbus Rtu通讯，无显示
+112 HSDP-A10000M 1095 1095 最大量程-10000~10000Pa，Modbus Rtu通讯，无显示
+113 HSDP-A100ML 1240 1240 最大量程-100~100Pa，Modbus Rtu通讯，带显示
+114 HSDP-A1000ML 1240 1240 最大量程-1000~1000Pa，Modbus Rtu通讯，带显示
+115 HSDP-A10000ML 1240 1240 最大量程-10000~10000Pa，Modbus Rtu通讯，带显示
+116 DPT0010T1-B 1878 1878 压差变送器，0...+10000 Pa, 0~10V
+117 DPT0050U2-A 1945 1945 压差变送器，-50...0...+50 Pa, 4～20mA
+118 DPT0250U1-A 1589 1589 压差变送器，0...+250 Pa, 4～20mA
+119 DPT0250U1-B 1589 1589 压差变送器，0...+250 Pa, 0~10V
+120 DPT0500U1-A 1589 1589 压差变送器，0...+500 Pa, 4～20mA
+121 DPT0500U1-B 1589 1589 压差变送器，0...+500 Pa, 0~10V
+122 DPT1000U1-A 1549 1549 压差变送器，0...+1000 Pa, 4～20mA
+123 DPT1000U1-B 1549 1549 压差变送器，0...+1000 Pa, 0~10V
+124 DPT5000U1-B 1771 1771 压差变送器，0...+5000 Pa, 0~10V
+125 DPSN200A 205 240 压差开关~~Differential Pressure Switch, 20~200Pa
+126 DPSN400A 199 234 压差开关~~Differential Pressure Switch, 40~400Pa
+127 DPSN1000A 205 240 压差开关~~Differential Pressure Switch, 200~1000Pa
+128 DPSN2500A 218 256 压差开关~~Differential Pressure Switch, 500~2500Pa
+129 E121-R15T 765 695 自动排气阀，顶排~~Automatic air vent, PN16, DN15, top，x10
+130 E121-R20T 789 717 自动排气阀，顶排~~Automatic air vent, PN16, DN20, top，x10
+131 HSP-W110MA 531 625 pressure gauge, 1%, 10Bar, 4-20mA, G1/4
+132 HSP-W116MA 531 625 pressure gauge, 1%, 16Bar, 4-20mA, G1/4
+133 HSP-W120MA 531 625 pressure gauge, 1%, 20Bar, 4-20mA, G1/4
+134 HSP-W125MA 531 625 pressure gauge, 1%, 25Bar, 4-20mA, G1/4
+135 HSP-W140MA 531 625 pressure gauge, 1%, 40Bar, 4-20mA, G1/4
+136 HSP-W110VA 531 625 pressure gauge, 1%, 10Bar, 0-10V, G1/4
+137 HSP-W116VA 531 625 pressure gauge, 1%, 16Bar, 0-10V, G1/4
+138 HSP-W120VA 531 625 pressure gauge, 1%, 20Bar, 0-10V, G1/4
+139 HSP-W125VA 531 625 pressure gauge, 1%, 25Bar, 0-10V, G1/4
+140 HSP-W140VA 531 625 pressure gauge, 1%, 40Bar, 0-10V, G1/4
+141 HSP-W110MB 531 625 pressure gauge, 1%, 10Bar, 4-20mA, NPT
+142 HSP-W116MB 531 625 pressure gauge, 1%, 16Bar, 4-20mA, NPT
+143 HSP-W120MB 531 625 pressure gauge, 1%, 20Bar, 4-20mA, NPT
+144 HSP-W125MB 531 625 pressure gauge, 1%, 25Bar, 4-20mA, NPT
+145 HSP-W140MB 531 625 pressure gauge, 1%, 40Bar, 4-20mA, NPT
+146 HSP-W110VB 531 625 pressure gauge, 1%, 10Bar, 0-10V, NPT
+147 HSP-W116VB 531 625 pressure gauge, 1%, 16Bar, 0-10V, NPT
+148 HSP-W120VB 531 625 pressure gauge, 1%, 20Bar, 0-10V, NPT
+149 HSP-W125VB 531 625 pressure gauge, 1%, 25Bar, 0-10V, NPT
+150 HSP-W140VB 531 625 pressure gauge, 1%, 40Bar, 0-10V, NPT
+151 HSP-W210MA 641 753 pressure gauge, 0.5%, 10Bar, 4-20mA, G1/4
+152 HSP-W216MA 641 753 pressure gauge, 0.5%, 16Bar, 4-20mA, G1/4
+153 HSP-W220MA 641 753 pressure gauge, 0.5%, 20Bar, 4-20mA, G1/4
+154 HSP-W225MA 641 753 pressure gauge, 0.5%, 25Bar, 4-20mA, G1/4
+155 HSP-W240MA 641 753 pressure gauge, 0.5%, 40Bar, 4-20mA, G1/4
+156 HSP-W210VA 641 753 pressure gauge, 0.5%, 10Bar, 0-10V, G1/4
+157 HSP-W216VA 641 753 pressure gauge, 0.5%, 16Bar, 0-10V, G1/4
+158 HSP-W220VA 641 753 pressure gauge, 0.5%, 20Bar, 0-10V, G1/4
+159 HSP-W225VA 641 753 pressure gauge, 0.5%, 25Bar, 0-10V, G1/4
+160 HSP-W240VA 641 753 pressure gauge, 0.5%, 40Bar, 0-10V, G1/4
+161 HSP-W210MB 641 753 pressure gauge, 0.5%, 10Bar, 4-20mA, NPT
+162 HSP-W216MB 641 753 pressure gauge, 0.5%, 16Bar, 4-20mA, NPT
+163 HSP-W220MB 641 753 pressure gauge, 0.5%, 20Bar, 4-20mA, NPT
+164 HSP-W225MB 641 753 pressure gauge, 0.5%, 25Bar, 4-20mA, NPT
+165 HSP-W240MB 641 753 pressure gauge, 0.5%, 40Bar, 4-20mA, NPT
+166 HSP-W210VB 641 753 pressure gauge, 0.5%, 10Bar, 0-10V, NPT
+167 HSP-W216VB 641 753 pressure gauge, 0.5%, 16Bar, 0-10V, NPT
+168 HSP-W220VB 641 753 pressure gauge, 0.5%, 20Bar, 0-10V, NPT
+169 HSP-W225VB 641 753 pressure gauge, 0.5%, 25Bar, 0-10V, NPT
+170 HSP-W240VB 641 753 pressure gauge, 0.5%, 40Bar, 0-10V, NPT
+171 HSP-HW416VC 1196 1407 pressure gauge, HT, 0.25%, 16Bar, 0-10V, G1/2，高温
+172 HSP-HW420VC 1196 1407 pressure gauge, HT, 0.25%, 20Bar, 0-10V, G1/2，高温
+173 HSP-HW425VC 1196 1407 pressure gauge, HT, 0.25%, 25Bar, 0-10V, G1/2，高温
+174 HSP-HW440VC 1196 1407 pressure gauge, HT, 0.25%, 40Bar, 0-10V, G1/2，高温
+175 HSP-HW416MC 1196 1407 pressure gauge, HT, 0.25%, 16Bar, 4-20mA, G1/2，高温
+176 HSP-HW420MC 1196 1407 pressure gauge, HT, 0.25%, 20Bar, 4-20mA, G1/2，高温
+177 HSP-HW425MC 1196 1407 pressure gauge, HT, 0.25%, 25Bar, 4-20mA, G1/2，高温
+178 HSP-HW440MC 1196 1407 pressure gauge, HT, 0.25%, 40Bar, 4-20mA, G1/2，高温
+179 HST-PA2 362 362 Temp. immersion, 10K NTC, 65mm
+180 HST-PA4 381 381 Temp. immersion, 10K NTC, 102mm
+181 HST-PA6 401 401 Temp. immersion, 10K NTC, 152mm
+182 HST-PA9 456 456 Temp. immersion, 10K NTC, 300mm
+183 HST-PB2 362 362 Temp. immersion, 20K NTC, 65mm
+184 HST-PB4 381 381 Temp. immersion, 20K NTC, 102mm
+185 HST-PB6 401 401 Temp. immersion, 20K NTC, 152mm
+186 HST-PB9 456 456 Temp. immersion, 20K NTC, 300mm
+187 HST-PP2 379 379 Temp. immersion, PT1000, 65mm
+188 HST-PP4 398 398 Temp. immersion, PT1000, 102mm
+189 HST-PP6 418 418 Temp. immersion, PT1000, 152mm
+190 HST-PP9 473 473 Temp. immersion, PT1000, 300mm
+191 HST-PM2 635 747 Temp. immersion, 4-20mA, 65mm
+192 HST-PM4 652 767 Temp. immersion, 4-20mA, 102mm
+193 HST-PM6 669 787 Temp. immersion, 4-20mA, 152mm
+194 HST-PM9 783 921 Temp. immersion, 4-20mA, 300mm
+195 HST-PV2 635 747 Temp. immersion, 0-10V, 65mm
+196 HST-PV4 652 767 Temp. immersion, 0-10V, 102mm
+197 HST-PV6 669 787 Temp. immersion, 0-10V, 152mm
+198 HST-PV9 783 921 Temp. immersion, 0-10V, 300mm
+199 HSL-LS05 220 220 浮球液位开关, 5米线长
+200 HSL-LS10 283 283 浮球液位开关, 10米线长
+201 HSL-LS20 367 367 浮球液位开关, 20米线长
