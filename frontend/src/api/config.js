@@ -134,7 +134,7 @@ export const testConfig = (text, config) => {
  * @returns {Promise} 生成结果
  */
 export const regenerateRules = (config) => {
-  return api.post('/config/regenerate-rules', { config })
+  return api.post('/rules/regenerate', { config })
 }
 
 // 默认导出所有API方法

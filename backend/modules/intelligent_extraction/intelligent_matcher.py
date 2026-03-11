@@ -149,8 +149,8 @@ class IntelligentMatcher:
     
     def _fallback_match(self, extraction: ExtractionResult) -> List[CandidateDevice]:
         """兜底匹配：返回相近类型的设备"""
-        # 获取所有设备
-        devices = self.device_loader.get_all_devices()
+        # 获取所有设备并转换为字典列表
+        devices = self._get_all_devices_as_list()
         
         # 评分并筛选
         candidates = []
@@ -164,17 +164,79 @@ class IntelligentMatcher:
     def _filter_by_device_type(self, device_type: str) -> List[Dict]:
         """根据设备类型筛选"""
         if not device_type or device_type == "未知":
-            return self.device_loader.get_all_devices()
+            return self._get_all_devices_as_list()
         
-        return self.device_loader.get_devices_by_type(device_type)
+        # 尝试使用 get_devices_by_type 方法
+        if hasattr(self.device_loader, 'get_devices_by_type'):
+            devices = self.device_loader.get_devices_by_type(device_type)
+            return self._convert_devices_to_list(devices)
+        
+        # 否则手动筛选
+        all_devices = self._get_all_devices_as_list()
+        return [d for d in all_devices if d.get('device_type', '') == device_type]
     
     def _filter_by_main_type(self, main_type: str) -> List[Dict]:
         """根据主类型筛选"""
         if not main_type or main_type == "未知":
-            return self.device_loader.get_all_devices()
+            return self._get_all_devices_as_list()
         
-        all_devices = self.device_loader.get_all_devices()
+        all_devices = self._get_all_devices_as_list()
         return [d for d in all_devices if main_type in d.get('device_type', '')]
+    
+    def _get_all_devices_as_list(self) -> List[Dict]:
+        """获取所有设备并转换为字典列表"""
+        devices = self.device_loader.get_all_devices()
+        return self._convert_devices_to_list(devices)
+    
+    def _convert_devices_to_list(self, devices) -> List[Dict]:
+        """
+        将设备数据转换为字典列表
+        
+        Args:
+            devices: 可能是 Dict[str, Device] 或 List[Device] 或 List[Dict]
+            
+        Returns:
+            List[Dict]: 设备字典列表
+        """
+        if not devices:
+            return []
+        
+        # 如果是字典（device_id -> Device）
+        if isinstance(devices, dict):
+            result = []
+            for device_id, device in devices.items():
+                if hasattr(device, 'to_dict'):
+                    # Device 对象
+                    device_dict = device.to_dict()
+                    device_dict['device_id'] = device_id
+                    result.append(device_dict)
+                elif isinstance(device, dict):
+                    # 已经是字典
+                    device_dict = device.copy()
+                    device_dict['device_id'] = device_id
+                    result.append(device_dict)
+                else:
+                    # 其他类型，尝试转换为字符串
+                    logger.warning(f"未知的设备类型: {type(device)}")
+            return result
+        
+        # 如果是列表
+        elif isinstance(devices, list):
+            result = []
+            for device in devices:
+                if hasattr(device, 'to_dict'):
+                    # Device 对象
+                    result.append(device.to_dict())
+                elif isinstance(device, dict):
+                    # 已经是字典
+                    result.append(device)
+                else:
+                    logger.warning(f"未知的设备类型: {type(device)}")
+            return result
+        
+        else:
+            logger.error(f"不支持的设备数据格式: {type(devices)}")
+            return []
     
     def _score_device(self, extraction: ExtractionResult, device: Dict) -> CandidateDevice:
         """对单个设备进行评分"""

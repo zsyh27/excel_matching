@@ -1,156 +1,159 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-为蝶阀设备生成匹配规则
+步骤3：生成蝶阀设备匹配规则
+
+为导入的设备生成匹配规则
 """
 
 import sys
 sys.path.insert(0, 'backend')
 
-import json
 from modules.database import DatabaseManager
 from modules.database_loader import DatabaseLoader
-from modules.models import Device as DeviceModel
+from modules.models import Device, Rule as RuleModel
 from modules.device_feature_extractor import DeviceFeatureExtractor
 from modules.rule_generator import RuleGenerator
-from modules.models import Rule as RuleModel
 
-def generate_butterfly_valve_rules():
-    """为蝶阀设备生成规则"""
+print('=' * 80)
+print('步骤3：生成蝶阀设备匹配规则')
+print('=' * 80)
+
+# 初始化
+db_manager = DatabaseManager("sqlite:///data/devices.db")
+db_loader = DatabaseLoader(db_manager)
+
+# 加载配置
+print('加载配置...')
+config = db_loader.load_config()
+
+# 初始化组件
+feature_extractor = DeviceFeatureExtractor(config)
+rule_generator = RuleGenerator(config)
+
+# 统计信息
+stats = {
+    'total': 0,
+    'success': 0,
+    'error': 0,
+    'by_type': {}
+}
+
+with db_manager.session_scope() as session:
+    # 查询所有蝶阀相关设备
+    devices = session.query(Device).filter(
+        Device.device_type.in_([
+            '蝶阀',
+            '蝶阀开关型执行器',
+            '蝶阀调节型执行器',
+            '蝶阀+蝶阀开关型执行器',
+            '蝶阀+蝶阀调节型执行器'
+        ])
+    ).all()
     
-    print("=" * 60)
-    print("蝶阀设备规则生成")
-    print("=" * 60)
+    print(f'找到 {len(devices)} 个蝶阀设备\n')
     
-    # 1. 初始化数据库
-    print("\n1. 初始化数据库连接")
-    try:
-        db_manager = DatabaseManager("sqlite:///data/devices.db")
-        db_loader = DatabaseLoader(db_manager)
-        print("   ✓ 数据库连接成功")
-    except Exception as e:
-        print(f"   ✗ 数据库连接失败: {e}")
-        return
-    
-    # 2. 加载配置
-    print("\n2. 加载配置")
-    try:
-        with open('data/static_config.json', 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        print("   ✓ 配置加载成功")
-    except Exception as e:
-        print(f"   ✗ 配置加载失败: {e}")
-        return
-    
-    # 3. 初始化特征提取器和规则生成器
-    print("\n3. 初始化特征提取器和规则生成器")
-    try:
-        feature_extractor = DeviceFeatureExtractor(config)
-        rule_generator = RuleGenerator(config)
-        print("   ✓ 初始化成功")
-    except Exception as e:
-        print(f"   ✗ 初始化失败: {e}")
-        return
-    
-    # 4. 查询蝶阀设备ID
-    print("\n4. 查询蝶阀设备")
-    try:
-        with db_manager.session_scope() as session:
-            from sqlalchemy import func
+    for device in devices:
+        try:
+            stats['total'] += 1
             
-            butterfly_device_ids = session.query(DeviceModel.device_id).filter(
-                DeviceModel.device_type.in_([
-                    '蝶阀',
-                    '蝶阀+开关型执行器',
-                    '蝶阀+调节型执行器',
-                    '开关型执行器',
-                    '调节型执行器'
-                ])
-            ).all()
+            # 统计设备类型
+            if device.device_type not in stats['by_type']:
+                stats['by_type'][device.device_type] = {'success': 0, 'error': 0}
             
-            butterfly_device_ids = [d[0] for d in butterfly_device_ids]
+            # 检查规则是否已存在
+            existing_rule = session.query(RuleModel).filter(
+                RuleModel.target_device_id == device.device_id
+            ).first()
             
-            print(f"   ✓ 找到 {len(butterfly_device_ids)} 个蝶阀设备")
+            if existing_rule:
+                # 删除旧规则
+                session.delete(existing_rule)
             
-            # 统计各类型数量
-            type_counts = session.query(
-                DeviceModel.device_type,
-                func.count(DeviceModel.device_id)
-            ).filter(
-                DeviceModel.device_type.in_([
-                    '蝶阀',
-                    '蝶阀+开关型执行器',
-                    '蝶阀+调节型执行器',
-                    '开关型执行器',
-                    '调节型执行器'
-                ])
-            ).group_by(DeviceModel.device_type).all()
+            # 生成规则
+            rule_data = rule_generator.generate_rule(device)
             
-            print("   设备类型分布:")
-            for device_type, count in type_counts:
-                print(f"   - {device_type}: {count}")
-    except Exception as e:
-        print(f"   ✗ 查询设备失败: {e}")
-        return
-    
-    # 5. 使用DatabaseLoader的批量生成规则方法
-    print("\n5. 生成规则")
-    try:
-        # 设置规则生成器到DatabaseLoader
-        db_loader.rule_generator = rule_generator
-        
-        # 批量生成规则
-        stats = db_loader.batch_generate_rules(
-            device_ids=butterfly_device_ids,
-            force_regenerate=True
-        )
-        
-        print(f"\n   规则生成完成:")
-        print(f"   - 生成: {stats.get('generated', 0)}")
-        print(f"   - 更新: {stats.get('updated', 0)}")
-        print(f"   - 跳过: {stats.get('skipped', 0)}")
-        print(f"   - 失败: {stats.get('failed', 0)}")
-        
-    except Exception as e:
-        print(f"   ✗ 规则生成失败: {e}")
-        import traceback
-        traceback.print_exc()
-        return
-    
-    # 6. 验证规则
-    print("\n6. 验证规则")
-    try:
-        with db_manager.session_scope() as session:
-            # 查询蝶阀设备的规则
-            rules = session.query(RuleModel).filter(
-                RuleModel.target_device_id.in_(butterfly_device_ids)
-            ).all()
-            
-            print(f"   ✓ 找到 {len(rules)} 条规则")
-            
-            # 显示前3个规则示例
-            print("\n   前3个规则示例:")
-            for rule in rules[:3]:
-                print(f"\n   规则ID: {rule.rule_id}")
-                print(f"   目标设备: {rule.target_device_id}")
-                print(f"   匹配阈值: {rule.match_threshold}")
-                print(f"   特征数量: {len(rule.auto_extracted_features)}")
+            if rule_data:
+                # 转换为ORM模型
+                rule_orm = RuleModel(
+                    rule_id=rule_data.rule_id,
+                    target_device_id=rule_data.target_device_id,
+                    auto_extracted_features=rule_data.auto_extracted_features,
+                    feature_weights=rule_data.feature_weights,
+                    match_threshold=rule_data.match_threshold,
+                    remark=rule_data.remark
+                )
+                session.add(rule_orm)
                 
-                # 显示前5个特征
-                features = rule.auto_extracted_features[:5]
-                print(f"   前5个特征:")
-                for feature in features:
-                    print(f"     - {feature.get('feature', 'N/A')} (类型: {feature.get('type', 'N/A')}, 权重: {feature.get('weight', 0)})")
-    except Exception as e:
-        print(f"   ! 验证失败: {e}")
-    
-    print("\n" + "=" * 60)
-    print("规则生成完成！")
-    print("=" * 60)
-    print("\n下一步:")
-    print("1. 在前端配置管理页面添加蝶阀参数配置")
-    print("2. 测试设备匹配功能")
-    print("3. 上传包含蝶阀的Excel文件进行匹配测试")
+                stats['success'] += 1
+                stats['by_type'][device.device_type]['success'] += 1
+                
+                # 每100条打印一次进度
+                if stats['success'] % 100 == 0:
+                    print(f'已生成 {stats["success"]} 条规则...')
+            else:
+                stats['error'] += 1
+                stats['by_type'][device.device_type]['error'] += 1
+                print(f'❌ 设备 {device.device_id} 规则生成失败')
+        
+        except Exception as e:
+            stats['error'] += 1
+            if device.device_type in stats['by_type']:
+                stats['by_type'][device.device_type]['error'] += 1
+            print(f'❌ 设备 {device.device_id} 规则生成失败: {str(e)}')
+            continue
 
-if __name__ == '__main__':
-    generate_butterfly_valve_rules()
+# 打印统计信息
+print('\n' + '=' * 80)
+print('规则生成统计')
+print('=' * 80)
+print(f'总设备数: {stats["total"]}')
+print(f'成功生成: {stats["success"]}')
+print(f'失败: {stats["error"]}')
+
+print('\n按设备类型统计:')
+for device_type, counts in sorted(stats['by_type'].items()):
+    print(f'  {device_type}:')
+    print(f'    成功: {counts["success"]}')
+    if counts['error'] > 0:
+        print(f'    失败: {counts["error"]}')
+
+print('\n' + '=' * 80)
+print('✅ 步骤3完成！所有蝶阀设备已导入并生成规则')
+print('=' * 80)
+
+# 验证结果
+print('\n验证导入结果...')
+with db_manager.session_scope() as session:
+    # 查询示例设备
+    sample_device = session.query(Device).filter(
+        Device.device_type == '蝶阀'
+    ).first()
+    
+    if sample_device:
+        print(f'\n示例设备:')
+        print(f'  设备ID: {sample_device.device_id}')
+        print(f'  设备名称: {sample_device.device_name}')
+        print(f'  规格型号: {sample_device.spec_model}')
+        print(f'  设备类型: {sample_device.device_type}')
+        print(f'  参数数量: {len(sample_device.key_params) if sample_device.key_params else 0}')
+        
+        if sample_device.key_params:
+            print(f'  参数列表: {list(sample_device.key_params.keys())}')
+        
+        # 查询规则
+        rule = session.query(RuleModel).filter(
+            RuleModel.target_device_id == sample_device.device_id
+        ).first()
+        
+        if rule:
+            print(f'\n规则信息:')
+            print(f'  规则ID: {rule.rule_id}')
+            print(f'  特征数量: {len(rule.auto_extracted_features)}')
+            print(f'  匹配阈值: {rule.match_threshold}')
+        else:
+            print(f'\n⚠️ 规则不存在')
+
+print('\n' + '=' * 80)
+print('🎉 蝶阀设备导入完成！')
+print('=' * 80)

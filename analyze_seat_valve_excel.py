@@ -1,78 +1,87 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""分析座阀Excel文件的设备类型和参数"""
+"""分析座阀Excel文件 - Step 0: 必须先运行！"""
 
-from openpyxl import load_workbook
+import openpyxl
+from collections import defaultdict
 
-def analyze_excel():
-    wb = load_workbook('data/霍尼韦尔座阀设备清单_v2.xlsx')
-    ws = wb.active
+excel_file = 'data/座阀/座阀价格表_清洗后.xlsx'
+wb = openpyxl.load_workbook(excel_file)
+ws = wb.active
+
+# 读取表头
+headers = []
+for cell in ws[1]:
+    if cell.value:
+        headers.append(cell.value.strip())
+
+print('=' * 80)
+print('座阀Excel数据分析 - 用于生成配置')
+print('=' * 80)
+print(f'\n表头: {headers}')
+
+# 按设备类型分组
+device_types = defaultdict(lambda: {'count': 0, 'param_sets': [], 'samples': []})
+
+for row_idx in range(2, ws.max_row + 1):
+    device_type_cell = ws.cell(row=row_idx, column=headers.index('设备类型')+1)
+    device_type = device_type_cell.value
     
-    # 获取表头
-    headers = [cell.value for cell in ws[1]]
-    print("="*60)
-    print("Excel表头:")
-    print("="*60)
-    for i, header in enumerate(headers, 1):
-        print(f"{i}. {header}")
-    
-    # 标准字段（前5列）
-    standard_fields = headers[:5]
-    # 参数字段（第6列起）
-    param_fields = headers[5:]
-    
-    print(f"\n{'='*60}")
-    print("标准字段（前5列）:")
-    print(f"{'='*60}")
-    for field in standard_fields:
-        print(f"  - {field}")
-    
-    print(f"\n{'='*60}")
-    print(f"参数字段（第6列起，共{len(param_fields)}个）:")
-    print(f"{'='*60}")
-    for field in param_fields:
-        print(f"  - {field}")
-    
-    # 统计设备类型
-    device_types = {}
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        dtype = row[1]  # 设备类型列
-        if dtype:
-            device_types[dtype] = device_types.get(dtype, 0) + 1
-    
-    print(f"\n{'='*60}")
-    print("设备类型统计:")
-    print(f"{'='*60}")
-    for dtype, count in sorted(device_types.items()):
-        print(f"  {dtype}: {count}个")
-    
-    # 分析每个设备类型的参数使用情况
-    print(f"\n{'='*60}")
-    print("各设备类型的参数使用情况:")
-    print(f"{'='*60}")
-    
-    device_type_params = {}
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        dtype = row[1]
-        if not dtype:
-            continue
+    if device_type:
+        device_type = device_type.strip()
+        device_types[device_type]['count'] += 1
         
-        if dtype not in device_type_params:
-            device_type_params[dtype] = {param: 0 for param in param_fields}
+        # 获取型号和说明
+        model = ws.cell(row=row_idx, column=headers.index('型号')+1).value
+        description = ws.cell(row=row_idx, column=headers.index('说明')+1).value
         
-        # 统计每个参数的使用次数
-        for i, param in enumerate(param_fields, start=5):
-            if row[i]:  # 如果参数有值
-                device_type_params[dtype][param] += 1
-    
-    for dtype in sorted(device_type_params.keys()):
-        print(f"\n{dtype}:")
-        params = device_type_params[dtype]
-        total_devices = device_types[dtype]
-        for param, count in sorted(params.items(), key=lambda x: -x[1]):
-            if count > 0:
-                percentage = (count / total_devices) * 100
-                print(f"  - {param}: {count}/{total_devices} ({percentage:.1f}%)")
+        # 保存样本（前3个）
+        if len(device_types[device_type]['samples']) < 3:
+            device_types[device_type]['samples'].append({
+                'model': model,
+                'description': description
+            })
+        
+        # 解析说明字段中的参数
+        if description:
+            params = description.split('，')
+            param_names = []
+            for param in params:
+                if '：' in param:
+                    key = param.split('：')[0].strip()
+                    param_names.append(key)
+            device_types[device_type]['param_sets'].append(param_names)
 
-if __name__ == '__main__':
-    analyze_excel()
+wb.close()
+
+# 显示分析结果
+print(f'\n总行数: {ws.max_row - 1}')
+print(f'设备类型数量: {len(device_types)}')
+
+for device_type, data in sorted(device_types.items()):
+    # 统计所有参数
+    all_params = set()
+    for param_set in data['param_sets']:
+        all_params.update(param_set)
+    
+    print(f'\n{"=" * 80}')
+    print(f'设备类型: {device_type}')
+    print(f'数量: {data["count"]} 个')
+    print(f'参数数量: {len(all_params)} 个')
+    
+    # 显示样本
+    print(f'\n样本数据:')
+    for i, sample in enumerate(data['samples'], 1):
+        print(f'  {i}. 型号: {sample["model"]}')
+        print(f'     说明: {sample["description"][:100]}...' if len(sample["description"]) > 100 else f'     说明: {sample["description"]}')
+    
+    # 显示参数列表（用于配置脚本）
+    print(f'\n参数列表（复制到配置脚本）:')
+    print("'params': [")
+    for param in sorted(all_params):
+        print(f"    {{'name': '{param}', 'type': 'string', 'required': False}},")
+    print("]")
+
+print('\n' + '=' * 80)
+print('分析完成！请将上面的参数列表复制到 add_seat_valve_device_params.py 中')
+print('=' * 80)

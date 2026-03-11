@@ -1,0 +1,51 @@
+以下霍尼韦尔暖通FCU设备数据的格式为【设备型号 说明】
+设备型号	说明
+ VS92C15PP 	
+ VS92C15PT 	
+ VS92C15NT 	
+ VS92C20PP 	
+ VS92C20PT 	
+ VS92C20NT 	
+ VS92C25PP 	
+ VS92C25PT 	
+ VS92C25NT 	
+ VS93C15PP 	
+ VS93C15PT 	
+ VS93C15NT 	
+ VS93C20PP 	
+ VS93C20PT 	
+ VS93C20NT 	
+ VS93C25PP 	
+ VS93C25PT 	
+ VS93C25NT 	
+VN82C15NT	FCU Ball valve, 220VAC, 2 way, DN15, NPT
+VN82C15PP	FCU Ball valve, 220VAC, 2 way, DN15, BSPP
+VN82C15PT	FCU Ball valve, 220VAC, 2 way, DN15, BSPT
+VN82C20NT	FCU Ball valve, 220VAC, 2 way, DN20, NPT
+ VN82C20PP 	 FCU Ball valve, 220VAC, 2 way, DN20, BSPP 
+VN82C20PT	FCU Ball valve, 220VAC, 2 way, DN20, BSPT
+VN82C25NT	FCU Ball valve, 220VAC, 2 way, DN25, NPT
+VN82C25PP	FCU Ball valve, 220VAC, 2 way, DN25, BSPP
+VN82C25PT	FCU Ball valve, 220VAC, 2 way, DN25, BSPT
+VN82C32NT	FCU Ball valve, 220VAC, 2 way, DN32, NPT
+VN82C32PP	FCU Ball valve, 220VAC, 2 way, DN32, BSPP
+VN82C32PT	FCU Ball valve, 220VAC, 2 way, DN32, BSPT
+VN83C15NT	FCU Ball valve, 220VAC, 3 way, DN15, NPT
+VN83C15PP	FCU Ball valve, 220VAC, 3 way, DN15, BSPP
+VN83C15PT	FCU Ball valve, 220VAC, 3 way, DN15, BSPT
+VN83C20NT	FCU Ball valve, 220VAC, 3 way, DN20, NPT
+VN83C20PP	FCU Ball valve, 220VAC, 3 way, DN20, BSPP
+VN83C20PT	FCU Ball valve, 220VAC, 3 way, DN20, BSPT
+VN83C25NT	FCU Ball valve, 220VAC, 3 way, DN25, NPT
+VN83C25PP	FCU Ball valve, 220VAC, 3 way, DN25, BSPP
+VN83C25PT	FCU Ball valve, 220VAC, 3 way, DN25, BSPT
+VN83C32NT	FCU Ball valve, 220VAC, 3 way, DN32, NPT
+VN83C32PP	FCU Ball valve, 220VAC, 3 way, DN32, BSPP
+VN83C32PT	FCU Ball valve, 220VAC, 3 way, DN32, BSPT
+
+需要根据型号展示该设备的参数，不需要再显示型号。
+【说明】可以作为参考，但是不要照抄，还要补充实用额外参数。
+每个设备的参数写一行，格式为参数名称：参数值。
+需要展示设备类型：FCU阀门、支持的功能等，还要展示各个型号之间的区别。
+每个参数之间以逗号结束。如果一个参数有多个值，中间用"/"连接，尽量详细。
+严格按照我提供的设备的顺序生成，不要去重，不要遗漏。

@@ -19,17 +19,28 @@ logger = logging.getLogger(__name__)
 class DeviceTypeRecognizer:
     """设备类型识别器"""
     
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: Dict[str, Any], full_config: Optional[Dict[str, Any]] = None):
         """
         初始化识别器
         
         Args:
-            config: 配置字典，包含device_types, prefix_keywords, main_types
+            config: 设备类型识别配置，包含device_types, prefix_keywords, main_types
+            full_config: 完整配置（可选），用于初始化文本预处理器
         """
         self.config = config
         self.device_types = config.get('device_types', [])
         self.prefix_keywords = config.get('prefix_keywords', {})
         self.main_types = config.get('main_types', {})
+        
+        # 初始化文本预处理器（如果提供了完整配置）
+        self.preprocessor = None
+        if full_config:
+            try:
+                from modules.text_preprocessor import TextPreprocessor
+                self.preprocessor = TextPreprocessor(full_config)
+                logger.info("文本预处理器初始化成功")
+            except Exception as e:
+                logger.warning(f"文本预处理器初始化失败: {e}，将不进行文本归一化")
         
         # 预编译正则模式
         self.patterns = self._build_patterns()
@@ -49,17 +60,18 @@ class DeviceTypeRecognizer:
             pattern = re.escape(device_type)
             patterns['exact'].append((re.compile(pattern), device_type, 1.0))
         
-        # 模糊匹配模式（前缀+类型）
+        # 模糊匹配模式（完整设备类型）
+        # 注意：prefix_keywords 中的 types 现在是完整的设备类型列表
         for prefix, types in self.prefix_keywords.items():
             for dtype in types:
-                # CO.*?探测器
-                pattern = f"{re.escape(prefix)}.*?{re.escape(dtype)}"
-                patterns['fuzzy'].append((re.compile(pattern), f"{prefix}{dtype}", 0.9))
+                # dtype 已经是完整类型（如"压力传感器"），直接使用
+                pattern = re.escape(dtype)
+                patterns['fuzzy'].append((re.compile(pattern), dtype, 0.9))
         
-        # 关键词匹配模式
+        # 关键词匹配模式（完整设备类型）
         for prefix, types in self.prefix_keywords.items():
             for dtype in types:
-                # 分别匹配前缀和类型
+                # dtype 已经是完整类型，直接使用
                 patterns['keyword'].append((prefix, dtype, 0.8))
         
         return patterns
@@ -83,26 +95,36 @@ class DeviceTypeRecognizer:
                 mode="none"
             )
         
+        # 应用文本归一化（如果预处理器可用）
+        normalized_text = text
+        if self.preprocessor:
+            try:
+                normalized_text = self.preprocessor.normalize_text(text, mode='matching')
+                logger.debug(f"文本归一化: '{text}' -> '{normalized_text}'")
+            except Exception as e:
+                logger.warning(f"文本归一化失败: {e}，使用原始文本")
+                normalized_text = text
+        
         # 1. 精确匹配
-        result = self._exact_match(text)
+        result = self._exact_match(normalized_text)
         if result and result.confidence >= 0.95:
             logger.debug(f"精确匹配成功：{result.sub_type}")
             return result
         
         # 2. 模糊匹配
-        result = self._fuzzy_match(text)
+        result = self._fuzzy_match(normalized_text)
         if result and result.confidence >= 0.85:
             logger.debug(f"模糊匹配成功：{result.sub_type}")
             return result
         
         # 3. 关键词匹配
-        result = self._keyword_match(text)
+        result = self._keyword_match(normalized_text)
         if result and result.confidence >= 0.75:
             logger.debug(f"关键词匹配成功：{result.sub_type}")
             return result
         
         # 4. 类型推断
-        result = self._type_inference(text)
+        result = self._type_inference(normalized_text)
         logger.debug(f"类型推断结果：{result.sub_type if result else '未知'}")
         return result if result else DeviceTypeInfo(
             main_type="未知",
@@ -141,32 +163,32 @@ class DeviceTypeRecognizer:
         return None
     
     def _keyword_match(self, text: str) -> Optional[DeviceTypeInfo]:
-        """关键词匹配：前缀和类型分别匹配"""
+        """关键词匹配：直接匹配完整设备类型"""
         for prefix, dtype, confidence in self.patterns['keyword']:
-            if prefix in text and dtype in text:
-                device_type = f"{prefix}{dtype}"
+            # dtype 已经是完整类型（如"压力传感器"），直接匹配
+            if dtype in text:
                 main_type = self._extract_main_type(dtype)
                 return DeviceTypeInfo(
                     main_type=main_type,
-                    sub_type=device_type,
-                    keywords=[prefix, dtype],
+                    sub_type=dtype,
+                    keywords=[dtype],
                     confidence=confidence,
                     mode='keyword'
                 )
         return None
     
     def _type_inference(self, text: str) -> Optional[DeviceTypeInfo]:
-        """类型推断：根据前缀词推断类型"""
+        """类型推断：根据前缀词推断完整设备类型"""
         for prefix, types in self.prefix_keywords.items():
             if prefix in text:
                 # 选择第一个类型作为推断结果
+                # types 中的每个元素已经是完整类型（如"压力传感器"）
                 if types:
                     dtype = types[0]
-                    device_type = f"{prefix}{dtype}"
                     main_type = self._extract_main_type(dtype)
                     return DeviceTypeInfo(
                         main_type=main_type,
-                        sub_type=device_type,
+                        sub_type=dtype,
                         keywords=[prefix],
                         confidence=0.7,
                         mode='inference'

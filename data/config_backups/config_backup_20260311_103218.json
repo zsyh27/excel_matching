@@ -1,0 +1,914 @@
+{
+  "brand_keywords": [
+    "霍尼韦尔",
+    "西门子",
+    "江森自控",
+    "施耐德",
+    "通用品牌"
+  ],
+  "default_feature_weights": {
+    "brand": 0.3,
+    "detailed_params": 0.2,
+    "device_name": 0.3,
+    "spec_model": 0.2
+  },
+  "default_match_threshold": {
+    "value": 0.6
+  },
+  "device_params": {
+    "brands": {
+      "ABB": {
+        "keywords": [
+          "ABB",
+          "abb"
+        ]
+      },
+      "三菱": {
+        "keywords": [
+          "三菱",
+          "MITSUBISHI",
+          "mitsubishi",
+          "Mitsubishi"
+        ]
+      },
+      "丹佛斯": {
+        "keywords": [
+          "丹佛斯",
+          "DANFOSS",
+          "danfoss",
+          "Danfoss"
+        ]
+      },
+      "台达": {
+        "keywords": [
+          "台达",
+          "DELTA",
+          "delta",
+          "Delta"
+        ]
+      },
+      "和利时": {
+        "keywords": [
+          "和利时",
+          "HOLLYSYS",
+          "hollysys",
+          "Hollysys"
+        ]
+      },
+      "富士": {
+        "keywords": [
+          "富士",
+          "FUJI",
+          "fuji",
+          "Fuji"
+        ]
+      },
+      "施耐德": {
+        "keywords": [
+          "施耐德",
+          "SCHNEIDER",
+          "schneider",
+          "Schneider"
+        ]
+      },
+      "欧姆龙": {
+        "keywords": [
+          "欧姆龙",
+          "OMRON",
+          "omron",
+          "Omron"
+        ]
+      },
+      "江森自控": {
+        "keywords": [
+          "江森自控",
+          "江森",
+          "JOHNSON",
+          "johnson",
+          "Johnson",
+          "JCI"
+        ]
+      },
+      "海林": {
+        "keywords": [
+          "海林",
+          "HAILIN",
+          "hailin",
+          "Hailin"
+        ]
+      },
+      "艾默生": {
+        "keywords": [
+          "艾默生",
+          "EMERSON",
+          "emerson",
+          "Emerson"
+        ]
+      },
+      "西门子": {
+        "keywords": [
+          "西门子",
+          "SIEMENS",
+          "siemens",
+          "Siemens"
+        ]
+      },
+      "贝尔莫": {
+        "keywords": [
+          "贝尔莫",
+          "BELIMO",
+          "belimo",
+          "Belimo"
+        ]
+      },
+      "霍尼韦尔": {
+        "keywords": [
+          "霍尼韦尔",
+          "HONEYWELL",
+          "honeywell",
+          "Honeywell"
+        ]
+      }
+    },
+    "device_types": {},
+    "model_patterns": [
+      {
+        "pattern": "[A-Z]{2,}[0-9]{3,}"
+      },
+      {
+        "pattern": "[A-Z]+-[0-9]+"
+      },
+      {
+        "pattern": "[A-Z]+[0-9]+[A-Z]*"
+      },
+      {
+        "pattern": "[A-Z]{2,}[0-9]{2,}[A-Z]{1,}"
+      },
+      {
+        "pattern": "[A-Z]+[0-9]+-[A-Z0-9]+"
+      },
+      {
+        "pattern": "[0-9]{3,}[A-Z]{2,}"
+      },
+      {
+        "pattern": "[A-Z]{2,}_[0-9]+"
+      }
+    ]
+  },
+  "device_params_config": {
+    "device_params_config": {
+      "CO2传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "CO2",
+              "二氧化碳",
+              "温度+湿度+二氧化碳",
+              "温度+湿度+二氧化碳+PM2.5"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "options": [
+              "0-2000ppm",
+              "0-5000ppm"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V",
+              "4-20mA/0-10V/2-10V",
+              "Modbus"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "通道数",
+            "options": [
+              "单通道",
+              "双通道"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "options": [
+              "带显示",
+              "无显示"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板颜色",
+            "options": [
+              "黑色",
+              "白色"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电源",
+            "options": [
+              "24VDC"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "CO传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "CO",
+              "一氧化碳"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "options": [
+              "0-100ppm",
+              "0-200ppm",
+              "0-500ppm",
+              "0-1000ppm"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V",
+              "4-20mA/0-10V/2-10V"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "options": [
+              "带显示",
+              "无显示"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "继电器",
+            "options": [
+              "有继电器",
+              "无继电器"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "温度传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "温度"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "安装位置",
+            "options": [
+              "室内墙装",
+              "风管",
+              "室外"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度信号类型",
+            "options": [
+              "NTC 10K",
+              "NTC 20K",
+              "Pt1000",
+              "电子式"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": "-20~60℃",
+            "name": "温度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "温湿度传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "温度+湿度"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "安装位置",
+            "options": [
+              "室内墙装",
+              "风管",
+              "室外"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度信号类型",
+            "options": [
+              "NTC 10K",
+              "NTC 20K",
+              "Pt1000",
+              "电子式"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度信号类型",
+            "options": [
+              "4-20mA",
+              "0-10V"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度精度",
+            "options": [
+              "±2%",
+              "±3%",
+              "±5%"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": "-20~60℃",
+            "name": "温度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": "0-100%RH",
+            "name": "湿度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "空气质量传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "CO2+PM2.5+温度+湿度",
+              "多参数"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "options": [
+              "带显示屏",
+              "无显示"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示状态",
+            "options": [
+              "长暗",
+              "常亮",
+              "靠近点亮"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板颜色",
+            "options": [
+              "黑色",
+              "白色"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电源",
+            "options": [
+              "24VDC"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  },
+  "device_row_recognition": {
+    "industry_keywords": {
+      "brands": [
+        "霍尼韦尔",
+        "西门子",
+        "江森自控",
+        "施耐德",
+        "明纬",
+        "欧姆龙",
+        "ABB",
+        "丹佛斯",
+        "贝尔莫",
+        "Honeywell",
+        "Siemens",
+        "Johnson",
+        "Schneider",
+        "OMRON",
+        "Danfoss",
+        "Belimo",
+        "Delta",
+        "台达",
+        "正泰",
+        "德力西"
+      ],
+      "device_types": [
+        "传感器",
+        "控制器",
+        "DDC",
+        "阀门",
+        "执行器",
+        "控制柜",
+        "电源",
+        "继电器",
+        "网关",
+        "模块",
+        "探测器",
+        "开关",
+        "变送器",
+        "温控器",
+        "风阀",
+        "水阀",
+        "电动阀",
+        "调节阀",
+        "压力传感器",
+        "温度传感器",
+        "湿度传感器",
+        "CO2传感器",
+        "流量计",
+        "压差开关",
+        "液位开关",
+        "风机",
+        "水泵"
+      ],
+      "model_patterns": [
+        "[A-Z]{2,}-[A-Z0-9]+",
+        "[A-Z]+\\d{3,}",
+        "\\d{4}[A-Z]+",
+        "[A-Z]+-\\d+"
+      ],
+      "parameters": [
+        "PPM",
+        "ppm",
+        "℃",
+        "摄氏度",
+        "Pa",
+        "pa",
+        "%RH",
+        "%rh",
+        "m/s",
+        "MPa",
+        "mA",
+        "4-20mA",
+        "0-10V",
+        "2-10V",
+        "AC220V",
+        "DC24V",
+        "DN",
+        "dn",
+        "AI",
+        "AO",
+        "DI",
+        "DO",
+        "点位",
+        "通道",
+        "路",
+        "个",
+        "V",
+        "A",
+        "W",
+        "Hz",
+        "kW",
+        "kg",
+        "mm",
+        "cm",
+        "m"
+      ]
+    },
+    "probability_thresholds": {
+      "high": 50,
+      "medium": 30
+    },
+    "scoring_weights": {
+      "data_type": 0.3,
+      "industry": 0.35,
+      "structure": 0.35
+    }
+  },
+  "device_type_keywords": [
+    "CO2传感器",
+    "CO传感器",
+    "DDC",
+    "PM传感器",
+    "传感器",
+    "压差开关",
+    "变送器",
+    "座阀",
+    "开关",
+    "执行器",
+    "探测器",
+    "控制器",
+    "控制柜",
+    "模块",
+    "水泵",
+    "水阀",
+    "流量计",
+    "液位开关",
+    "温度传感器",
+    "温控器",
+    "温湿度传感器",
+    "球阀",
+    "电动阀",
+    "电源",
+    "空气质量传感器",
+    "继电器",
+    "网关",
+    "蝶阀",
+    "调节阀",
+    "阀门",
+    "风机",
+    "风阀"
+  ],
+  "feature_extraction": {
+    "separator_processing": [],
+    "param_decompose": [],
+    "smart_split": [],
+    "unit_remove": []
+  },
+  "feature_quality": {
+    "quality_scoring": [],
+    "whitelist": []
+  },
+  "feature_quality_scoring": {
+    "enabled": false,
+    "scoring_rules": {
+      "min_length": 2,
+      "min_length_chinese": 1,
+      "quality_threshold": 0.5
+    }
+  },
+  "feature_split_chars": [
+    "+",
+    "|",
+    "；",
+    "\n"
+  ],
+  "feature_weight_config": {
+    "brand_weight": 10,
+    "device_type_weight": 20,
+    "key_params_weight": 15,
+    "model_weight": 5,
+    "parameter_weight": 1
+  },
+  "feature_weight_strategy": {
+    "brand_weight": 10,
+    "common_param_weight": 1,
+    "device_type_weight": 15,
+    "important_param_weight": 3,
+    "key_params_weight": 15,
+    "model_weight": 5
+  },
+  "feature_whitelist": [
+    "水",
+    "气",
+    "阀",
+    "泵",
+    "表",
+    "计",
+    "器"
+  ],
+  "global_config": {
+    "default_match_threshold": 5,
+    "fullwidth_to_halfwidth": true,
+    "min_feature_length": 1,
+    "min_feature_length_chinese": 1,
+    "remove_whitespace": true,
+    "unify_lowercase": true
+  },
+  "ignore_keywords": [
+    "施工要求",
+    "验收",
+    "图纸",
+    "规范",
+    "清单",
+    "调试",
+    "安装",
+    "含税",
+    "不含税",
+    "备注",
+    "说明",
+    "要求",
+    "标准",
+    "国标",
+    "进口",
+    "国产",
+    "品牌",
+    "厂家",
+    "供货",
+    "交货",
+    "质保",
+    "系列",
+    "传输",
+    "传输方式"
+  ],
+  "intelligent_splitting": {
+    "enabled": true,
+    "split_by_space": true,
+    "split_compound_words": true,
+    "split_technical_specs": true
+  },
+  "location_words": [
+    "室内",
+    "室外",
+    "管道",
+    "风管",
+    "水管",
+    "回风",
+    "送风",
+    "新风",
+    "排风"
+  ],
+  "match_threshold_config": {
+    "max_value": 0.95,
+    "min_value": 0.3,
+    "value": 0.6
+  },
+  "medium_keywords": [
+    "水",
+    "气",
+    "蒸汽",
+    "空气",
+    "氮气",
+    "油",
+    "气体",
+    "冷冻水",
+    "热水",
+    "烟气",
+    "粉尘"
+  ],
+  "metadata_keywords": [
+    "型号",
+    "通径",
+    "阀体类型",
+    "适用介质",
+    "品牌",
+    "规格",
+    "参数",
+    "名称",
+    "类型",
+    "尺寸",
+    "材质",
+    "范围",
+    "输出",
+    "输入",
+    "信号",
+    "接口",
+    "安装",
+    "防护",
+    "等级",
+    "规格参数",
+    "工作原理",
+    "量程",
+    "输出信号",
+    "精度",
+    "传输方式",
+    "介质"
+  ],
+  "normalization_map": [],
+  "performance_config": {
+    "match_timeout_seconds": 10,
+    "max_rows_per_file": 10000,
+    "parse_timeout_seconds": 5
+  },
+  "python_test_config": {
+    "test_enabled": false,
+    "test_value": 456
+  },
+  "synonym_map": {
+    "0-10v": [
+      "0-10伏",
+      "010v"
+    ],
+    "4-20ma": [
+      "4-20毫安",
+      "420ma"
+    ],
+    "co": "一氧化碳",
+    "co2": "二氧化碳",
+    "co2传感器": [
+      "co2探测器",
+      "二氧化碳传感器",
+      "二氧化碳探测器"
+    ],
+    "co传感器": [
+      "co探测器",
+      "一氧化碳传感器",
+      "一氧化碳探测器"
+    ],
+    "ntc": [
+      "ntc热敏电阻",
+      "负温度系数"
+    ],
+    "pm传感器": [
+      "pm10传感器",
+      "pm2.5传感器",
+      "颗粒物传感器"
+    ],
+    "pt1000": [
+      "pt1000铂电阻",
+      "铂电阻"
+    ],
+    "solenoid": "电磁阀",
+    "二通阀": "电动开关阀",
+    "减压": "减压阀",
+    "动态平衡阀": "平衡阀",
+    "单向阀": "止回阀",
+    "室内": [
+      "室内墙装",
+      "室内安装"
+    ],
+    "室外": [
+      "室外安装",
+      "户外"
+    ],
+    "平衡": "平衡阀",
+    "开关阀": "电动开关阀",
+    "截止阀": "手动球阀",
+    "手动阀": "手动球阀",
+    "止回": "止回阀",
+    "比例阀": "电动调节阀",
+    "泄压阀": "减压阀",
+    "温度传感器": [
+      "温度探头",
+      "温度探测器",
+      "温度检测器"
+    ],
+    "温湿度传感器": [
+      "温度湿度传感器",
+      "温湿度探头",
+      "温湿度探测器"
+    ],
+    "球阀": "电动球阀",
+    "电动二通阀": "电动开关阀",
+    "电动阀": "电动调节阀",
+    "电球阀": "电动球阀",
+    "电磁": "电磁阀",
+    "电蝶阀": "电动蝶阀",
+    "电调阀": "电动调节阀",
+    "空气质量传感器": [
+      "环境监测传感器",
+      "空气监测仪",
+      "空气质量检测仪"
+    ],
+    "蝶阀": "电动蝶阀",
+    "调压阀": "减压阀",
+    "调节阀": "电动调节阀",
+    "逆止阀": "止回阀",
+    "阀": "电动调节阀",
+    "阀门": "电动调节阀",
+    "静态平衡阀": "平衡阀",
+    "风管": [
+      "管道式",
+      "风管式"
+    ],
+    "风阀": "电动蝶阀"
+  },
+  "system_version": {
+    "version": "1.0.0"
+  },
+  "text_cleaning": {
+    "noise_patterns": [],
+    "metadata_rules": [],
+    "separator_mappings": []
+  },
+  "ui_config": {
+    "default_export_format": "xlsx",
+    "max_file_size_mb": 10,
+    "supported_formats": [
+      "xls",
+      "xlsm",
+      "xlsx"
+    ]
+  },
+  "unit_removal": {
+    "enabled": true,
+    "units": [
+      "ppm",
+      "ma",
+      "v",
+      "w",
+      "a",
+      "pa",
+      "hz",
+      "kw",
+      "kg",
+      "mm",
+      "cm",
+      "m",
+      "%rh",
+      "c",
+      "f"
+    ]
+  },
+  "whitelist_features": [
+    "0-10v",
+    "2-10v",
+    "4-20ma",
+    "co",
+    "co2",
+    "modbus",
+    "ntc",
+    "pm10",
+    "pm2.5",
+    "pt1000",
+    "一氧化碳",
+    "二氧化碳",
+    "单通道",
+    "双通道",
+    "墙装",
+    "室内",
+    "室外",
+    "带显示",
+    "无显示",
+    "显示屏",
+    "气",
+    "水",
+    "温度",
+    "湿度",
+    "电子式",
+    "白色",
+    "继电器",
+    "阀",
+    "霍尼韦尔",
+    "颗粒物",
+    "风管",
+    "黑色"
+  ]
+}

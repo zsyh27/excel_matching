@@ -1513,6 +1513,104 @@ def get_device_types_filter():
         return create_error_response('GET_DEVICE_TYPES_ERROR', '获取设备类型列表失败', {'error_detail': str(e)})
 
 
+@app.route('/api/devices/types-from-database', methods=['GET'])
+def get_device_types_from_database():
+    """
+    从数据库获取所有实际使用的设备类型（用于配置管理）
+    
+    返回数据库中实际存在的所有设备类型，用于配置管理页面的只读展示
+    
+    Response:
+        {
+            "success": true,
+            "data": {
+                "device_types": ["温度传感器", "压力传感器", ...],
+                "total_count": 70,
+                "categorized": {
+                    "传感器": ["温度传感器", "压力传感器", ...],
+                    "执行器": ["座阀调节型执行器", ...],
+                    ...
+                }
+            }
+        }
+    """
+    try:
+        # 检查缓存
+        cache_key = 'device_types_from_database'
+        if cache.is_valid(cache_key):
+            cached_data = cache.get(cache_key)
+            if cached_data:
+                logger.info("从缓存获取数据库设备类型列表")
+                return jsonify(cached_data), 200
+        
+        # 从数据库获取所有设备
+        all_devices = data_loader.get_all_devices()
+        
+        # 统计设备类型
+        device_type_counts = {}
+        for device_id, device in all_devices.items():
+            device_type = device.device_type
+            if device_type:
+                device_type_counts[device_type] = device_type_counts.get(device_type, 0) + 1
+        
+        # 按数量排序
+        sorted_types = sorted(device_type_counts.items(), key=lambda x: x[1], reverse=True)
+        device_types = [dt for dt, _ in sorted_types]
+        
+        # 按主类型分类
+        categorized = {}
+        
+        for device_type, count in sorted_types:
+            # 分类逻辑
+            category = None
+            if '传感器' in device_type and '+' not in device_type:
+                category = '传感器'
+            elif '变送器' in device_type and '+' not in device_type:
+                category = '变送器'
+            elif '探测器' in device_type and '+' not in device_type:
+                category = '探测器'
+            elif '执行器' in device_type and '+' not in device_type:
+                category = '执行器'
+            elif '控制器' in device_type and '+' not in device_type:
+                category = '控制器'
+            elif '流量计' in device_type and '+' not in device_type:
+                category = '流量计'
+            elif ('阀' in device_type or '阀门' in device_type) and '+' not in device_type and '执行器' not in device_type:
+                category = '阀门'
+            elif '+' in device_type:
+                category = '组合设备'
+            else:
+                category = '其他'
+            
+            # 只有当分类不存在时才创建
+            if category not in categorized:
+                categorized[category] = []
+            
+            categorized[category].append({'type': device_type, 'count': count})
+        
+        response_data = {
+            'success': True,
+            'data': {
+                'device_types': device_types,
+                'total_count': len(device_types),
+                'total_devices': len(all_devices),
+                'categorized': categorized,
+                'type_counts': device_type_counts
+            }
+        }
+        
+        # 缓存结果（10分钟）
+        cache.set(cache_key, response_data, ttl=600)
+        
+        logger.info(f"从数据库获取设备类型成功: {len(device_types)} 个类型, {len(all_devices)} 个设备")
+        return jsonify(response_data), 200
+        
+    except Exception as e:
+        logger.error(f"从数据库获取设备类型失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_DATABASE_TYPES_ERROR', '从数据库获取设备类型失败', {'error_detail': str(e)})
+
+
 @app.route('/api/devices/<device_id>/rule', methods=['PUT'])
 def update_device_rule(device_id):
     """
@@ -3621,12 +3719,20 @@ def save_config():
         
         if success:
             # 重新加载配置和组件
-            global config, preprocessor, match_engine, device_row_classifier
+            global config, preprocessor, match_engine, device_row_classifier, intelligent_extraction_api
             config = data_loader.load_config()
             preprocessor = TextPreprocessor(config)
             data_loader.preprocessor = preprocessor
             match_engine = MatchEngine(rules=rules, devices=devices, config=config)
             device_row_classifier = DeviceRowClassifier(config)
+            
+            # 重新初始化智能提取API（重要！）
+            try:
+                from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
+                intelligent_extraction_api = IntelligentExtractionAPI(config, data_loader)
+                logger.info("智能提取API已重新加载")
+            except Exception as api_error:
+                logger.error(f"智能提取API重新加载失败: {api_error}")
             
             return jsonify({'success': True, 'message': message}), 200
         else:
@@ -4497,6 +4603,199 @@ def get_regenerate_status():
         'progress': 100,
         'message': '规则生成已完成'
     }), 200
+
+
+# ==================== 智能提取 API ====================
+
+# 初始化智能提取API
+intelligent_extraction_api = None
+
+def init_intelligent_extraction_api():
+    """初始化智能提取API"""
+    global intelligent_extraction_api
+    try:
+        from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
+        config = data_loader.load_config()
+        intelligent_extraction_api = IntelligentExtractionAPI(config, data_loader)
+        logger.info("智能提取API初始化成功")
+    except Exception as e:
+        logger.error(f"智能提取API初始化失败: {e}")
+        logger.error(traceback.format_exc())
+
+# 在应用启动时初始化
+try:
+    init_intelligent_extraction_api()
+except Exception as e:
+    logger.error(f"智能提取API初始化异常: {e}")
+
+
+@app.route('/api/intelligent-extraction/extract', methods=['POST'])
+def intelligent_extract():
+    """
+    提取设备信息
+    
+    Request:
+        {
+            "text": "CO浓度探测器 量程0~250ppm 输出4~20mA 精度±5%"
+        }
+    
+    Response:
+        {
+            "success": true,
+            "data": {
+                "device_type": {...},
+                "parameters": {...},
+                "auxiliary": {...}
+            }
+        }
+    """
+    try:
+        if not intelligent_extraction_api:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'SERVICE_UNAVAILABLE',
+                    'message': '智能提取服务未初始化'
+                }
+            }), 503
+        
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'MISSING_TEXT',
+                    'message': '请求中缺少 text 参数'
+                }
+            }), 400
+        
+        text = data.get('text', '')
+        result = intelligent_extraction_api.extract(text)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"智能提取失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': {
+                'code': 'EXTRACTION_ERROR',
+                'message': str(e)
+            }
+        }), 500
+
+
+@app.route('/api/intelligent-extraction/match', methods=['POST'])
+def intelligent_match():
+    """
+    智能匹配设备
+    
+    Request:
+        {
+            "text": "温度传感器 量程-20~60℃",
+            "top_k": 5
+        }
+    
+    Response:
+        {
+            "success": true,
+            "data": {
+                "candidates": [...]
+            }
+        }
+    """
+    try:
+        if not intelligent_extraction_api:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'SERVICE_UNAVAILABLE',
+                    'message': '智能提取服务未初始化'
+                }
+            }), 503
+        
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'MISSING_TEXT',
+                    'message': '请求中缺少 text 参数'
+                }
+            }), 400
+        
+        text = data.get('text', '')
+        top_k = data.get('top_k', 5)
+        result = intelligent_extraction_api.match(text, top_k)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"智能匹配失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': {
+                'code': 'MATCHING_ERROR',
+                'message': str(e)
+            }
+        }), 500
+
+
+@app.route('/api/intelligent-extraction/preview', methods=['POST'])
+def intelligent_preview():
+    """
+    五步流程预览
+    
+    Request:
+        {
+            "text": "CO浓度探测器 量程0~250ppm"
+        }
+    
+    Response:
+        {
+            "success": true,
+            "data": {
+                "step1_device_type": {...},
+                "step2_parameters": {...},
+                "step3_auxiliary": {...},
+                "step4_matching": {...},
+                "step5_ui_preview": {...},
+                "debug_info": {...}
+            }
+        }
+    """
+    try:
+        if not intelligent_extraction_api:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'SERVICE_UNAVAILABLE',
+                    'message': '智能提取服务未初始化'
+                }
+            }), 503
+        
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'MISSING_TEXT',
+                    'message': '请求中缺少 text 参数'
+                }
+            }), 400
+        
+        text = data.get('text', '')
+        result = intelligent_extraction_api.preview(text)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"预览失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': {
+                'code': 'PREVIEW_ERROR',
+                'message': str(e)
+            }
+        }), 500
+
 
 if __name__ == '__main__':
     logger.info("启动 Flask 应用...")

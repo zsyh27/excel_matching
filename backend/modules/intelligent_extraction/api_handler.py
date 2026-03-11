@@ -28,15 +28,21 @@ class IntelligentExtractionAPI:
             config: 完整配置
             device_loader: 设备数据加载器
         """
-        extraction_config = config.get('extraction_rules', {})
-        matching_config = config.get('matching_rules', {})
+        # 使用正确的配置路径
+        ie_config = config.get('intelligent_extraction', {})
+        device_type_config = ie_config.get('device_type_recognition', {})
+        parameter_config = ie_config.get('parameter_extraction', {})
         
-        self.device_recognizer = DeviceTypeRecognizer(extraction_config.get('device_type', {}))
-        self.parameter_extractor = ParameterExtractor(extraction_config.get('parameters', {}))
-        self.auxiliary_extractor = AuxiliaryExtractor(extraction_config.get('auxiliary', {}))
-        self.matcher = IntelligentMatcher(matching_config, device_loader)
+        # 初始化各个组件
+        # 注意：传递完整配置给识别器，以便初始化文本预处理器
+        self.device_recognizer = DeviceTypeRecognizer(device_type_config, full_config=config)
+        self.parameter_extractor = ParameterExtractor(parameter_config)
+        self.auxiliary_extractor = AuxiliaryExtractor({})  # 辅助信息提取器暂时使用空配置
         
-        logger.info("智能提取API初始化完成")
+        # 初始化匹配器（使用完整配置）
+        self.matcher = IntelligentMatcher(config, device_loader)
+        
+        logger.info(f"智能提取API初始化完成 - 设备类型数: {len(device_type_config.get('device_types', []))}")
     
     def extract(self, text: str) -> Dict[str, Any]:
         """

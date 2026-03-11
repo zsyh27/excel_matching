@@ -128,11 +128,18 @@
       <!-- 隐藏设备ID列 -->
       <!-- <el-table-column prop="device_id" label="设备ID" width="120" sortable /> -->
       <el-table-column prop="brand" label="品牌" width="120" sortable />
-      <el-table-column prop="device_type" label="设备类型" width="140" sortable>
+      <el-table-column prop="device_type" label="设备类型" min-width="200" sortable>
         <template #default="{ row }">
-          <el-tag v-if="row.device_type" type="info" size="small">
-            {{ row.device_type }}
-          </el-tag>
+          <el-tooltip 
+            v-if="row.device_type" 
+            :content="row.device_type" 
+            placement="top"
+            :disabled="row.device_type.length <= 20"
+          >
+            <el-tag type="info" size="small" class="device-type-tag">
+              {{ row.device_type.length > 20 ? row.device_type.substring(0, 20) + '...' : row.device_type }}
+            </el-tag>
+          </el-tooltip>
           <span v-else style="color: #909399">-</span>
         </template>
       </el-table-column>
@@ -618,5 +625,14 @@ onMounted(() => {
 .feature-tag {
   margin: 0;
   font-size: 12px;
+}
+
+.device-type-tag {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  cursor: pointer;
 }
 </style>
