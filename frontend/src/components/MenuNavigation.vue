@@ -23,7 +23,7 @@
       <transition name="slide">
         <div v-show="isStageExpanded(stage.id)" class="stage-items">
           <MenuItem
-            v-for="item in stage.items"
+            v-for="item in stage?.items || []"
             :key="item.id"
             :item="item"
             :active-item-id="menuState.activeItemId"
@@ -62,7 +62,14 @@ export default {
     return {
       menuStructure: MENU_STRUCTURE,
       // 从 MenuStateManager 加载初始状态
-      menuState: MenuStateManager.loadState() || MenuStateManager.getDefaultState()
+      menuState: (() => {
+        try {
+          return MenuStateManager.loadState() || MenuStateManager.getDefaultState()
+        } catch (error) {
+          console.error('Failed to load menu state:', error)
+          return MenuStateManager.getDefaultState()
+        }
+      })()
     };
   },
 

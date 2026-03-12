@@ -4797,6 +4797,78 @@ def intelligent_preview():
         }), 500
 
 
+@app.route('/api/intelligent-extraction/device-type/recognize', methods=['POST'])
+def recognize_device_type():
+    """
+    设备类型识别
+    
+    Request:
+        {
+            "text": "CO浓度探测器"
+        }
+    
+    Response:
+        {
+            "success": true,
+            "data": {
+                "main_type": "探测器",
+                "sub_type": "CO浓度探测器",
+                "keywords": ["CO", "浓度", "探测器"],
+                "confidence": 0.95,
+                "mode": "exact"
+            }
+        }
+    """
+    try:
+        if not intelligent_extraction_api:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'SERVICE_UNAVAILABLE',
+                    'message': '智能提取服务未初始化'
+                }
+            }), 503
+        
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({
+                'success': False,
+                'error': {
+                    'code': 'MISSING_TEXT',
+                    'message': '请求中缺少 text 参数'
+                }
+            }), 400
+        
+        text = data.get('text', '')
+        
+        # 调用设备类型识别器
+        device_type_info = intelligent_extraction_api.device_recognizer.recognize(text)
+        
+        # 转换为字典格式
+        result = {
+            'success': True,
+            'data': {
+                'main_type': device_type_info.main_type,
+                'sub_type': device_type_info.sub_type,
+                'keywords': device_type_info.keywords,
+                'confidence': device_type_info.confidence,
+                'mode': device_type_info.mode
+            }
+        }
+        
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"设备类型识别失败: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': {
+                'code': 'RECOGNITION_ERROR',
+                'message': str(e)
+            }
+        }), 500
+
+
 if __name__ == '__main__':
     logger.info("启动 Flask 应用...")
     app.run(host='0.0.0.0', port=5000, debug=True)

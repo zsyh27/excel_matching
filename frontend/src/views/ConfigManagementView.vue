@@ -54,196 +54,25 @@
       <!-- 右侧编辑区域 -->
       <div class="main-content">
         <div class="editor-container">
-          <!-- 根据activeTab显示不同的编辑器 -->
+              <!-- 错误边界 -->
+    <div v-if="componentError" class="error-boundary">
+      <div class="error-message">
+        <h3>⚠️ 组件加载错误</h3>
+        <p>{{ componentError }}</p>
+        <button @click="resetComponentError" class="btn btn-secondary">重试</button>
+      </div>
+    </div>
+
+    <!-- 根据activeTab显示不同的编辑器 -->
           <component 
             :is="currentEditor" 
+            :key="activeTab"
             :model-value="getEditorValue(activeTab)"
             :full-config="config"
             @change="handleConfigChange"
             @update-ignore-keywords="handleUpdateIgnoreKeywords"
             @update:model-value="handleEditorUpdate(activeTab, $event)"
           />
-        </div>
-
-        <!-- 实时预览区域 -->
-        <div class="preview-container">
-          <h3>
-            五步流程实时预览
-            <span v-if="testing" class="testing-indicator">分析中...</span>
-          </h3>
-          <div class="preview-input">
-            <input 
-              v-model="testText" 
-              type="text" 
-              placeholder="输入设备描述进行测试，例如：CO浓度探测器 量程0~250ppm 输出4~20mA 精度±5%"
-              @input="handleTestTextChange"
-              :disabled="testing"
-            />
-          </div>
-          <div v-if="previewResult" class="preview-result">
-            <!-- 步骤1：设备类型识别 -->
-            <div class="preview-section">
-              <h4>📋 步骤1：设备类型识别</h4>
-              <div class="preview-item">
-                <span class="label">识别结果:</span>
-                <span class="value">{{ previewResult.step1_device_type?.sub_type || '未识别' }}</span>
-              </div>
-              <div class="preview-item">
-                <span class="label">主类型:</span>
-                <span class="value">{{ previewResult.step1_device_type?.main_type || '未知' }}</span>
-              </div>
-              <div class="preview-item">
-                <span class="label">置信度:</span>
-                <span class="value">{{ ((previewResult.step1_device_type?.confidence || 0) * 100).toFixed(1) }}%</span>
-              </div>
-              <div class="preview-item">
-                <span class="label">识别模式:</span>
-                <span class="value">{{ getModeText(previewResult.step1_device_type?.mode) }}</span>
-              </div>
-              <div class="preview-item">
-                <span class="label">关键词:</span>
-                <span class="value">
-                  <span 
-                    v-for="(keyword, index) in (previewResult.step1_device_type?.keywords || [])" 
-                    :key="index"
-                    class="feature-tag"
-                  >
-                    {{ keyword }}
-                  </span>
-                  <span v-if="!(previewResult.step1_device_type?.keywords?.length)" class="no-data">无关键词</span>
-                </span>
-              </div>
-            </div>
-
-            <!-- 步骤2：技术参数提取 -->
-            <div class="preview-section">
-              <h4>🔧 步骤2：技术参数提取</h4>
-              <div class="preview-item">
-                <span class="label">量程参数:</span>
-                <span class="value">
-                  {{ previewResult.step2_parameters?.range?.value || '未提取' }}
-                  <span v-if="previewResult.step2_parameters?.range?.confidence" class="confidence">
-                    ({{ (previewResult.step2_parameters.range.confidence * 100).toFixed(1) }}%)
-                  </span>
-                </span>
-              </div>
-              <div class="preview-item">
-                <span class="label">输出信号:</span>
-                <span class="value">
-                  {{ previewResult.step2_parameters?.output?.value || '未提取' }}
-                  <span v-if="previewResult.step2_parameters?.output?.confidence" class="confidence">
-                    ({{ (previewResult.step2_parameters.output.confidence * 100).toFixed(1) }}%)
-                  </span>
-                </span>
-              </div>
-              <div class="preview-item">
-                <span class="label">精度参数:</span>
-                <span class="value">
-                  {{ previewResult.step2_parameters?.accuracy?.value || '未提取' }}
-                  <span v-if="previewResult.step2_parameters?.accuracy?.confidence" class="confidence">
-                    ({{ (previewResult.step2_parameters.accuracy.confidence * 100).toFixed(1) }}%)
-                  </span>
-                </span>
-              </div>
-              <div v-if="previewResult.step2_parameters?.specs?.length" class="preview-item">
-                <span class="label">规格参数:</span>
-                <span class="value">
-                  <span 
-                    v-for="(spec, index) in previewResult.step2_parameters.specs" 
-                    :key="index"
-                    class="feature-tag"
-                  >
-                    {{ spec }}
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            <!-- 步骤3：辅助信息提取 -->
-            <div class="preview-section">
-              <h4>ℹ️ 步骤3：辅助信息提取</h4>
-              <div class="preview-item">
-                <span class="label">品牌信息:</span>
-                <span class="value">{{ previewResult.step3_auxiliary?.brand || '未识别' }}</span>
-              </div>
-              <div class="preview-item">
-                <span class="label">适用介质:</span>
-                <span class="value">{{ previewResult.step3_auxiliary?.medium || '未识别' }}</span>
-              </div>
-              <div class="preview-item">
-                <span class="label">设备型号:</span>
-                <span class="value">{{ previewResult.step3_auxiliary?.model || '未识别' }}</span>
-              </div>
-            </div>
-
-            <!-- 步骤4：智能匹配评分 -->
-            <div class="preview-section">
-              <h4>🏆 步骤4：智能匹配评分</h4>
-              <div class="preview-item">
-                <span class="label">匹配状态:</span>
-                <span :class="['value', previewResult.step4_matching?.status === 'success' ? 'success' : 'failed']">
-                  {{ previewResult.step4_matching?.status === 'success' ? '成功' : '失败' }}
-                </span>
-              </div>
-              <div class="preview-item">
-                <span class="label">候选设备:</span>
-                <span class="value">{{ previewResult.step4_matching?.candidates?.length || 0 }} 个</span>
-              </div>
-              <div v-if="previewResult.step4_matching?.candidates?.length" class="preview-item">
-                <span class="label">最佳匹配:</span>
-                <span class="value">
-                  {{ previewResult.step4_matching.candidates[0]?.device_name || '无' }}
-                  ({{ previewResult.step4_matching.candidates[0]?.total_score?.toFixed(1) || 0 }}分)
-                </span>
-              </div>
-            </div>
-
-            <!-- 步骤5：用户界面展示 -->
-            <div class="preview-section">
-              <h4>🖥️ 步骤5：用户界面展示</h4>
-              <div class="preview-item">
-                <span class="label">默认选中:</span>
-                <span class="value">
-                  {{ getDefaultSelectedDevice()?.device_name || '无' }}
-                </span>
-              </div>
-              <div class="preview-item">
-                <span class="label">筛选选项:</span>
-                <span class="value">
-                  <span 
-                    v-for="(option, index) in (previewResult.step5_ui_preview?.filter_options || [])" 
-                    :key="index"
-                    class="feature-tag"
-                  >
-                    {{ option }}
-                  </span>
-                  <span v-if="!(previewResult.step5_ui_preview?.filter_options?.length)" class="no-data">无筛选选项</span>
-                </span>
-              </div>
-              <div class="preview-item">
-                <span class="label">显示格式:</span>
-                <span class="value">{{ previewResult.step5_ui_preview?.display_format || '未知' }}</span>
-              </div>
-            </div>
-
-            <!-- 性能统计 -->
-            <div class="preview-section">
-              <h4>⏱️ 性能统计</h4>
-              <div class="preview-item">
-                <span class="label">总处理时间:</span>
-                <span class="value">{{ previewResult.debug_info?.performance?.total_time_ms?.toFixed(2) || 0 }}ms</span>
-              </div>
-              <div class="preview-item">
-                <span class="label">各步骤耗时:</span>
-                <span class="value">
-                  步骤1: {{ previewResult.debug_info?.performance?.step1_time_ms?.toFixed(2) || 0 }}ms, 
-                  步骤2: {{ previewResult.debug_info?.performance?.step2_time_ms?.toFixed(2) || 0 }}ms, 
-                  步骤3: {{ previewResult.debug_info?.performance?.step3_time_ms?.toFixed(2) || 0 }}ms, 
-                  步骤4: {{ previewResult.debug_info?.performance?.step4_time_ms?.toFixed(2) || 0 }}ms
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -325,6 +154,18 @@ export default {
     AuxiliaryInfoEditor
   },
   setup() {
+    const componentError = ref(null)
+    
+    // 重置组件错误
+    const resetComponentError = () => {
+      componentError.value = null
+    }
+    
+    // 错误处理
+    const handleComponentError = (error) => {
+      console.error('Component error:', error)
+      componentError.value = error.message || '未知错误'
+    }
     // Load initial menu state from localStorage
     const initialState = MenuStateManager.loadState() || MenuStateManager.getDefaultState()
     
@@ -332,13 +173,10 @@ export default {
     const config = ref({})
     const originalConfig = ref({})
     const hasChanges = ref(false)
-    const testText = ref('')
-    const previewResult = ref(null)
     const showHistory = ref(false)
     const history = ref([])
     const fileInput = ref(null)
     const loading = ref(false)
-    const testing = ref(false)
     const regenerating = ref(false)
     const message = ref({ show: false, text: '', type: 'info' })
 
@@ -360,6 +198,9 @@ export default {
 
     // 当前编辑器组件
     const currentEditor = computed(() => {
+      // 添加activeTab依赖确保响应式更新
+      const tab = activeTab.value
+      if (!tab) return null
       const editorMap = {
         // Pre-entry Configuration
         'brand-keywords': 'BrandKeywordsEditor',
@@ -623,83 +464,6 @@ export default {
       handleConfigChange()
     }
 
-    // 测试文本变更处理（防抖）
-    let testTimeout = null
-    const handleTestTextChange = () => {
-      clearTimeout(testTimeout)
-      testTimeout = setTimeout(async () => {
-        if (testText.value.trim()) {
-          testing.value = true
-          try {
-            // 调用新的五步流程预览API
-            const response = await fetch('/api/intelligent-extraction/preview', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ text: testText.value })
-            })
-            
-            const result = await response.json()
-            
-            if (result.success && result.data) {
-              // 处理预览结果，添加时间信息
-              const data = result.data
-              const debugInfo = data.debug_info || {}
-              const performance = debugInfo.performance || {}
-              
-              previewResult.value = {
-                // 步骤1：设备类型识别
-                step1_device_type: data.step1_device_type || {},
-                
-                // 步骤2：技术参数提取
-                step2_parameters: data.step2_parameters || {},
-                
-                // 步骤3：辅助信息提取
-                step3_auxiliary: data.step3_auxiliary || {},
-                
-                // 步骤4：智能匹配评分
-                step4_matching: data.step4_matching || { status: 'no_match', candidates: [] },
-                
-                // 步骤5：用户界面展示
-                step5_ui_preview: data.step5_ui_preview || {},
-                
-                // 调试信息
-                debug_info: debugInfo
-              }
-            } else {
-              showMessage('测试失败: ' + (result.error?.message || '未知错误'), 'error')
-            }
-          } catch (error) {
-            console.error('测试失败:', error)
-            const errorMsg = error.message || '网络错误'
-            showMessage('测试失败: ' + errorMsg, 'error')
-          } finally {
-            testing.value = false
-          }
-        } else {
-          previewResult.value = null
-        }
-      }, 500)
-    }
-
-    // 辅助方法：获取识别模式文本
-    const getModeText = (mode) => {
-      switch (mode) {
-        case 'exact': return '精确匹配'
-        case 'fuzzy': return '模糊匹配'
-        case 'keyword': return '关键词匹配'
-        case 'inference': return '类型推断'
-        default: return '未知'
-      }
-    }
-
-    // 辅助方法：获取默认选中设备
-    const getDefaultSelectedDevice = () => {
-      if (!previewResult.value?.step4_matching?.candidates?.length) return null
-      return previewResult.value.step4_matching.candidates[0]
-    }
-
     // 保存配置
     const saving = ref(false)
     const handleSave = async () => {
@@ -841,6 +605,12 @@ export default {
 
     // 监听配置变化
     watch(config, handleConfigChange, { deep: true })
+    // 监听组件错误
+    watch(currentEditor, (newEditor) => {
+      if (newEditor) {
+        componentError.value = null
+      }
+    })
 
     // 键盘快捷键
     const handleKeyDown = (event) => {
@@ -876,8 +646,6 @@ export default {
       activeTab,
       config,
       hasChanges,
-      testText,
-      previewResult,
       showHistory,
       history,
       fileInput,
@@ -885,15 +653,16 @@ export default {
       currentEditor,
       loading,
       saving,
-      testing,
       regenerating,
       message,
+      componentError,
+      resetComponentError,
+      handleComponentError,
       handleMenuSelect,
       handleConfigChange,
       getEditorValue,
       handleEditorUpdate,
       handleUpdateIgnoreKeywords,
-      handleTestTextChange,
       handleSave,
       handleReset,
       handleExport,
@@ -901,9 +670,7 @@ export default {
       handleFileSelect,
       handleRollback,
       handleRegenerateRules,
-      formatTime,
-      getModeText,
-      getDefaultSelectedDevice
+      formatTime
     }
   }
 }
@@ -1000,104 +767,6 @@ export default {
 .editor-container :deep(.ignore-keywords-editor) {
   max-width: none !important;
   width: 100% !important;
-}
-
-.preview-container {
-  height: 300px;
-  border-top: 1px solid #e0e0e0;
-  padding: 20px;
-  background: #fafafa;
-  overflow-y: auto;
-}
-
-.preview-container h3 {
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.preview-input input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.preview-result {
-  margin-top: 15px;
-}
-
-.preview-section {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: white;
-  border-radius: 6px;
-  border-left: 4px solid #2196f3;
-}
-
-.preview-section h4 {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  color: #333;
-  font-weight: 600;
-}
-
-.preview-item {
-  display: flex;
-  margin-bottom: 8px;
-  font-size: 13px;
-  align-items: flex-start;
-}
-
-.preview-item .label {
-  width: 100px;
-  color: #666;
-  flex-shrink: 0;
-  font-weight: 500;
-}
-
-.preview-item .value {
-  flex: 1;
-  color: #333;
-  line-height: 1.4;
-}
-
-.preview-item .value.success {
-  color: #4caf50;
-  font-weight: bold;
-}
-
-.preview-item .value.failed {
-  color: #f44336;
-  font-weight: bold;
-}
-
-.feature-tag {
-  display: inline-block;
-  padding: 2px 8px;
-  margin-right: 5px;
-  margin-bottom: 3px;
-  background: #e3f2fd;
-  border-radius: 3px;
-  font-size: 12px;
-  color: #2196f3;
-  border: 1px solid #bbdefb;
-}
-
-.confidence {
-  font-size: 11px;
-  color: #999;
-  margin-left: 5px;
-}
-
-.no-data {
-  color: #999;
-  font-style: italic;
-  font-size: 12px;
 }
 
 /* 按钮样式 */
@@ -1404,15 +1073,33 @@ export default {
     padding: 8px 15px;
   }
 
-  .preview-container {
-    height: auto;
-    min-height: 200px;
-  }
-
   .message-toast {
     right: 10px;
     left: 10px;
     min-width: auto;
   }
+}
+
+/* 错误边界样式 */
+.error-boundary {
+  padding: 20px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  margin: 20px;
+}
+
+.error-message {
+  text-align: center;
+}
+
+.error-message h3 {
+  margin: 0 0 10px 0;
+  color: #856404;
+}
+
+.error-message p {
+  margin: 0 0 15px 0;
+  color: #856404;
 }
 </style>

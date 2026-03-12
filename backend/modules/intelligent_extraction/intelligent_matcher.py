@@ -378,33 +378,65 @@ class IntelligentMatcher:
         
         return score
     
-    def _ranges_exact_match(self, range_param: RangeParam, device_range: str) -> bool:
+    def _ranges_exact_match(self, range_param: RangeParam, device_range) -> bool:
         """量程精确匹配"""
         if not range_param or not device_range:
             return False
-        return range_param.value in device_range or device_range in range_param.value
+        
+        # 处理设备参数格式：{'value': 'xxx'} 或直接字符串
+        if isinstance(device_range, dict):
+            device_range_str = device_range.get('value', '')
+        else:
+            device_range_str = str(device_range)
+        
+        if not device_range_str:
+            return False
+            
+        return range_param.value in device_range_str or device_range_str in range_param.value
     
-    def _ranges_overlap(self, range_param: RangeParam, device_range: str) -> bool:
+    def _ranges_overlap(self, range_param: RangeParam, device_range) -> bool:
         """量程范围匹配"""
         if not self.fuzzy_config.get('range_overlap', True):
             return False
         
+        # 处理设备参数格式：{'value': 'xxx'} 或直接字符串
+        if isinstance(device_range, dict):
+            device_range_str = device_range.get('value', '')
+        else:
+            device_range_str = str(device_range)
+        
         # 简化实现：检查单位是否相同
         if range_param and range_param.normalized:
             unit = range_param.normalized.get('unit', '')
-            return unit in device_range
+            return unit in device_range_str
         return False
     
-    def _outputs_match(self, output_param: OutputParam, device_output: str) -> bool:
+    def _outputs_match(self, output_param: OutputParam, device_output) -> bool:
         """输出信号精确匹配"""
         if not output_param or not device_output:
             return False
-        return output_param.value in device_output or device_output in output_param.value
+        
+        # 处理设备参数格式：{'value': 'xxx'} 或直接字符串
+        if isinstance(device_output, dict):
+            device_output_str = device_output.get('value', '')
+        else:
+            device_output_str = str(device_output)
+        
+        if not device_output_str:
+            return False
+            
+        return output_param.value in device_output_str or device_output_str in output_param.value
     
-    def _outputs_equivalent(self, output_param: OutputParam, device_output: str) -> bool:
+    def _outputs_equivalent(self, output_param: OutputParam, device_output) -> bool:
         """输出信号等价匹配"""
         if not self.fuzzy_config.get('output_equivalence', True):
             return False
+        
+        # 处理设备参数格式：{'value': 'xxx'} 或直接字符串
+        if isinstance(device_output, dict):
+            device_output_str = device_output.get('value', '')
+        else:
+            device_output_str = str(device_output)
         
         # 模拟信号等价
         analog_signals = ['mA', 'V', 'VDC']
@@ -414,17 +446,23 @@ class IntelligentMatcher:
                 return any(sig in device_output for sig in analog_signals)
         return False
     
-    def _accuracy_match(self, accuracy_param: AccuracyParam, device_accuracy: str) -> bool:
+    def _accuracy_match(self, accuracy_param: AccuracyParam, device_accuracy) -> bool:
         """精度匹配（允许容差）"""
         if not accuracy_param or not device_accuracy:
             return False
+        
+        # 处理设备参数格式：{'value': 'xxx'} 或直接字符串
+        if isinstance(device_accuracy, dict):
+            device_accuracy_str = device_accuracy.get('value', '')
+        else:
+            device_accuracy_str = str(device_accuracy)
         
         tolerance = self.fuzzy_config.get('accuracy_tolerance', 0.2)
         
         # 简化实现：检查单位是否相同
         if accuracy_param.normalized:
             unit = accuracy_param.normalized.get('unit', '')
-            return unit in device_accuracy
+            return unit in device_accuracy_str
         return False
     
     def _mark_params(self, extraction: ExtractionResult, device: Dict) -> tuple:

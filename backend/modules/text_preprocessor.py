@@ -22,8 +22,7 @@ class PreprocessResult:
     normalized: str         # 归一化后的文本
     features: List[str]     # 提取的特征列表
     
-    # 新增详情字段（可选，用于可视化展示）
-    intelligent_cleaning_detail: Optional[Any] = None  # 智能清理详情
+    # 详情字段（可选，用于可视化展示）
     normalization_detail: Optional[Any] = None         # 归一化详情
     extraction_detail: Optional[Any] = None            # 特征提取详情
     
@@ -36,12 +35,6 @@ class PreprocessResult:
             'features': self.features
         }
         
-        # 添加详情字段（如果存在）
-        # 注意：字段名使用 intelligent_cleaning 而不是 intelligent_cleaning_detail
-        # 以匹配前端期望的字段名
-        if self.intelligent_cleaning_detail is not None:
-            result['intelligent_cleaning'] = self.intelligent_cleaning_detail.to_dict()
-        
         if self.normalization_detail is not None:
             result['normalization_detail'] = self.normalization_detail.to_dict()
         
@@ -53,7 +46,7 @@ class PreprocessResult:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'PreprocessResult':
         """从字典创建实例"""
-        from modules.match_detail import IntelligentCleaningDetail, NormalizationDetail, ExtractionDetail
+        from modules.match_detail import NormalizationDetail, ExtractionDetail
         
         # 基础字段
         result = cls(
@@ -64,9 +57,6 @@ class PreprocessResult:
         )
         
         # 详情字段（可选）
-        if 'intelligent_cleaning' in data:
-            result.intelligent_cleaning_detail = IntelligentCleaningDetail.from_dict(data['intelligent_cleaning'])
-        
         if 'normalization_detail' in data:
             result.normalization_detail = NormalizationDetail.from_dict(data['normalization_detail'])
         
@@ -111,10 +101,8 @@ class TextPreprocessor:
         self.device_type_keywords = config.get('device_type_keywords', [])
         self.medium_keywords = config.get('medium_keywords', [])  # 新增：介质关键词
         
-        # 加载智能提取配置
+        # 加载智能提取配置（仅用于特征质量评分和复杂参数分解）
         self.intelligent_extraction = config.get('intelligent_extraction', {})
-        self.text_cleaning_config = self.intelligent_extraction.get('text_cleaning', {})
-        self.metadata_label_patterns = self.intelligent_extraction.get('metadata_label_patterns', [])
         self.complex_param_config = self.intelligent_extraction.get('complex_parameter_decomposition', {})
         self.term_expansion = self.intelligent_extraction.get('technical_term_expansion', {})
         
@@ -181,26 +169,13 @@ class TextPreprocessor:
         """
         if not text or not isinstance(text, str):
             # 即使是空文本，也要创建完整的详情对象
-            from modules.match_detail import IntelligentCleaningDetail, NormalizationDetail, ExtractionDetail
+            from modules.match_detail import NormalizationDetail, ExtractionDetail
             
             empty_result = PreprocessResult(
                 original=text or "",
                 cleaned="",
                 normalized="",
                 features=[]
-            )
-            
-            # 创建空的详情对象
-            empty_result.intelligent_cleaning_detail = IntelligentCleaningDetail(
-                applied_rules=[],
-                truncation_matches=[],
-                noise_pattern_matches=[],
-                metadata_tag_matches=[],
-                original_length=0,
-                cleaned_length=0,
-                deleted_length=0,
-                before_text="",
-                after_text=""
             )
             
             empty_result.normalization_detail = NormalizationDetail(
@@ -225,20 +200,13 @@ class TextPreprocessor:
         # 保存真正的原始文本（在任何处理之前）
         original_text = text
         
-        # 步骤 1: 智能清理（如果启用）
-        # 智能清理现在包括：删除噪音 + 删除无关关键词 + 统一分隔符
-        intelligent_cleaning_detail = None
-        if self.intelligent_extraction.get('enabled', False):
-            text_before_cleaning = text
-            text, intelligent_cleaning_detail = self._intelligent_clean_with_detail(text, mode=mode)
-        
-        # 注意：删除无关关键词已经整合到智能清理中，不再单独执行
+        # 注意：智能清理功能已移除，现在直接进行归一化
         cleaned_text = text
         
-        # 步骤 2: 三层归一化（带详情记录）
+        # 步骤 1: 三层归一化（带详情记录）
         normalized_text, normalization_detail = self._normalize_with_detail(cleaned_text, mode=mode)
         
-        # 步骤 3: 特征拆分（带详情记录）
+        # 步骤 2: 特征拆分（带详情记录）
         features, extraction_detail = self._extract_features_with_detail(normalized_text, mode=mode)
         
         result = PreprocessResult(
@@ -248,10 +216,6 @@ class TextPreprocessor:
             features=features
         )
         
-        # 将智能清理详情附加到结果对象（用于详情记录）
-        if intelligent_cleaning_detail:
-            result.intelligent_cleaning_detail = intelligent_cleaning_detail
-        
         # 将归一化详情附加到结果对象（用于详情记录）
         if normalization_detail:
             result.normalization_detail = normalization_detail
@@ -259,28 +223,6 @@ class TextPreprocessor:
         # 将特征提取详情附加到结果对象（用于详情记录）
         if extraction_detail:
             result.extraction_detail = extraction_detail
-        
-        return result
-    
-    def remove_ignore_keywords(self, text: str) -> str:
-        """
-        删除配置文件中指定的无关关键词
-        
-        验证需求: 3.1
-        
-        Args:
-            text: 原始文本
-            
-        Returns:
-            删除关键词后的文本
-        """
-        if not text:
-            return text
-        
-        result = text
-        for keyword in self.ignore_keywords:
-            if keyword in result:
-                result = result.replace(keyword, "")
         
         return result
     
@@ -1370,523 +1312,3 @@ class TextPreprocessor:
         with open(config_file_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
         return cls(config)
-    
-    # ========== 智能清理方法 ==========
-    
-    def _smart_separator_unification(self, text: str, target_separator: str) -> str:
-        """
-        智能统一分隔符，保护数值范围中的空格
-        
-        改进（2024-03-01）：
-        - 识别数值范围模式（如"0~ 250"、"4 - 20"）
-        - 保护这些模式中的空格不被替换
-        - 其他空格正常替换为目标分隔符
-        
-        Args:
-            text: 待处理的文本
-            target_separator: 目标分隔符（通常是 '+'）
-            
-        Returns:
-            处理后的文本
-        """
-        # 定义数值范围模式
-        # 匹配: 数字 + 空格 + 连接符(~或-) + 空格 + 数字
-        # 例如: "0~ 250", "4 - 20", "2 ~ 10"
-        range_patterns = [
-            r'(\d+)\s*(~|-)\s*(\d+)',  # 数字范围
-        ]
-        
-        # 第一步：保护数值范围中的空格
-        # 使用占位符替换，避免被后续处理
-        placeholder = '\x00RANGE_SPACE\x00'  # 使用不可见字符作为占位符
-        protected_text = text
-        
-        for pattern in range_patterns:
-            # 将数值范围中的空格替换为占位符
-            # 例如: "0~ 250" → "0~\x00RANGE_SPACE\x00250"
-            protected_text = re.sub(pattern, r'\1\2' + placeholder + r'\3', protected_text)
-        
-        # 第二步：统一其他分隔符
-        # 1. 常见分隔符
-        common_separators = [',', '，', ' ', '  ', '\t']
-        # 2. 用户配置的其他分隔符（除了第一个标准分隔符）
-        user_separators = self.feature_split_chars[1:] if len(self.feature_split_chars) > 1 else []
-        
-        # 合并所有需要转换的分隔符
-        all_separators = common_separators + user_separators
-        
-        # 执行转换
-        for sep in all_separators:
-            if sep != target_separator:  # 避免重复替换
-                protected_text = protected_text.replace(sep, target_separator)
-        
-        # 第三步：恢复被保护的空格（删除它们）
-        # 数值范围中的空格应该被删除，而不是替换成分隔符
-        # 例如: "0~\x00RANGE_SPACE\x00250" → "0~250"
-        result_text = protected_text.replace(placeholder, '')
-        
-        return result_text
-    
-    def intelligent_clean(self, text: str) -> str:
-        """
-        智能清理文本，删除噪音段落和元数据标签
-        
-        Args:
-            text: 原始文本
-            
-        Returns:
-            清理后的文本
-        """
-        if not self.text_cleaning_config.get('enabled', False):
-            return text
-        
-        # 阶段0: 过滤行号/序号（如果启用）
-        text = self.filter_row_numbers(text)
-        
-        # 阶段1: 在噪音分隔符处截断
-        text = self.truncate_at_noise_delimiter(text)
-        
-        # 阶段2: 删除噪音段落
-        text = self.remove_noise_sections(text)
-        
-        # 阶段3: 删除元数据标签
-        text = self.remove_metadata_labels(text)
-        
-        return text
-    
-    def _intelligent_clean_with_detail(self, text: str, mode: str = 'matching'):
-        """
-        智能清理文本并返回详细信息
-        
-        现在包括三个阶段：
-        1. 删除噪音（截断、删除噪音段落、删除元数据标签）
-        2. 删除无关关键词
-        3. 统一分隔符（将常见分隔符转换为标准分隔符）
-        
-        Args:
-            text: 原始文本
-            mode: 处理模式
-                  'device' - 设备库数据（不统一分隔符）
-                  'matching' - 匹配数据（统一分隔符）
-            
-        Returns:
-            (cleaned_text, IntelligentCleaningDetail): 清理后的文本和详情对象
-        """
-        from modules.match_detail import IntelligentCleaningDetail, TruncationMatch, NoiseMatch, MetadataMatch
-        
-        # 如果智能清理未启用，返回原文本和空详情
-        if not self.text_cleaning_config.get('enabled', False):
-            detail = IntelligentCleaningDetail(
-                applied_rules=[],
-                truncation_matches=[],
-                noise_pattern_matches=[],
-                metadata_tag_matches=[],
-                original_length=len(text),
-                cleaned_length=len(text),
-                deleted_length=0,
-                before_text=text,
-                after_text=text
-            )
-            return text, detail
-        
-        # 初始化详情对象
-        detail = IntelligentCleaningDetail()
-        detail.before_text = text
-        detail.original_length = len(text)
-        
-        applied_rules = []
-        truncation_matches = []
-        noise_pattern_matches = []
-        metadata_tag_matches = []
-        
-        # 阶段0: 过滤行号/序号（如果启用）
-        if self.text_cleaning_config.get('filter_row_numbers', False):
-            text_before_filter = text
-            text = self.filter_row_numbers(text)
-            if text != text_before_filter:
-                applied_rules.append('row_number_filter')
-        
-        # 阶段1: 在噪音分隔符处截断
-        text_after_truncation, truncation_match = self._truncate_at_noise_delimiter_with_detail(text)
-        if truncation_match:
-            applied_rules.append('truncation')
-            truncation_matches.append(truncation_match)
-        text = text_after_truncation
-        
-        # 阶段2: 删除噪音段落
-        text_after_noise, noise_matches = self._remove_noise_sections_with_detail(text)
-        if noise_matches:
-            applied_rules.append('noise_pattern')
-            noise_pattern_matches.extend(noise_matches)
-        text = text_after_noise
-        
-        # 阶段3: 删除元数据标签
-        text_after_metadata, metadata_matches = self._remove_metadata_labels_with_detail(text)
-        if metadata_matches:
-            applied_rules.append('metadata_tag')
-            metadata_tag_matches.extend(metadata_matches)
-        text = text_after_metadata
-        
-        # 阶段4: 删除无关关键词（新增）
-        text_before_ignore = text
-        ignore_keyword_matches = []
-        
-        for keyword in self.ignore_keywords:
-            if keyword in text:
-                # 记录所有匹配位置
-                positions = []
-                position = 0
-                count = 0
-                while True:
-                    pos = text.find(keyword, position)
-                    if pos == -1:
-                        break
-                    positions.append(pos)
-                    count += 1
-                    position = pos + len(keyword)
-                
-                if count > 0:
-                    from modules.match_detail import IgnoreKeywordMatch
-                    ignore_keyword_matches.append(IgnoreKeywordMatch(
-                        keyword=keyword,
-                        count=count,
-                        positions=positions
-                    ))
-        
-        text = self.remove_ignore_keywords(text)
-        if text != text_before_ignore:
-            applied_rules.append('ignore_keywords')
-        
-        # 阶段5: 统一分隔符（改进版 - 保护数值范围中的空格）
-        # 在匹配模式下，将所有配置的分隔符统一转换为标准分隔符
-        if mode == 'matching' and self.feature_split_chars and len(self.feature_split_chars) > 0:
-            text_before_separator = text
-            temp_separator = self.feature_split_chars[0]  # 第一个分隔符是标准分隔符
-            
-            # 智能替换：保护数值范围中的空格
-            text = self._smart_separator_unification(text, temp_separator)
-            
-            # 如果发生了分隔符转换，记录到应用规则中
-            if text != text_before_separator:
-                applied_rules.append('separator_unification')
-        
-        # 填充详情对象
-        detail.applied_rules = applied_rules
-        detail.truncation_matches = truncation_matches
-        detail.noise_pattern_matches = noise_pattern_matches
-        detail.metadata_tag_matches = metadata_tag_matches
-        detail.ignore_keyword_matches = ignore_keyword_matches
-        detail.after_text = text
-        detail.cleaned_length = len(text)
-        detail.deleted_length = detail.original_length - detail.cleaned_length
-        
-        return text, detail
-    
-    def truncate_at_noise_delimiter(self, text: str) -> str:
-        """
-        在遇到噪音分隔符时截断文本
-        
-        Args:
-            text: 原始文本
-            
-        Returns:
-            截断后的文本
-        """
-        truncate_delimiters = self.text_cleaning_config.get('truncate_delimiters', [])
-        
-        earliest_pos = len(text)
-        for delimiter_config in truncate_delimiters:
-            pattern = delimiter_config.get('pattern', '')
-            if not pattern:
-                continue
-            
-            try:
-                match = re.search(pattern, text)
-                if match and match.start() < earliest_pos:
-                    earliest_pos = match.start()
-            except re.error:
-                continue
-        
-        return text[:earliest_pos]
-    
-    def _truncate_at_noise_delimiter_with_detail(self, text: str):
-        """
-        在遇到噪音分隔符时截断文本，并返回详细信息
-        
-        Args:
-            text: 原始文本
-            
-        Returns:
-            (truncated_text, TruncationMatch or None): 截断后的文本和匹配详情
-        """
-        from modules.match_detail import TruncationMatch
-        
-        truncate_delimiters = self.text_cleaning_config.get('truncate_delimiters', [])
-        
-        earliest_pos = len(text)
-        earliest_delimiter = None
-        
-        for delimiter_config in truncate_delimiters:
-            pattern = delimiter_config.get('pattern', '')
-            if not pattern:
-                continue
-            
-            try:
-                match = re.search(pattern, text)
-                if match and match.start() < earliest_pos:
-                    earliest_pos = match.start()
-                    earliest_delimiter = delimiter_config.get('name', pattern)
-            except re.error:
-                continue
-        
-        # 如果找到了截断点
-        if earliest_pos < len(text):
-            deleted_text = text[earliest_pos:]
-            truncation_match = TruncationMatch(
-                delimiter=earliest_delimiter,
-                position=earliest_pos,
-                deleted_text=deleted_text
-            )
-            return text[:earliest_pos], truncation_match
-        
-        return text, None
-    
-    def remove_noise_sections(self, text: str) -> str:
-        """
-        删除匹配噪音模式的段落
-        
-        Args:
-            text: 文本
-            
-        Returns:
-            删除噪音后的文本
-        """
-        noise_patterns = self.text_cleaning_config.get('noise_section_patterns', [])
-        
-        for pattern_config in noise_patterns:
-            pattern = pattern_config.get('pattern', '')
-            if not pattern:
-                continue
-            
-            try:
-                text = re.sub(pattern, '', text)
-            except re.error:
-                continue
-        
-        return text
-    
-    def _remove_noise_sections_with_detail(self, text: str):
-        """
-        删除匹配噪音模式的段落，并返回详细信息
-        
-        Args:
-            text: 文本
-            
-        Returns:
-            (cleaned_text, List[NoiseMatch]): 删除噪音后的文本和匹配详情列表
-        """
-        from modules.match_detail import NoiseMatch
-        
-        noise_patterns = self.text_cleaning_config.get('noise_section_patterns', [])
-        noise_matches = []
-        
-        for pattern_config in noise_patterns:
-            pattern = pattern_config.get('pattern', '')
-            if not pattern:
-                continue
-            
-            try:
-                # 查找所有匹配
-                for match in re.finditer(pattern, text):
-                    noise_match = NoiseMatch(
-                        pattern=pattern_config.get('name', pattern),
-                        matched_text=match.group(0),
-                        position=match.start()
-                    )
-                    noise_matches.append(noise_match)
-                
-                # 删除匹配的文本
-                text = re.sub(pattern, '', text)
-            except re.error:
-                continue
-        
-        return text, noise_matches
-    
-    def remove_metadata_labels(self, text: str) -> str:
-        """
-        删除元数据标签，保留值
-        
-        改进（2024-03-01）：
-        - 自动处理 metadata_keywords 中的关键词
-        - 支持两种格式：
-          1. 简单格式: "型号:QAA2061" → "QAA2061"
-          2. 带序号格式: "2.型号:QAA2061" → "QAA2061"
-        - 同时保留 metadata_label_patterns 中的自定义正则表达式
-        - 按关键词长度从长到短排序，避免误匹配
-        
-        Args:
-            text: 文本
-            
-        Returns:
-            删除标签后的文本
-        """
-        # 1. 处理 metadata_keywords 中的关键词（自动生成正则表达式）
-        # 按长度从长到短排序，优先匹配较长的关键词（避免"规格参数"被拆分成"规格"和"参数"）
-        sorted_keywords = sorted(self.metadata_keywords, key=len, reverse=True)
-        
-        for keyword in sorted_keywords:
-            # 转义特殊字符
-            escaped_keyword = re.escape(keyword)
-            
-            # 生成两种模式：
-            # 模式1: 带序号 "数字.关键词:" 或 "数字关键词:"
-            # 模式2: 不带序号 "关键词:"
-            # 同时支持中文冒号和英文冒号
-            pattern = rf'(?:\d+\.?)?{escaped_keyword}[:：]'
-            
-            try:
-                text = re.sub(pattern, '', text)
-            except re.error:
-                continue
-        
-        # 2. 处理 metadata_label_patterns 中的自定义正则表达式（向后兼容）
-        for pattern in self.metadata_label_patterns:
-            try:
-                text = re.sub(pattern, '', text)
-            except re.error:
-                continue
-        
-        return text
-    
-    def _remove_metadata_labels_with_detail(self, text: str):
-        """
-        删除元数据标签，并返回详细信息
-        
-        改进（2024-03-01）：
-        - 自动处理 metadata_keywords 中的关键词
-        - 支持两种格式：
-          1. 简单格式: "型号:QAA2061" → "QAA2061"
-          2. 带序号格式: "2.型号:QAA2061" → "QAA2061"
-        - 同时保留 metadata_label_patterns 中的自定义正则表达式
-        - 按关键词长度从长到短排序，避免误匹配
-        
-        Args:
-            text: 文本
-            
-        Returns:
-            (cleaned_text, List[MetadataMatch]): 删除标签后的文本和匹配详情列表
-        """
-        from modules.match_detail import MetadataMatch
-        
-        metadata_matches = []
-        
-        # 1. 处理 metadata_keywords 中的关键词（自动生成正则表达式）
-        # 按长度从长到短排序，优先匹配较长的关键词（避免"规格参数"被拆分成"规格"和"参数"）
-        sorted_keywords = sorted(self.metadata_keywords, key=len, reverse=True)
-        
-        for keyword in sorted_keywords:
-            # 转义特殊字符
-            escaped_keyword = re.escape(keyword)
-            
-            # 生成两种模式：
-            # 模式1: 带序号 "数字.关键词:" 或 "数字关键词:"
-            # 模式2: 不带序号 "关键词:"
-            # 同时支持中文冒号和英文冒号
-            pattern = rf'(?:\d+\.?)?{escaped_keyword}[:：]'
-            
-            try:
-                # 查找所有匹配
-                for match in re.finditer(pattern, text):
-                    metadata_match = MetadataMatch(
-                        tag=keyword,  # 使用关键词而不是正则表达式
-                        matched_text=match.group(0),
-                        position=match.start()
-                    )
-                    metadata_matches.append(metadata_match)
-                
-                # 删除匹配的文本
-                text = re.sub(pattern, '', text)
-            except re.error:
-                continue
-        
-        # 2. 处理 metadata_label_patterns 中的自定义正则表达式（向后兼容）
-        for pattern in self.metadata_label_patterns:
-            try:
-                # 查找所有匹配
-                for match in re.finditer(pattern, text):
-                    metadata_match = MetadataMatch(
-                        tag=pattern,
-                        matched_text=match.group(0),
-                        position=match.start()
-                    )
-                    metadata_matches.append(metadata_match)
-                
-                # 删除匹配的文本
-                text = re.sub(pattern, '', text)
-            except re.error:
-                continue
-        
-        return text, metadata_matches
-
-    def filter_row_numbers(self, text: str) -> str:
-        """
-        过滤行号/序号列
-        
-        检测行内容的前N列是否都是纯数字，如果是则删除这些列，保留后面的内容。
-        这通常用于过滤Excel表格中的序号列。
-        
-        改进（2024-03-01）：
-        - 只删除前N列的数字，保留后面的有用内容
-        - 如果整行都是数字（没有其他内容），则删除整行
-        
-        Args:
-            text: 原始文本
-            
-        Returns:
-            过滤后的文本
-        """
-        if not self.text_cleaning_config.get('filter_row_numbers', False):
-            return text
-        
-        # 获取要检测的列数（默认为3）
-        num_columns = self.text_cleaning_config.get('row_number_columns', 3)
-        
-        # 按换行符分割文本
-        lines = text.split('\n')
-        filtered_lines = []
-        
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-            
-            # 按常见分隔符拆分（逗号、制表符、多个空格）
-            # 使用正则表达式拆分，支持多种分隔符
-            parts = re.split(r'[,\t\s]+', line)
-            
-            # 检查前N列是否都是纯数字
-            is_row_number_prefix = True
-            for i in range(min(num_columns, len(parts))):
-                part = parts[i].strip()
-                # 检查是否是纯数字（可能包含小数点）
-                if not part or not re.match(r'^\d+(\.\d+)?$', part):
-                    is_row_number_prefix = False
-                    break
-            
-            # 如果前N列都是数字
-            if is_row_number_prefix:
-                # 检查是否还有其他内容（第N+1列及以后）
-                if len(parts) > num_columns:
-                    # 保留第N+1列及以后的内容
-                    remaining_parts = parts[num_columns:]
-                    # 使用空格重新连接（后续会被统一分隔符处理）
-                    filtered_line = ' '.join(remaining_parts)
-                    if filtered_line.strip():
-                        filtered_lines.append(filtered_line)
-                # 如果整行都是数字，则不添加（删除整行）
-            else:
-                # 前N列不全是数字，保留整行
-                filtered_lines.append(line)
-        
-        # 重新组合文本
-        return '\n'.join(filtered_lines)

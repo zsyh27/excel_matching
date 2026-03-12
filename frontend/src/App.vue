@@ -17,6 +17,7 @@
             <el-menu-item index="/database/devices">设备库管理</el-menu-item>
             <el-menu-item index="/statistics">统计仪表板</el-menu-item>
             <el-menu-item index="/config-management">配置管理</el-menu-item>
+            <el-menu-item index="/testing">测试功能</el-menu-item>
           </el-menu>
         </div>
       </el-header>
@@ -43,6 +44,8 @@ watch(() => route.path, (newPath) => {
     activeMenu.value = '/statistics'
   } else if (newPath.startsWith('/config-management')) {
     activeMenu.value = '/config-management'
+  } else if (newPath.startsWith('/testing')) {
+    activeMenu.value = '/testing'
   } else if (newPath === '/device-input') {
     activeMenu.value = '/device-input'
   } else if (newPath === '/') {
@@ -50,9 +53,15 @@ watch(() => route.path, (newPath) => {
   }
 })
 
-// 菜单选择处理
+// 处理菜单选择
 const handleMenuSelect = (index) => {
-  router.push(index)
+  // 上传清单页面在当前标签页打开
+  if (index === '/') {
+    router.push(index)
+  } else {
+    // 其他页面在新标签页打开
+    window.open(index, '_blank')
+  }
 }
 </script>
 

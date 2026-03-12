@@ -129,6 +129,14 @@ const routes = [
     }
   },
   {
+    path: '/testing',
+    name: 'Testing',
+    component: () => import('../views/TestingView.vue'),
+    meta: {
+      title: '测试功能'
+    }
+  },
+  {
     path: '/match-detail/:cacheKey',
     name: 'MatchDetail',
     component: () => import('../views/MatchDetailView.vue'),
