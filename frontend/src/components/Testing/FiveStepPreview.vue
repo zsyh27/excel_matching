@@ -1,8 +1,8 @@
 <template>
-  <div class="six-step-preview">
+  <div class="five-step-preview">
     <div class="section-header">
-      <h2>🔄 六步流程实时预览</h2>
-      <p class="description">输入设备描述，查看完整的六步处理流程</p>
+      <h2>🔄 五步流程实时预览</h2>
+      <p class="description">输入设备描述，查看完整的五步处理流程</p>
     </div>
 
     <div class="preview-input">
@@ -20,14 +20,11 @@
     </div>
 
     <div v-if="previewResult" class="preview-result">
-      <!-- 步骤0：文本预处理 -->
-      <PreprocessingStep :data="previewResult.step0_preprocessing" />
-      
       <!-- 步骤1：设备类型识别 -->
       <DeviceTypeStep :data="previewResult.step1_device_type" />
       
-      <!-- 步骤2：技术参数提取 -->
-      <ParameterStep :data="previewResult.step2_parameters" />
+      <!-- 步骤2：参数候选提取 -->
+      <ParameterStep :data="previewResult.step2_parameters" :fullData="previewResult" />
       
       <!-- 步骤3：辅助信息提取 -->
       <AuxiliaryStep :data="previewResult.step3_auxiliary" />
@@ -46,7 +43,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import PreprocessingStep from './PreviewSteps/PreprocessingStep.vue'
 import DeviceTypeStep from './PreviewSteps/DeviceTypeStep.vue'
 import ParameterStep from './PreviewSteps/ParameterStep.vue'
 import AuxiliaryStep from './PreviewSteps/AuxiliaryStep.vue'
@@ -79,7 +75,6 @@ const handleTestTextChange = () => {
         if (result.success && result.data) {
           const data = result.data
           previewResult.value = {
-            step0_preprocessing: data.step0_preprocessing || null,
             step1_device_type: data.step1_device_type || {},
             step2_parameters: data.step2_parameters || {},
             step3_auxiliary: data.step3_auxiliary || {},
@@ -101,7 +96,7 @@ const handleTestTextChange = () => {
 </script>
 
 <style scoped>
-.six-step-preview {
+.five-step-preview {
   height: 100%;
   display: flex;
   flex-direction: column;

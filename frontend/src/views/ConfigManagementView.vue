@@ -135,6 +135,8 @@ import MetadataRulesEditor from '../components/ConfigManagement/MetadataRulesEdi
 import DeviceTypePatternsEditor from '../components/ConfigManagement/DeviceTypePatternsEditor.vue'
 import ParameterExtractionEditor from '../components/ConfigManagement/ParameterExtractionEditor.vue'
 import AuxiliaryInfoEditor from '../components/ConfigManagement/AuxiliaryInfoEditor.vue'
+import MatchWeightsEditor from '../components/ConfigManagement/MatchWeightsEditor.vue'
+import ParameterPatternsEditor from '../components/ConfigManagement/ParameterPatternsEditor.vue'
 
 export default {
   name: 'ConfigManagementView',
@@ -151,7 +153,9 @@ export default {
     MetadataRulesEditor,
     DeviceTypePatternsEditor,
     ParameterExtractionEditor,
-    AuxiliaryInfoEditor
+    AuxiliaryInfoEditor,
+    MatchWeightsEditor,
+    ParameterPatternsEditor
   },
   setup() {
     const componentError = ref(null)
@@ -228,7 +232,9 @@ export default {
         'synonym-map': 'SynonymMapEditor',
         
         // Global Configuration
-        'global-settings': 'GlobalConfigEditor'
+        'global-settings': 'GlobalConfigEditor',
+        'match-weights': 'MatchWeightsEditor',
+        'parameter-patterns': 'ParameterPatternsEditor'
       }
       return editorMap[activeTab.value]
     })
@@ -292,7 +298,9 @@ export default {
       'synonym-map': 'synonym_map',
       'device-type': 'device_type_keywords',
       'match-threshold': 'match_threshold_config',
-      'global-settings': 'global_config'
+      'global-settings': 'global_config',
+      'match-weights': 'match_weights',
+      'parameter-patterns': 'parameter_patterns'
     }
     
     // 获取编辑器的值（处理嵌套结构）

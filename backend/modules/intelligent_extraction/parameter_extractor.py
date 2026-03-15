@@ -1,4 +1,4 @@
-﻿import re
+import re
 import logging
 from typing import Dict, List, Optional, Any
 from .data_models import ParameterInfo, RangeParam, OutputParam, AccuracyParam
@@ -76,15 +76,15 @@ class ParameterExtractor:
             return None
             
         labels = self.output_config.get('labels', ['输出', '输出信号'])
-        # 匹配模式：4~20mA, 2~10VDC等
-        pattern = r'(\d+)\s*[~\-]\s*(\d+)\s*(mA|V|VDC)'
+        # 匹配模式：4~20mA, 2~10VDC等（忽略大小写）
+        pattern = r'(\d+)\s*[~\-]\s*(\d+)\s*(ma|v|vdc)'
         
         # 先在标签附近查找
         for label in labels:
             if label in text:
                 label_pos = text.index(label)
                 search_text = text[label_pos:label_pos+50]  # 搜索标签后50个字符
-                match = re.search(pattern, search_text)
+                match = re.search(pattern, search_text, re.IGNORECASE)
                 if match:
                     try:
                         return OutputParam(
@@ -92,7 +92,7 @@ class ParameterExtractor:
                             normalized={
                                 'min': int(match.group(1)),
                                 'max': int(match.group(2)),
-                                'unit': match.group(3),
+                                'unit': match.group(3).upper(),  # 统一转为大写
                                 'type': 'analog'
                             },
                             confidence=0.90
@@ -100,8 +100,8 @@ class ParameterExtractor:
                     except ValueError:
                         pass
         
-        # 如果标签附近没找到，在全文中查找
-        match = re.search(pattern, text)
+        # 如果标签附近没找到，在全文中查找（忽略大小写）
+        match = re.search(pattern, text, re.IGNORECASE)
         if match:
             try:
                 return OutputParam(
@@ -109,7 +109,7 @@ class ParameterExtractor:
                     normalized={
                         'min': int(match.group(1)),
                         'max': int(match.group(2)),
-                        'unit': match.group(3),
+                        'unit': match.group(3).upper(),  # 统一转为大写
                         'type': 'analog'
                     },
                     confidence=0.75

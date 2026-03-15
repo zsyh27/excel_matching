@@ -105,9 +105,17 @@ try:
     intelligent_config_manager = ConfigurationManager(db_manager)
     intelligent_parser = DeviceDescriptionParser(intelligent_config_manager)
     
+    # 11. 初始化智能提取API（新匹配系统）
+    from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
+    intelligent_extraction_api = IntelligentExtractionAPI(
+        config=config,
+        device_loader=data_loader
+    )
+    
     logger.info("系统组件初始化完成")
     logger.info(f"已加载 {len(devices)} 个设备，{len(rules)} 条规则")
     logger.info("智能设备录入系统组件初始化完成")
+    logger.info("智能提取API初始化完成")
     
 except Exception as e:
     logger.error(f"系统初始化失败: {e}")
@@ -119,6 +127,7 @@ except Exception as e:
     device_row_classifier = None
     intelligent_config_manager = None
     intelligent_parser = None
+    intelligent_extraction_api = None
 
 
 def allowed_file(filename: str) -> bool:
@@ -501,15 +510,13 @@ def parse_file():
 
 @app.route('/api/match', methods=['POST'])
 def match_devices():
-    """设备匹配接口（增强版）"""
+    """设备匹配接口（使用智能提取API）"""
     try:
         data = request.get_json()
         if not data or 'rows' not in data:
             return create_error_response('MISSING_ROWS', '请求中缺少 rows 参数')
         
         rows = data['rows']
-        # 获取record_detail参数（默认True）
-        record_detail = data.get('record_detail', True)
         
         matched_rows = []
         total_devices = matched_count = unmatched_count = 0
@@ -518,79 +525,71 @@ def match_devices():
             if row.get('row_type') == 'device':
                 total_devices += 1
                 
-                # 获取预处理特征
-                # 如果已经有预处理特征，直接使用；否则从 raw_data 中提取
-                if 'preprocessed_features' in row and row['preprocessed_features']:
-                    features = row['preprocessed_features']
-                    # 构建原始描述用于详情记录 - 使用 | 分隔符保持原始格式
-                    if 'device_description' in row:
-                        original_description = row['device_description']
-                    elif 'raw_data' in row:
-                        raw_data = row['raw_data']
-                        if isinstance(raw_data, list):
-                            # 使用 | 连接,保持Excel原始格式
-                            original_description = ' | '.join(str(cell) for cell in raw_data if cell)
-                        else:
-                            original_description = str(raw_data)
-                    else:
-                        original_description = ''
+                if 'device_description' in row:
+                    original_description = row['device_description']
                 elif 'raw_data' in row:
-                    # 从 raw_data 中提取设备描述并预处理
                     raw_data = row['raw_data']
                     if isinstance(raw_data, list):
-                        # 使用 | 连接,保持Excel原始格式
                         original_description = ' | '.join(str(cell) for cell in raw_data if cell)
                     else:
                         original_description = str(raw_data)
-                    
-                    # 使用预处理器完整处理（包括归一化和特征提取）
-                    preprocess_result = preprocessor.preprocess(original_description)
-                    features = preprocess_result.features
                 else:
-                    # 没有可用的数据
-                    logger.warning(f"行 {row.get('row_number')} 缺少数据")
-                    features = []
                     original_description = ''
                 
-                # 执行匹配（传递record_detail参数和原始描述）
-                match_result, cache_key = match_engine.match(
-                    features=features,
-                    input_description=original_description,
-                    record_detail=record_detail
-                )
+                candidates_list = []
+                match_result_dict = None
                 
-                if match_result.match_status == 'success':
+                if original_description and original_description.strip():
+                    try:
+                        match_response = intelligent_extraction_api.match(
+                            text=original_description,
+                            top_k=20
+                        )
+                        
+                        if match_response.get('success') and match_response.get('data'):
+                            match_data = match_response['data']
+                            candidates = match_data.get('candidates', [])
+                            
+                            for candidate in candidates:
+                                candidates_list.append({
+                                    'device_id': candidate.get('device_id', ''),
+                                    'matched_device_text': f"{candidate.get('brand', '')} {candidate.get('device_name', '')} - {candidate.get('spec_model', '')}".strip(),
+                                    'unit_price': candidate.get('unit_price', 0.0),
+                                    'match_score': candidate.get('total_score', 0.0),
+                                    'brand': candidate.get('brand', ''),
+                                    'device_name': candidate.get('device_name', ''),
+                                    'spec_model': candidate.get('spec_model', ''),
+                                    'score_details': candidate.get('score_details', {}),
+                                    'matched_params': candidate.get('matched_params', []),
+                                    'unmatched_params': candidate.get('unmatched_params', []),
+                                    'all_params': candidate.get('all_params', {})
+                                })
+                    except Exception as e:
+                        logger.error(f"智能匹配失败: {e}")
+                        logger.error(traceback.format_exc())
+                
+                if candidates_list:
                     matched_count += 1
+                    best_candidate = candidates_list[0]
+                    match_result_dict = {
+                        'device_id': best_candidate.get('device_id'),
+                        'matched_device_text': best_candidate.get('matched_device_text'),
+                        'unit_price': best_candidate.get('unit_price', 0.0),
+                        'match_status': 'success',
+                        'match_score': best_candidate.get('match_score', 0.0),
+                        'match_reason': f"智能匹配成功，总分 {best_candidate.get('match_score', 0.0):.1f}"
+                    }
                 else:
                     unmatched_count += 1
+                    match_result_dict = {
+                        'device_id': None,
+                        'matched_device_text': None,
+                        'unit_price': 0.0,
+                        'match_status': 'failed',
+                        'match_score': 0.0,
+                        'match_reason': '未找到匹配的设备'
+                    }
                 
-                # 获取候选设备列表（前20个）
-                candidates_list = []
-                if features:
-                    try:
-                        # 使用 _evaluate_all_candidates 获取所有候选
-                        all_candidates = match_engine._evaluate_all_candidates(features)
-                        
-                        # 取前20个候选
-                        top_candidates = all_candidates[:20]
-                        
-                        # 转换为前端需要的格式
-                        for candidate in top_candidates:
-                            device_info = candidate.device_info
-                            candidates_list.append({
-                                'device_id': candidate.target_device_id,
-                                'matched_device_text': f"{device_info.get('brand', '')} {device_info.get('device_name', '')} - {device_info.get('spec_model', '')}".strip(),
-                                'unit_price': device_info.get('unit_price', 0.0),
-                                'match_score': candidate.weight_score,
-                                'brand': device_info.get('brand', ''),
-                                'device_name': device_info.get('device_name', ''),
-                                'spec_model': device_info.get('spec_model', '')
-                            })
-                    except Exception as e:
-                        logger.error(f"获取候选设备失败: {e}")
-                        candidates_list = []
-                
-                # 构建设备描述（用于前端显示）
                 if 'device_description' in row:
                     device_description = row['device_description']
                 elif 'raw_data' in row:
@@ -602,18 +601,13 @@ def match_devices():
                 else:
                     device_description = ''
                 
-                # 构建匹配行数据，添加detail_cache_key和candidates字段
                 matched_row = {
                     'row_number': row.get('row_number'),
                     'row_type': 'device',
                     'device_description': device_description,
-                    'match_result': match_result.to_dict(),
-                    'candidates': candidates_list  # 添加候选设备列表
+                    'match_result': match_result_dict,
+                    'candidates': candidates_list
                 }
-                
-                # 如果有缓存键，添加到响应中
-                if cache_key:
-                    matched_row['detail_cache_key'] = cache_key
                 
                 matched_rows.append(matched_row)
             else:

@@ -179,13 +179,21 @@ class DeviceTypeRecognizer:
     
     def _type_inference(self, text: str) -> Optional[DeviceTypeInfo]:
         """类型推断：根据前缀词推断完整设备类型"""
-        for prefix, types in self.prefix_keywords.items():
-            if prefix in text:
-                # 选择第一个类型作为推断结果
-                # types 中的每个元素已经是完整类型（如"压力传感器"）
+        # 按长度降序排序，确保长的关键词优先匹配（如 co2 优先于 co）
+        sorted_prefixes = sorted(self.prefix_keywords.items(), key=lambda x: len(x[0]), reverse=True)
+        
+        matched_prefixes = []  # 记录所有匹配的前缀
+        
+        for prefix, types in sorted_prefixes:
+            # 使用正则表达式匹配，确保是独立的词（不是其他词的一部分）
+            # 匹配模式：前面是空格/标点/开头，后面是空格/标点/数字/结尾
+            pattern = r'(?<![a-zA-Z0-9])' + re.escape(prefix) + r'(?![a-zA-Z0-9])'
+            if re.search(pattern, text, re.IGNORECASE):
                 if types:
                     dtype = types[0]
                     main_type = self._extract_main_type(dtype)
+                    matched_prefixes.append(prefix)
+                    # 返回第一个匹配的结果（已经按长度降序排序）
                     return DeviceTypeInfo(
                         main_type=main_type,
                         sub_type=dtype,
@@ -193,6 +201,7 @@ class DeviceTypeRecognizer:
                         confidence=0.7,
                         mode='inference'
                     )
+        
         return None
     
     def _extract_main_type(self, device_type: str) -> str:

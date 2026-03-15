@@ -116,6 +116,18 @@
                   <div class="device-option-sub">
                     {{ candidate.spec_model }} | ¥{{ candidate.unit_price.toFixed(2) }} | 得分: {{ candidate.match_score.toFixed(1) }}
                   </div>
+                  <!-- 显示全部参数，高亮匹配参数 -->
+                  <div class="device-option-params" v-if="candidate.all_params && Object.keys(candidate.all_params).length > 0">
+                    <template v-for="(value, name) in candidate.all_params" :key="name">
+                      <span 
+                        class="param-tag" 
+                        :class="{ 'param-matched': candidate.matched_params?.includes(name) }"
+                        :title="candidate.matched_params?.includes(name) ? '已匹配' : ''"
+                      >
+                        {{ name }}: {{ value }}
+                      </span>
+                    </template>
+                  </div>
                 </div>
               </el-option>
               
@@ -237,12 +249,15 @@ const hasResults = computed(() => displayRows.value.length > 0)
 onMounted(async () => {
   await loadDevices()
   
-  // 从路由状态获取设备行数据
-  const deviceRows = history.state?.deviceRows
+  // 从 sessionStorage 获取设备行数据（支持新页签打开）
+  const storedData = sessionStorage.getItem(`matching_deviceRows_${props.excelId}`)
+  const deviceRows = storedData ? JSON.parse(storedData) : null
   
   if (deviceRows && deviceRows.length > 0) {
     // 使用传递的最终设备行数据进行匹配
     await matchDevices(deviceRows)
+    // 匹配完成后清除 sessionStorage
+    sessionStorage.removeItem(`matching_deviceRows_${props.excelId}`)
   } else {
     ElMessage.warning('未找到设备行数据，请重新上传文件')
     router.push({ name: 'FileUpload' })
@@ -586,6 +601,30 @@ const handleExportError = (error) => {
   font-size: 12px;
   color: #909399;
   margin-top: 2px;
+}
+
+.device-option-params {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+  max-height: 60px;
+  overflow-y: auto;
+}
+
+.param-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background-color: #f4f4f5;
+  color: #606266;
+  white-space: nowrap;
+}
+
+.param-tag.param-matched {
+  background-color: #e1f3d8;
+  color: #67c23a;
+  font-weight: 500;
 }
 
 /* 匹配信息样式 */

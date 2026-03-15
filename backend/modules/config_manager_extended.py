@@ -149,9 +149,21 @@ class ConfigManagerExtended:
             if key not in config:
                 errors.append(f"缺少必需的配置项: {key}")
         
-        # 2. 检查数据类型
-        if 'synonym_map' in config and not isinstance(config['synonym_map'], dict):
-            errors.append("synonym_map 必须是字典类型")
+        # 2. 检查 synonym_map 格式（支持字典和数组两种格式）
+        if 'synonym_map' in config:
+            sm = config['synonym_map']
+            # 支持数组格式：[{source, target, type, enabled}]
+            if isinstance(sm, list):
+                # 验证数组中的每个元素
+                for item in sm:
+                    if not isinstance(item, dict):
+                        errors.append("synonym_map 数组中的元素必须是字典类型")
+                        break
+                    if 'source' not in item or 'target' not in item:
+                        errors.append("synonym_map 数组中的元素必须包含 source 和 target 字段")
+                        break
+            elif not isinstance(sm, dict):
+                errors.append("synonym_map 必须是字典类型或数组类型")
         
         if 'brand_keywords' in config:
             bk = config['brand_keywords']
@@ -193,16 +205,36 @@ class ConfigManagerExtended:
         
         return len(errors) == 0, errors
     
-    def _check_circular_synonyms(self, synonym_map: Dict) -> Optional[List[str]]:
+    def _check_circular_synonyms(self, synonym_map) -> Optional[List[str]]:
         """
         检查同义词映射是否有循环引用
         
+        支持两种格式：
+        1. 字典格式: {source: target}
+        2. 数组格式: [{source, target, type, enabled}]
+        
         Args:
-            synonym_map: 同义词映射字典
+            synonym_map: 同义词映射
             
         Returns:
             如果有循环，返回循环路径；否则返回 None
         """
+        # 如果是数组格式，转换为字典格式进行验证
+        if isinstance(synonym_map, list):
+            # 数组格式：只检查同义词类型
+            synonym_dict = {}
+            for item in synonym_map:
+                if isinstance(item, dict) and item.get('type') == 'synonym':
+                    source = item.get('source', '')
+                    target = item.get('target', '')
+                    if source and target:
+                        synonym_dict[source] = target
+            synonym_map = synonym_dict
+        
+        # 如果不是字典，跳过验证
+        if not isinstance(synonym_map, dict):
+            return None
+        
         def find_cycle(word, visited, path):
             if word in visited:
                 # 找到循环

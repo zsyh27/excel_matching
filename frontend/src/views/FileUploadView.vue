@@ -51,7 +51,7 @@
       </el-row>
       <el-row :gutter="20" style="margin-top: 20px;">
         <el-col :span="6">
-          <el-card class="nav-card" shadow="hover" @click="navigateTo('/match-tester')">
+          <el-card class="nav-card" shadow="hover" @click="navigateTo('/testing')">
             <div class="nav-card-content">
               <el-icon :size="40" color="#F56C6C">
                 <setting />

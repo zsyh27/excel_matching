@@ -89,9 +89,9 @@ export const MENU_STRUCTURE = [
         component: 'DeviceTypePatternsEditor'
       },
       {
-        id: 'parameter-extraction',
-        name: '参数提取模式',
-        component: 'ParameterExtractionEditor'
+        id: 'parameter-patterns',
+        name: '参数提取正则模式',
+        component: 'ParameterPatternsEditor'
       },
       {
         id: 'auxiliary-info',
@@ -114,6 +114,11 @@ export const MENU_STRUCTURE = [
         id: 'global-settings',
         name: '全局配置',
         component: 'GlobalConfigEditor'
+      },
+      {
+        id: 'match-weights',
+        name: '匹配权重配置',
+        component: 'MatchWeightsEditor'
       }
     ]
   }

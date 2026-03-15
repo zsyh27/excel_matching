@@ -8,9 +8,6 @@
     <div class="preview-item">
       <span class="label">各步骤耗时:</span>
       <span class="value">
-        <span v-if="data?.step0_time_ms">
-          步骤0: {{ data.step0_time_ms.toFixed(2) }}ms, 
-        </span>
         步骤1: {{ data?.step1_time_ms?.toFixed(2) || 0 }}ms, 
         步骤2: {{ data?.step2_time_ms?.toFixed(2) || 0 }}ms, 
         步骤3: {{ data?.step3_time_ms?.toFixed(2) || 0 }}ms, 

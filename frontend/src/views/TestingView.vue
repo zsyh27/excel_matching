@@ -11,9 +11,9 @@
         <DeviceTypeRecognitionTest />
       </div>
       
-      <!-- 六步流程实时预览 -->
+      <!-- 五步流程实时预览 -->
       <div class="test-section">
-        <SixStepPreview />
+        <FiveStepPreview />
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@
 
 <script setup>
 import DeviceTypeRecognitionTest from '../components/Testing/DeviceTypeRecognitionTest.vue'
-import SixStepPreview from '../components/Testing/SixStepPreview.vue'
+import FiveStepPreview from '../components/Testing/FiveStepPreview.vue'
 </script>
 
 <style scoped>

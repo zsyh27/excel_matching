@@ -24,12 +24,15 @@ const router = useRouter()
  * 处理进入匹配流程
  */
 const handleProceedToMatching = (data) => {
-  // 跳转到匹配页面，传递 excel_id 和最终设备行数据
-  router.push({
+  // 将设备行数据存储到 sessionStorage，以便新页签可以读取
+  sessionStorage.setItem(`matching_deviceRows_${data.excelId}`, JSON.stringify(data.deviceRows))
+  
+  // 在新页签中打开匹配页面
+  const routeData = router.resolve({
     name: 'Matching',
-    params: { excelId: data.excelId },
-    state: { deviceRows: data.deviceRows }
+    params: { excelId: data.excelId }
   })
+  window.open(routeData.href, '_blank')
 }
 </script>
 

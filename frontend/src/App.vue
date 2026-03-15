@@ -17,7 +17,7 @@
             <el-menu-item index="/database/devices">设备库管理</el-menu-item>
             <el-menu-item index="/statistics">统计仪表板</el-menu-item>
             <el-menu-item index="/config-management">配置管理</el-menu-item>
-            <el-menu-item index="/testing">测试功能</el-menu-item>
+            <el-menu-item index="/testing">匹配测试</el-menu-item>
           </el-menu>
         </div>
       </el-header>

@@ -3,7 +3,6 @@ import FileUploadView from '../views/FileUploadView.vue'
 import DataRangeSelectionView from '../views/DataRangeSelectionView.vue'
 import DeviceRowAdjustmentView from '../views/DeviceRowAdjustmentView.vue'
 import MatchingView from '../views/MatchingView.vue'
-import MatchTesterView from '../views/MatchTesterView.vue'
 import DeviceManagementView from '../views/DeviceManagementView.vue'
 import StatisticsDashboardView from '../views/StatisticsDashboardView.vue'
 import DeviceInputView from '../views/DeviceInputView.vue'
@@ -89,14 +88,6 @@ const routes = [
     }
   },
   {
-    path: '/match-tester',
-    name: 'MatchTester',
-    component: MatchTesterView,
-    meta: {
-      title: '匹配测试'
-    }
-  },
-  {
     path: '/database/devices',
     name: 'DeviceManagement',
     component: DeviceManagementView,
@@ -133,7 +124,7 @@ const routes = [
     name: 'Testing',
     component: () => import('../views/TestingView.vue'),
     meta: {
-      title: '测试功能'
+      title: '匹配测试'
     }
   },
   {

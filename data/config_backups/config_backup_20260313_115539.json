@@ -1,0 +1,6324 @@
+{
+  "brand_keywords": [
+    "霍尼韦尔",
+    "西门子",
+    "江森自控",
+    "施耐德",
+    "通用品牌"
+  ],
+  "default_feature_weights": {
+    "brand": 0.3,
+    "detailed_params": 0.2,
+    "device_name": 0.3,
+    "spec_model": 0.2
+  },
+  "default_match_threshold": {
+    "value": 0.6
+  },
+  "device_params": {
+    "device_types": {
+      "FCU 阀门执行器": {
+        "keywords": [
+          "FCU 阀门执行器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配设备",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "FCU温控器": {
+        "keywords": [
+          "FCU温控器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "包装形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "墙面式控制模块",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作频率",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "管路制式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用场景",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "采暖专用温控器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "FCU电动球阀": {
+        "keywords": [
+          "FCU电动球阀"
+        ],
+        "params": [
+          {
+            "name": "产品公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "执行器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接螺纹",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通路形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "驱动扭矩",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "FCU联网型温控器": {
+        "keywords": [
+          "FCU联网型温控器"
+        ],
+        "params": [
+          {
+            "name": "Modbus通讯型温控器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "包装形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "墙面式温控模块",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "管路制式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "远程温度传感器组件",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用场景",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配设备",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通讯协议",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "FCU调节型温控器": {
+        "keywords": [
+          "FCU调节型温控器"
+        ],
+        "params": [
+          {
+            "name": "传感器配置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "包装形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "外观颜色",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "管路制式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用场景",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "VAV 专用墙面模块": {
+        "keywords": [
+          "VAV 专用墙面模块"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测参数",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用场景",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "Zio Plus 系列智能温控器": {
+        "keywords": [
+          "Zio Plus 系列智能温控器"
+        ],
+        "params": [
+          {
+            "name": "产品版本",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "附加功能",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "Zio Plus 系列智能温湿度控制器": {
+        "keywords": [
+          "Zio Plus 系列智能温湿度控制器"
+        ],
+        "params": [
+          {
+            "name": "产品版本",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测参数",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "附加功能",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "Zio 系列智能温控器": {
+        "keywords": [
+          "Zio 系列智能温控器"
+        ],
+        "params": [
+          {
+            "name": "产品版本",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "减压阀": {
+        "keywords": [
+          "减压阀",
+          "pressure reducing valve",
+          "减压"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "调节范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡压力传感器": {
+        "keywords": [
+          "动态压差平衡压力传感器",
+          "动态压差平衡",
+          "压差平衡",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "测量范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "options": [
+              "IP54",
+              "IP65",
+              "IP67",
+              "IP68"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡压差传感器": {
+        "keywords": [
+          "动态压差平衡压差传感器",
+          "动态压差平衡",
+          "压差平衡",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "测量范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "options": [
+              "IP54",
+              "IP65",
+              "IP67",
+              "IP68"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡开关型执行器": {
+        "keywords": [
+          "动态压差平衡开关型执行器",
+          "开关型执行器",
+          "动态压差执行器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "动作类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "外壳材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "恒定电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "起始电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门连接",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定功耗",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定推力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定行程",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡温度传感器": {
+        "keywords": [
+          "动态压差平衡温度传感器",
+          "动态压差平衡",
+          "压差平衡",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "传感器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装接口",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配管径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "options": [
+              "IP54",
+              "IP65",
+              "IP67",
+              "IP68"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡电动调节阀": {
+        "keywords": [
+          "动态压差平衡电动调节阀",
+          "电动调节阀",
+          "动态压差调节阀"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "压差控制范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "调节范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡电动调节阀+动态压差平衡调节型执行器": {
+        "keywords": [
+          "动态压差平衡电动调节阀+动态压差平衡调节型执行器",
+          "调节阀+调节型执行器",
+          "组合调节阀"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功耗",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "压差控制范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "反馈信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作环境温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "弹簧复位时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电气保护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "调节范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入阻抗",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行速度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定推力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定行程",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡电动调节阀总成": {
+        "keywords": [
+          "动态压差平衡电动调节阀总成",
+          "动态压差平衡",
+          "压差平衡",
+          "调节阀",
+          "阀门"
+        ],
+        "params": [
+          {
+            "name": "2个传感器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "主要作用",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "options": [
+              "AC24V",
+              "DC24V",
+              "AC220V",
+              "DC12V"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "options": [
+              "PN10",
+              "PN16",
+              "PN25",
+              "PN40"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "options": [
+              "DN15",
+              "DN20",
+              "DN25",
+              "DN32",
+              "DN40",
+              "DN50",
+              "DN65",
+              "DN80",
+              "DN100",
+              "DN125",
+              "DN150"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功耗",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "压差控制范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "反馈信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "存储环境温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装接口",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作环境温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "options": [
+              "开关型",
+              "调节型",
+              "比例型"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "调节范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配管径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "options": [
+              "IP54",
+              "IP65",
+              "IP67",
+              "IP68"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定推力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定行程",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差平衡调节型执行器": {
+        "keywords": [
+          "动态压差平衡调节型执行器",
+          "调节型执行器",
+          "动态压差执行器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功耗",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "反馈信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作环境温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电气保护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入阻抗",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行速度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定推力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定行程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "存储环境温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差控制阀": {
+        "keywords": [
+          "动态压差控制阀",
+          "压差控制阀"
+        ],
+        "params": [
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "调节范围",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差控制阀专用支架": {
+        "keywords": [
+          "动态压差控制阀专用支架",
+          "压差阀支架",
+          "阀门支架"
+        ],
+        "params": [
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功能类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "动态压差阀": {
+        "keywords": [
+          "动态压差阀",
+          "压差阀"
+        ],
+        "params": [
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "调节范围",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "压力传感器": {
+        "keywords": [
+          "压力传感器",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "压力接口",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "外壳材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装位置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作环境温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接线方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接触介质材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接触材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "爆破压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "表头材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "设备名称",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "过载压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "压差开关": {
+        "keywords": [
+          "压差开关",
+          "开关"
+        ],
+        "params": [
+          {
+            "name": "压力范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "备注",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "应用",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开关容量",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开关类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接口",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "触点容量",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "触点形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "墙面式温度模块": {
+        "keywords": [
+          "墙面式温度模块"
+        ],
+        "params": [
+          {
+            "name": "传感器规格",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功能定位",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接口形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "附加功能",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "墙面式温湿度模块": {
+        "keywords": [
+          "墙面式温湿度模块"
+        ],
+        "params": [
+          {
+            "name": "传感器规格",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接口形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测参数",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "附加功能",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "座阀": {
+        "keywords": [
+          "座阀",
+          "水阀",
+          "球阀",
+          "seat valve"
+        ],
+        "params": [
+          {
+            "name": "阀型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀内件材质",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "座阀+座阀开关型执行器": {
+        "keywords": [
+          "座阀+座阀开关型执行器",
+          "座阀开关型"
+        ],
+        "params": [
+          {
+            "name": "阀型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀内件材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "座阀+座阀调节型执行器": {
+        "keywords": [
+          "座阀+座阀调节型执行器",
+          "座阀调节型"
+        ],
+        "params": [
+          {
+            "name": "阀型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀内件材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "座阀开关型执行器": {
+        "keywords": [
+          "座阀开关型执行器",
+          "开关型执行器",
+          "seat valve actuator"
+        ],
+        "params": [
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "座阀调节型执行器": {
+        "keywords": [
+          "座阀调节型执行器",
+          "调节型执行器",
+          "modulating actuator"
+        ],
+        "params": [
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "微压差传感器": {
+        "keywords": [
+          "微压差传感器",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "截止阀": {
+        "keywords": [
+          "截止阀",
+          "globe valve",
+          "截止"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "手动球阀": {
+        "keywords": [
+          "手动球阀",
+          "manual ball valve",
+          "手动球"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "手动蝶阀": {
+        "keywords": [
+          "手动蝶阀",
+          "manual butterfly valve",
+          "手动蝶"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "低泄漏认证",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体加厚",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防火认证",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "手动闸阀": {
+        "keywords": [
+          "手动闸阀",
+          "manual gate valve",
+          "手动闸",
+          "闸阀"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "排气阀": {
+        "keywords": [
+          "排气阀",
+          "air vent",
+          "排气"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "排气量",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "智能照明设备": {
+        "keywords": [
+          "智能照明设备",
+          "智能照明",
+          "照明设备",
+          "KNX",
+          "执行器",
+          "开关",
+          "调光器"
+        ],
+        "params": [
+          {
+            "name": "传输特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "传输速率",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电要求",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "兼容信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "协议转换",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "单路调光电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "单路额定电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "单通道带载能力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "外观颜色",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "屏幕尺寸",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作模式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作电源",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开关触点额定电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "感应功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "指示功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "按键数量",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "探测角度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接口类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接线制式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "接线方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制支持",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制联动",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作模式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "数据功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示调节",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "状态指示",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "监测功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "系列归属",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "结构形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "设备名称",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "调光类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "负载特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "负载适配",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "辅助输出",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用场景",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用灯具",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配总线",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通讯接口",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通讯距离",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通道数量",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通道隔离",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "隔离特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "集成适配",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板形式",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "止回阀": {
+        "keywords": [
+          "止回阀",
+          "check valve",
+          "止回",
+          "逆止阀"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "水压差传感器": {
+        "keywords": [
+          "水压差传感器",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "H-Port 耐压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "L-Port 耐压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "TC-0",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "水流开关": {
+        "keywords": [
+          "水流开关",
+          "开关"
+        ],
+        "params": [
+          {
+            "name": "结构",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "触点容量",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "触点形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用口径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "流量计": {
+        "keywords": [
+          "流量计"
+        ],
+        "params": [
+          {
+            "name": "协议",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "口径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "管体承压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "表体形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "衬里材料",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入电压",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "涡街流量计": {
+        "keywords": [
+          "涡街流量计",
+          "涡街",
+          "流量计",
+          "vortex",
+          "flowmeter"
+        ],
+        "params": [
+          {
+            "name": "介质温度范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电配置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称口径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "压力等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "壳体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量模式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电池配置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "结构形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通讯功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通讯配置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防爆等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防爆配置",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "液位传感器": {
+        "keywords": [
+          "液位传感器",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "耐压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "液位开关": {
+        "keywords": [
+          "液位开关",
+          "开关"
+        ],
+        "params": [
+          {
+            "name": "供电方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "触点形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "液体压差传感器": {
+        "keywords": [
+          "液体压差传感器",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "备注",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "温度传感器": {
+        "keywords": [
+          "温度传感器",
+          "温度",
+          "temperature"
+        ],
+        "params": [
+          {
+            "name": "安装位置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测对象",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "浓度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "浓度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度传感器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度信号类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电源",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "继电器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通道数",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板颜色",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "响应时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "外壳",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装螺纹",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "探头长度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "温度控制器": {
+        "keywords": [
+          "温度控制器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "感温精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用系统",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "温湿度传感器": {
+        "keywords": [
+          "温湿度传感器",
+          "温湿度",
+          "温度湿度",
+          "温度",
+          "湿度"
+        ],
+        "params": [
+          {
+            "name": "安装位置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测对象",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "浓度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "浓度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度传感器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度信号类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电源",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "继电器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通道数",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板颜色",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "独立式 AHU 控制器": {
+        "keywords": [
+          "独立式 AHU 控制器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "语言版本",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入端口",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出端口",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配程序",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "球阀": {
+        "keywords": [
+          "球阀",
+          "ball valve",
+          "二通球阀",
+          "三通球阀"
+        ],
+        "params": [
+          {
+            "name": "KVS",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "关断压差",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "版本号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "球阀+球阀开关型执行器": {
+        "keywords": [
+          "球阀+球阀开关型执行器",
+          "球阀开关型"
+        ],
+        "params": [
+          {
+            "name": "KVS",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "关断压差",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "版本号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "执行器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "特点",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "辅助开关",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "球阀+球阀调节型执行器": {
+        "keywords": [
+          "球阀+球阀调节型执行器",
+          "球阀调节型"
+        ],
+        "params": [
+          {
+            "name": "KVS",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "关断压差",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "版本号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "执行器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "特点",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "球阀开关型执行器": {
+        "keywords": [
+          "球阀开关型执行器",
+          "开关型执行器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "执行器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "特点",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "辅助开关",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "球阀调节型执行器": {
+        "keywords": [
+          "球阀调节型执行器",
+          "调节型执行器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "执行器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "特点",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "电动区域阀": {
+        "keywords": [
+          "电动区域阀",
+          "区域阀",
+          "电动阀"
+        ],
+        "params": [
+          {
+            "name": "阀门型号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "执行器型号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "口径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "KVS",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "关闭压\n差BAR",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "材质：阀体/阀杆/密封",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "备注",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "作用形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安全帽",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功耗W",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流通方向",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "行程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开启方向",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温控器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开/关\n时间S",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "手动",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "无执行器或失电状态",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "电动静态阀": {
+        "keywords": [
+          "电动静态阀",
+          "静态平衡阀",
+          "静态阀",
+          "电动阀"
+        ],
+        "params": [
+          {
+            "name": "阀门型号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "执行器型号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "口径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "KVS",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "关闭压\n差BAR",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "材质：阀体/阀杆/密封",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "备注",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "作用形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安全帽",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "功耗W",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流通方向",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制器类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "行程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开启方向",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温控器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开/关\n时间S",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "手动",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "无执行器或失电状态",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "空气压差传感器": {
+        "keywords": [
+          "空气压差传感器",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "空气质量传感器": {
+        "keywords": [
+          "空气质量传感器",
+          "空气质量",
+          "空气",
+          "质量",
+          "传感器"
+        ],
+        "params": [
+          {
+            "name": "供电",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "外壳颜色",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装位置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "报警安装位置",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "报警继电器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测对象",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "检测气体",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "浓度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "浓度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度传感器",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度信号类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电源",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板颜色",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "能量表": {
+        "keywords": [
+          "能量表"
+        ],
+        "params": [
+          {
+            "name": "协议",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "口径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "测量方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "管体承压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "表体形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "衬里材料",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输入电压",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "自动排气阀": {
+        "keywords": [
+          "自动排气阀",
+          "阀"
+        ],
+        "params": [
+          {
+            "name": "‌介质‌",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力‌",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度‌",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "排气方式‌",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "通径",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "蝶阀": {
+        "keywords": [
+          "蝶阀",
+          "butterfly valve",
+          "对夹式蝶阀"
+        ],
+        "params": [
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "蝶阀+蝶阀开关型执行器": {
+        "keywords": [
+          "蝶阀+蝶阀开关型执行器",
+          "蝶阀开关型",
+          "蝶阀+开关型"
+        ],
+        "params": [
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "断电状态",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "蝶阀+蝶阀调节型执行器": {
+        "keywords": [
+          "蝶阀+蝶阀调节型执行器",
+          "蝶阀调节型",
+          "蝶阀+调节型"
+        ],
+        "params": [
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "断电状态",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "蝶阀开关型执行器": {
+        "keywords": [
+          "蝶阀开关型执行器",
+          "开关型执行器",
+          "蝶阀执行器"
+        ],
+        "params": [
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "断电状态",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "蝶阀调节型执行器": {
+        "keywords": [
+          "蝶阀调节型执行器",
+          "调节型执行器",
+          "蝶阀执行器"
+        ],
+        "params": [
+          {
+            "name": "额定扭矩",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制信号",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "断电状态",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行角度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "过滤器": {
+        "keywords": [
+          "过滤器",
+          "filter",
+          "strainer",
+          "滤网"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "过滤精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "通用型温度控制器": {
+        "keywords": [
+          "通用型温度控制器"
+        ],
+        "params": [
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "安装方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "感温精度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "控制形式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用系统",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "防冻保护温控器": {
+        "keywords": [
+          "防冻保护温控器",
+          "温控器",
+          "温控"
+        ],
+        "params": [
+          {
+            "name": "备注",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "复位方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作环境",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开关容量",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "开关模式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温差",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度最小可调刻度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "线圈长度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "设定温度范围",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "进线孔",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "重复误差",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "重量",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "静态平衡阀": {
+        "keywords": [
+          "静态平衡阀",
+          "平衡阀"
+        ],
+        "params": [
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "风机盘管用动态压差平衡电动二通开关阀+动态压差平衡开关型执行器": {
+        "keywords": [
+          "风机盘管用动态压差平衡电动二通开关阀",
+          "动态压差平衡电动二通开关阀",
+          "组合阀门"
+        ],
+        "params": [
+          {
+            "name": "介质温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "供电电压",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称压力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "公称通径",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "关闭压差",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "动作类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "外壳材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "密封材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "工作温度",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "恒定电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "操作方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "核心功能",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "流量特性",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "起始电流",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "运行时间",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "连接方式",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适用介质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "适配阀门",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀体材质",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门类型",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "阀门连接",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "防护等级",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定功耗",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定推力",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "额定行程",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  },
+  "device_params_config": {
+    "device_params_config": {
+      "CO2传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "CO2",
+              "二氧化碳",
+              "温度+湿度+二氧化碳",
+              "温度+湿度+二氧化碳+PM2.5"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "options": [
+              "0-2000ppm",
+              "0-5000ppm"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V",
+              "4-20mA/0-10V/2-10V",
+              "Modbus"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "通道数",
+            "options": [
+              "单通道",
+              "双通道"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "options": [
+              "带显示",
+              "无显示"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板颜色",
+            "options": [
+              "黑色",
+              "白色"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电源",
+            "options": [
+              "24VDC"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "CO传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "CO",
+              "一氧化碳"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "量程",
+            "options": [
+              "0-100ppm",
+              "0-200ppm",
+              "0-500ppm",
+              "0-1000ppm"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V",
+              "4-20mA/0-10V/2-10V"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "options": [
+              "带显示",
+              "无显示"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "继电器",
+            "options": [
+              "有继电器",
+              "无继电器"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "温度传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "温度"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "安装位置",
+            "options": [
+              "室内墙装",
+              "风管",
+              "室外"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度信号类型",
+            "options": [
+              "NTC 10K",
+              "NTC 20K",
+              "Pt1000",
+              "电子式"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": "-20~60℃",
+            "name": "温度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "温湿度传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "温度+湿度"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "安装位置",
+            "options": [
+              "室内墙装",
+              "风管",
+              "室外"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "温度信号类型",
+            "options": [
+              "NTC 10K",
+              "NTC 20K",
+              "Pt1000",
+              "电子式"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度信号类型",
+            "options": [
+              "4-20mA",
+              "0-10V"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "湿度精度",
+            "options": [
+              "±2%",
+              "±3%",
+              "±5%"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": "-20~60℃",
+            "name": "温度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": "0-100%RH",
+            "name": "湿度量程",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "输出信号",
+            "options": [
+              "4-20mA",
+              "0-10V",
+              "2-10V"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "空气质量传感器": {
+        "params": [
+          {
+            "name": "检测对象",
+            "options": [
+              "CO2+PM2.5+温度+湿度",
+              "多参数"
+            ],
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "显示屏",
+            "options": [
+              "带显示屏",
+              "无显示"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "显示状态",
+            "options": [
+              "长暗",
+              "常亮",
+              "靠近点亮"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "面板颜色",
+            "options": [
+              "黑色",
+              "白色"
+            ],
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "电源",
+            "options": [
+              "24VDC"
+            ],
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  },
+  "device_row_recognition": {
+    "industry_keywords": {
+      "brands": [
+        "霍尼韦尔",
+        "西门子",
+        "江森自控",
+        "施耐德",
+        "明纬",
+        "欧姆龙",
+        "ABB",
+        "丹佛斯",
+        "贝尔莫",
+        "Honeywell",
+        "Siemens",
+        "Johnson",
+        "Schneider",
+        "OMRON",
+        "Danfoss",
+        "Belimo",
+        "Delta",
+        "台达",
+        "正泰",
+        "德力西"
+      ],
+      "device_types": [
+        "传感器",
+        "控制器",
+        "DDC",
+        "阀门",
+        "执行器",
+        "控制柜",
+        "电源",
+        "继电器",
+        "网关",
+        "模块",
+        "探测器",
+        "开关",
+        "变送器",
+        "温控器",
+        "风阀",
+        "水阀",
+        "电动阀",
+        "调节阀",
+        "压力传感器",
+        "温度传感器",
+        "湿度传感器",
+        "CO2传感器",
+        "流量计",
+        "压差开关",
+        "液位开关",
+        "风机",
+        "水泵"
+      ],
+      "model_patterns": [
+        "[A-Z]{2,}-[A-Z0-9]+",
+        "[A-Z]+\\d{3,}",
+        "\\d{4}[A-Z]+",
+        "[A-Z]+-\\d+"
+      ],
+      "parameters": [
+        "PPM",
+        "ppm",
+        "℃",
+        "摄氏度",
+        "Pa",
+        "pa",
+        "%RH",
+        "%rh",
+        "m/s",
+        "MPa",
+        "mA",
+        "4-20mA",
+        "0-10V",
+        "2-10V",
+        "AC220V",
+        "DC24V",
+        "DN",
+        "dn",
+        "AI",
+        "AO",
+        "DI",
+        "DO",
+        "点位",
+        "通道",
+        "路",
+        "个",
+        "V",
+        "A",
+        "W",
+        "Hz",
+        "kW",
+        "kg",
+        "mm",
+        "cm",
+        "m"
+      ]
+    },
+    "probability_thresholds": {
+      "high": 50,
+      "medium": 30
+    },
+    "scoring_weights": {
+      "data_type": 0.3,
+      "industry": 0.35,
+      "structure": 0.35
+    }
+  },
+  "device_type_keywords": [
+    "CO2传感器",
+    "CO传感器",
+    "DDC",
+    "PM传感器",
+    "传感器",
+    "压差开关",
+    "变送器",
+    "座阀",
+    "开关",
+    "执行器",
+    "探测器",
+    "控制器",
+    "控制柜",
+    "模块",
+    "水泵",
+    "水阀",
+    "流量计",
+    "液位开关",
+    "温度传感器",
+    "温控器",
+    "温湿度传感器",
+    "球阀",
+    "电动阀",
+    "电源",
+    "空气质量传感器",
+    "继电器",
+    "网关",
+    "蝶阀",
+    "调节阀",
+    "阀门",
+    "风机",
+    "风阀"
+  ],
+  "feature_extraction": {
+    "param_decompose": [],
+    "separator_processing": [],
+    "smart_split": [],
+    "unit_remove": []
+  },
+  "feature_quality": {
+    "quality_scoring": [],
+    "whitelist": []
+  },
+  "feature_quality_scoring": {
+    "enabled": false,
+    "scoring_rules": {
+      "min_length": 2,
+      "min_length_chinese": 1,
+      "quality_threshold": 0.5
+    }
+  },
+  "feature_split_chars": [
+    "+",
+    "|",
+    "；",
+    "\n"
+  ],
+  "feature_weight_config": {
+    "brand_weight": 5,
+    "device_type_weight": 10,
+    "key_params_weight": 5,
+    "model_weight": 20,
+    "parameter_weight": 1
+  },
+  "feature_weight_strategy": {
+    "brand_weight": 10,
+    "common_param_weight": 1,
+    "device_type_weight": 15,
+    "important_param_weight": 3,
+    "key_params_weight": 15,
+    "model_weight": 5
+  },
+  "feature_whitelist": [
+    "水",
+    "气",
+    "阀",
+    "泵",
+    "表",
+    "计",
+    "器"
+  ],
+  "global_config": {
+    "default_match_threshold": 5,
+    "fullwidth_to_halfwidth": true,
+    "min_feature_length": 1,
+    "min_feature_length_chinese": 1,
+    "remove_whitespace": true,
+    "unify_lowercase": true
+  },
+  "ignore_keywords": [
+    "施工要求",
+    "验收",
+    "图纸",
+    "规范",
+    "清单",
+    "调试",
+    "安装",
+    "含税",
+    "不含税",
+    "备注",
+    "说明",
+    "要求",
+    "标准",
+    "国标",
+    "进口",
+    "国产",
+    "品牌",
+    "厂家",
+    "供货",
+    "交货",
+    "质保",
+    "系列",
+    "传输",
+    "传输方式"
+  ],
+  "intelligent_extraction": {
+    "complex_parameter_decomposition": {
+      "enabled": true,
+      "patterns": [
+        {
+          "description": "提取精度、温度、湿度、量程中的数值（归一化后的格式）",
+          "name": "精度规格",
+          "pattern": "±(\\d+)%?@(\\d+)c\\.?(\\d+)%?rh\\((\\d+)[-~](\\d+)"
+        }
+      ]
+    },
+    "device_type_recognition": {
+      "device_types": [
+        "流量计",
+        "能量表",
+        "座阀+座阀调节型执行器",
+        "蝶阀+蝶阀开关型执行器",
+        "蝶阀+蝶阀调节型执行器",
+        "蝶阀",
+        "座阀",
+        "涡街流量计",
+        "压力传感器",
+        "手动蝶阀",
+        "FCU电动球阀",
+        "球阀+球阀开关型执行器",
+        "温湿度传感器",
+        "动态压差平衡电动调节阀+动态压差平衡调节型执行器",
+        "球阀+球阀调节型执行器",
+        "止回阀",
+        "电动静态阀",
+        "动态压差控制阀",
+        "静态平衡阀",
+        "温度传感器",
+        "空气质量传感器",
+        "动态压差阀",
+        "液体压差传感器",
+        "手动闸阀",
+        "座阀+座阀开关型执行器",
+        "球阀",
+        "蝶阀开关型执行器",
+        "蝶阀调节型执行器",
+        "电动区域阀",
+        "微压差传感器",
+        "过滤器",
+        "动态压差平衡电动调节阀",
+        "智能照明设备",
+        "座阀调节型执行器",
+        "截止阀",
+        "风机盘管用动态压差平衡电动二通开关阀+动态压差平衡开关型执行器",
+        "动态压差平衡温度传感器",
+        "球阀开关型执行器",
+        "动态压差平衡电动调节阀总成",
+        "防冻保护温控器",
+        "FCU温控器",
+        "墙面式温度模块",
+        "球阀调节型执行器",
+        "空气压差传感器",
+        "动态压差平衡调节型执行器",
+        "液位开关",
+        "FCU联网型温控器",
+        "手动球阀",
+        "减压阀",
+        "FCU调节型温控器",
+        "VAV 专用墙面模块",
+        "压差开关",
+        "水压差传感器",
+        "独立式 AHU 控制器",
+        "座阀开关型执行器",
+        "排气阀",
+        "液位传感器",
+        "动态压差平衡开关型执行器",
+        "水流开关",
+        "自动排气阀",
+        "墙面式温湿度模块",
+        "动态压差控制阀专用支架",
+        "动态压差平衡压力传感器",
+        "动态压差平衡压差传感器",
+        "FCU 阀门执行器",
+        "温度控制器",
+        "通用型温度控制器",
+        "Zio 系列智能温控器",
+        "Zio Plus 系列智能温湿度控制器",
+        "Zio Plus 系列智能温控器"
+      ],
+      "main_types": {
+        "传感器": [
+          "压力传感器",
+          "温湿度传感器",
+          "温度传感器",
+          "空气质量传感器",
+          "液体压差传感器",
+          "微压差传感器",
+          "动态压差平衡温度传感器",
+          "空气压差传感器",
+          "水压差传感器",
+          "液位传感器",
+          "动态压差平衡压力传感器",
+          "动态压差平衡压差传感器"
+        ],
+        "其他": [
+          "能量表",
+          "过滤器",
+          "智能照明设备",
+          "FCU温控器",
+          "墙面式温度模块",
+          "防冻保护温控器",
+          "FCU联网型温控器",
+          "液位开关",
+          "FCU调节型温控器",
+          "VAV 专用墙面模块",
+          "压差开关",
+          "墙面式温湿度模块",
+          "水流开关",
+          "Zio Plus 系列智能温控器",
+          "Zio 系列智能温控器"
+        ],
+        "变送器": [],
+        "执行器": [
+          "蝶阀开关型执行器",
+          "蝶阀调节型执行器",
+          "座阀调节型执行器",
+          "球阀开关型执行器",
+          "球阀调节型执行器",
+          "动态压差平衡调节型执行器",
+          "座阀开关型执行器",
+          "动态压差平衡开关型执行器",
+          "FCU 阀门执行器"
+        ],
+        "探测器": [],
+        "控制器": [
+          "独立式 AHU 控制器",
+          "Zio Plus 系列智能温湿度控制器",
+          "温度控制器",
+          "通用型温度控制器"
+        ],
+        "流量计": [
+          "流量计",
+          "涡街流量计"
+        ],
+        "组合设备": [
+          "座阀+座阀调节型执行器",
+          "蝶阀+蝶阀开关型执行器",
+          "蝶阀+蝶阀调节型执行器",
+          "球阀+球阀开关型执行器",
+          "动态压差平衡电动调节阀+动态压差平衡调节型执行器",
+          "球阀+球阀调节型执行器",
+          "座阀+座阀开关型执行器",
+          "风机盘管用动态压差平衡电动二通开关阀+动态压差平衡开关型执行器"
+        ],
+        "阀门": [
+          "蝶阀",
+          "座阀",
+          "手动蝶阀",
+          "FCU电动球阀",
+          "止回阀",
+          "电动静态阀",
+          "动态压差控制阀",
+          "静态平衡阀",
+          "动态压差阀",
+          "手动闸阀",
+          "球阀",
+          "电动区域阀",
+          "动态压差平衡电动调节阀",
+          "截止阀",
+          "动态压差平衡电动调节阀总成",
+          "减压阀",
+          "手动球阀",
+          "排气阀",
+          "自动排气阀",
+          "动态压差控制阀专用支架"
+        ]
+      },
+      "prefix_keywords": {
+        "co": [
+          "空气质量传感器"
+        ],
+        "co2": [
+          "空气质量传感器"
+        ]
+      }
+    },
+    "enabled": false,
+    "feature_quality_scoring": {
+      "enabled": true,
+      "min_quality_score": 50,
+      "scoring_rules": {
+        "appropriate_length": 5,
+        "has_number": 10,
+        "has_unit": 10,
+        "in_device_keywords": 15,
+        "is_common_word": -20,
+        "is_metadata_label": -30,
+        "is_pure_number": -5,
+        "is_pure_punctuation": -30,
+        "is_technical_term": 20,
+        "too_short": -20
+      },
+      "whitelist_features": [
+        "0-10v",
+        "2-10v",
+        "4-20ma",
+        "co",
+        "co2",
+        "modbus",
+        "ntc",
+        "pm10",
+        "pm2.5",
+        "pt1000",
+        "一氧化碳",
+        "二氧化碳",
+        "单通道",
+        "双通道",
+        "墙装",
+        "室内",
+        "室外",
+        "带显示",
+        "无显示",
+        "显示屏",
+        "气",
+        "水",
+        "温度",
+        "湿度",
+        "电子式",
+        "白色",
+        "继电器",
+        "阀",
+        "霍尼韦尔",
+        "颗粒物",
+        "风管",
+        "黑色"
+      ]
+    },
+    "metadata_label_patterns": [
+      "\\d+\\.?名称[:：]",
+      "\\d+\\.?施工要求[:：]"
+    ],
+    "parameter_extraction": {
+      "range": {
+        "enabled": true,
+        "labels": [
+          "测量范围",
+          "温度量程",
+          "湿度量程",
+          "浓度量程",
+          "介质温度"
+        ]
+      },
+      "output": {
+        "enabled": true,
+        "labels": [
+          "输出",
+          "输出信号"
+        ]
+      },
+      "accuracy": {
+        "enabled": true,
+        "labels": [
+          "精度",
+          "准确度"
+        ]
+      },
+      "specs": {
+        "enabled": true,
+        "patterns": [
+          "DN\\d+",
+          "PN\\d+",
+          "PT\\d+"
+        ]
+      }
+    },
+    "technical_term_expansion": {
+      "0-10V": [
+        "0-10V",
+        "电压输出"
+      ],
+      "4-20mA": [
+        "4-20mA",
+        "电流输出"
+      ],
+      "485通讯": [
+        "RS485",
+        "485"
+      ],
+      "CO2": [
+        "CO2",
+        "二氧化碳",
+        "co2"
+      ],
+      "DDC": [
+        "DDC",
+        "直接数字控制器"
+      ]
+    },
+    "text_cleaning": {
+      "enabled": true,
+      "filter_row_numbers": true,
+      "noise_section_patterns": [
+        {
+          "description": "删除按照图纸规范的描述",
+          "pattern": "按照.*?(?:图纸|规范|清单).*?(?:要求|配置)"
+        },
+        {
+          "description": "删除验收相关描述",
+          "pattern": "(?:达到|满足|通过).*?验收"
+        },
+        {
+          "description": "删除采购运输相关描述",
+          "pattern": "(?:采购|运输|保管|转运).*?(?:施工|验收)"
+        }
+      ],
+      "row_number_columns": 3,
+      "truncate_delimiters": [
+        {
+          "description": "在施工要求处截断",
+          "pattern": "\\d+\\.?施工要求[:：]"
+        },
+        {
+          "description": "在采购说明处截断",
+          "pattern": "含该项施工内容"
+        }
+      ]
+    }
+  },
+  "intelligent_splitting": {
+    "enabled": true,
+    "split_by_space": true,
+    "split_compound_words": true,
+    "split_technical_specs": true
+  },
+  "location_words": [
+    "室内",
+    "室外",
+    "管道",
+    "风管",
+    "水管",
+    "回风",
+    "送风",
+    "新风",
+    "排风"
+  ],
+  "match_threshold_config": {
+    "max_value": 0.95,
+    "min_value": 0.3,
+    "value": 0.6
+  },
+  "medium_keywords": [
+    "水",
+    "气",
+    "蒸汽",
+    "空气",
+    "氮气",
+    "油",
+    "气体",
+    "冷冻水",
+    "热水",
+    "烟气",
+    "粉尘"
+  ],
+  "metadata_keywords": [
+    "型号",
+    "通径",
+    "阀体类型",
+    "适用介质",
+    "品牌",
+    "规格",
+    "参数",
+    "名称",
+    "类型",
+    "尺寸",
+    "材质",
+    "范围",
+    "输出",
+    "输入",
+    "信号",
+    "接口",
+    "安装",
+    "防护",
+    "等级",
+    "规格参数",
+    "工作原理",
+    "量程",
+    "输出信号",
+    "精度",
+    "传输方式",
+    "介质"
+  ],
+  "normalization_map": [],
+  "performance_config": {
+    "match_timeout_seconds": 10,
+    "max_rows_per_file": 10000,
+    "parse_timeout_seconds": 5
+  },
+  "python_test_config": {
+    "test_enabled": false,
+    "test_value": 456
+  },
+  "synonym_map": [
+    {
+      "enabled": true,
+      "id": "mapping_0",
+      "source": "0-10v",
+      "target": [
+        "0-10伏",
+        "010v"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_1",
+      "source": "4-20ma",
+      "target": [
+        "4-20毫安",
+        "420ma"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_2",
+      "source": "co",
+      "target": "一氧化碳",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_3",
+      "source": "co2",
+      "target": "二氧化碳",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_4",
+      "source": "co2传感器",
+      "target": [
+        "co2探测器",
+        "二氧化碳传感器",
+        "二氧化碳探测器"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_5",
+      "source": "co传感器",
+      "target": [
+        "co探测器",
+        "一氧化碳传感器",
+        "一氧化碳探测器"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_6",
+      "source": "ntc",
+      "target": [
+        "ntc热敏电阻",
+        "负温度系数"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_7",
+      "source": "pm传感器",
+      "target": [
+        "pm10传感器",
+        "pm2.5传感器",
+        "颗粒物传感器"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_8",
+      "source": "pt1000",
+      "target": [
+        "pt1000铂电阻",
+        "铂电阻"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_9",
+      "source": "solenoid",
+      "target": "电磁阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_10",
+      "source": "二通阀",
+      "target": "电动开关阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_11",
+      "source": "减压",
+      "target": "减压阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_12",
+      "source": "动态平衡阀",
+      "target": "平衡阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_13",
+      "source": "单向阀",
+      "target": "止回阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_14",
+      "source": "室内",
+      "target": [
+        "室内墙装",
+        "室内安装"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_15",
+      "source": "室外",
+      "target": [
+        "室外安装",
+        "户外"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_16",
+      "source": "平衡",
+      "target": "平衡阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_17",
+      "source": "开关阀",
+      "target": "电动开关阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_18",
+      "source": "截止阀",
+      "target": "手动球阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_19",
+      "source": "手动阀",
+      "target": "手动球阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_20",
+      "source": "止回",
+      "target": "止回阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_21",
+      "source": "比例阀",
+      "target": "电动调节阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_22",
+      "source": "泄压阀",
+      "target": "减压阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_23",
+      "source": "温度传感器",
+      "target": [
+        "温度探头",
+        "温度探测器",
+        "温度检测器"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_24",
+      "source": "温湿度传感器",
+      "target": [
+        "温度湿度传感器",
+        "温湿度探头",
+        "温湿度探测器"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_25",
+      "source": "球阀",
+      "target": "电动球阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_26",
+      "source": "电动二通阀",
+      "target": "电动开关阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_27",
+      "source": "电动阀",
+      "target": "电动调节阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_28",
+      "source": "电球阀",
+      "target": "电动球阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_29",
+      "source": "电磁",
+      "target": "电磁阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_30",
+      "source": "电蝶阀",
+      "target": "电动蝶阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_31",
+      "source": "电调阀",
+      "target": "电动调节阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_32",
+      "source": "空气质量传感器",
+      "target": [
+        "环境监测传感器",
+        "空气监测仪",
+        "空气质量检测仪"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_33",
+      "source": "蝶阀",
+      "target": "电动蝶阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_34",
+      "source": "调压阀",
+      "target": "减压阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_35",
+      "source": "调节阀",
+      "target": "电动调节阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_36",
+      "source": "逆止阀",
+      "target": "止回阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_37",
+      "source": "阀",
+      "target": "电动调节阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_38",
+      "source": "阀门",
+      "target": "电动调节阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_39",
+      "source": "静态平衡阀",
+      "target": "平衡阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_40",
+      "source": "风管",
+      "target": [
+        "管道式",
+        "风管式"
+      ],
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_41",
+      "source": "风阀",
+      "target": "电动蝶阀",
+      "type": "synonym"
+    },
+    {
+      "enabled": true,
+      "id": "mapping_1773367586888",
+      "source": "~",
+      "target": "-",
+      "type": "synonym"
+    }
+  ],
+  "system_version": {
+    "version": "1.0.0"
+  },
+  "text_cleaning": {
+    "metadata_rules": [],
+    "noise_patterns": [],
+    "separator_mappings": []
+  },
+  "ui_config": {
+    "default_export_format": "xlsx",
+    "max_file_size_mb": 10,
+    "supported_formats": [
+      "xls",
+      "xlsm",
+      "xlsx"
+    ]
+  },
+  "unit_removal": {
+    "enabled": true,
+    "units": [
+      "ppm",
+      "ma",
+      "v",
+      "w",
+      "a",
+      "pa",
+      "hz",
+      "kw",
+      "kg",
+      "mm",
+      "cm",
+      "m",
+      "%rh",
+      "c",
+      "f"
+    ]
+  },
+  "whitelist_features": [
+    "0-10v",
+    "2-10v",
+    "4-20ma",
+    "co",
+    "co2",
+    "modbus",
+    "ntc",
+    "pm10",
+    "pm2.5",
+    "pt1000",
+    "一氧化碳",
+    "二氧化碳",
+    "单通道",
+    "双通道",
+    "墙装",
+    "室内",
+    "室外",
+    "带显示",
+    "无显示",
+    "显示屏",
+    "气",
+    "水",
+    "温度",
+    "湿度",
+    "电子式",
+    "白色",
+    "继电器",
+    "阀",
+    "霍尼韦尔",
+    "颗粒物",
+    "风管",
+    "黑色"
+  ]
+}

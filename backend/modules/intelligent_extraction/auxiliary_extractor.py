@@ -105,9 +105,35 @@ class AuxiliaryExtractor:
         if not self.model_config.get('enabled', True):
             return None
         
-        match = re.search(self.model_pattern, text)
-        if match:
+        # 常见的单位和技术术语，不应该被识别为型号
+        exclude_patterns = [
+            r'VDC', r'VAC', r'DC', r'AC',  # 电压单位
+            r'mA', r'A', r'V', r'W',  # 电流、电压、功率单位
+            r'RS485', r'RS232', r'RS488',  # 通讯协议
+            r'Modbus', r'BACnet', r'CAN',  # 通讯协议
+            r'TCP', r'IP', r'UDP',  # 网络协议
+            r'LED', r'LCD', r'OLED',  # 显示技术
+            r'USB', r'UART', r'I2C', r'SPI',  # 接口
+            r'PM', r'CO', r'CO2', r'NO2', r'SO2',  # 气体符号
+            r'CPU', r'GPU', r'RAM', r'ROM',  # 计算机术语
+        ]
+        
+        # 构建排除正则
+        exclude_regex = '|'.join(exclude_patterns)
+        
+        # 查找所有可能的型号
+        matches = re.finditer(self.model_pattern, text)
+        for match in matches:
             model = match.group(0)
+            # 检查是否在排除列表中
+            if re.match(f'^({exclude_regex})$', model, re.IGNORECASE):
+                continue
+            # 检查是否是纯数字或纯字母（太短的不太可能是型号）
+            if len(model) < 3:
+                continue
+            # 检查是否只包含常见单位
+            if model.upper() in ['VDC', 'VAC', 'DC', 'AC', 'MA', 'RS']:
+                continue
             logger.debug(f"识别到型号：{model}")
             return model
         

@@ -87,9 +87,7 @@
           v-for="param in currentDeviceParams"
           :key="param.name"
           :label="param.name"
-          :prop="`key_params.${param.name}.value`"
           :required="param.required"
-          :rules="param.required ? [{ required: true, message: `请输入${param.name}`, trigger: 'blur' }] : []"
         >
           <el-input
             :model-value="getParamValue(param.name)"

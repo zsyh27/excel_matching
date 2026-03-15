@@ -344,7 +344,9 @@ export default {
       const source = newSource.value.trim()
       const target = newTarget.value.trim()
       
-      if (source && target) {
+      // 单位归一化类型允许target为空（表示删除单位）
+      // 其他类型要求source和target都有值
+      if (source && (newType.value === 'unit' || target)) {
         const newMapping = {
           id: `mapping_${Date.now()}`,
           source,
@@ -356,6 +358,13 @@ export default {
         newSource.value = ''
         newTarget.value = ''
         emitChange()
+        ElMessage.success('添加成功，请点击"保存配置"按钮保存更改')
+      } else {
+        if (!source) {
+          ElMessage.warning('请输入原词/原单位')
+        } else if (!target && newType.value !== 'unit') {
+          ElMessage.warning('请输入目标词')
+        }
       }
     }
 

@@ -43,6 +43,7 @@
             v-model="filters.device_type"
             placeholder="筛选设备类型"
             clearable
+            filterable
             @change="handleSearch"
           >
             <el-option

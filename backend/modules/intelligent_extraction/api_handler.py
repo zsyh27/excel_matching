@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional
 from .device_type_recognizer import DeviceTypeRecognizer
 from .parameter_extractor import ParameterExtractor
+from .parameter_candidate_extractor import ParameterCandidateExtractor
 from .auxiliary_extractor import AuxiliaryExtractor
 from .intelligent_matcher import IntelligentMatcher
 from .data_models import ExtractionResult
@@ -37,6 +38,14 @@ class IntelligentExtractionAPI:
         # 注意：传递完整配置给识别器，以便初始化文本预处理器
         self.device_recognizer = DeviceTypeRecognizer(device_type_config, full_config=config)
         self.parameter_extractor = ParameterExtractor(parameter_config)
+        
+        # 初始化参数候选提取器
+        candidate_config = {
+            'parameter_patterns': config.get('parameter_patterns', []),
+            'medium_keywords': config.get('medium_keywords', []),
+            'brand_keywords': config.get('brand_keywords', [])
+        }
+        self.candidate_extractor = ParameterCandidateExtractor(candidate_config)
         
         # 为辅助信息提取器准备配置
         auxiliary_config = ie_config.get('auxiliary_extraction', {})
@@ -89,8 +98,13 @@ class IntelligentExtractionAPI:
             # 提取设备类型
             device_type = self.device_recognizer.recognize(text)
             
-            # 提取参数
+            # 提取参数（保留原有逻辑，用于兼容）
             parameters = self.parameter_extractor.extract(text)
+            
+            # 提取参数候选（新增）
+            print(f"[DEBUG] 开始提取参数候选，文本长度: {len(text)}")
+            parameter_candidates = self.candidate_extractor.extract_all_candidates(text)
+            print(f"[DEBUG] 提取到 {len(parameter_candidates)} 个参数候选")
             
             # 提取辅助信息
             auxiliary = self.auxiliary_extractor.extract(text)
@@ -99,6 +113,7 @@ class IntelligentExtractionAPI:
             extraction = ExtractionResult(
                 device_type=device_type,
                 parameters=parameters,
+                parameter_candidates=parameter_candidates,
                 auxiliary=auxiliary,
                 raw_text=text,
                 timestamp=datetime.now()
@@ -227,13 +242,13 @@ class IntelligentExtractionAPI:
     
     def preview(self, text: str) -> Dict[str, Any]:
         """
-        六步流程预览（新增步骤0：文本预处理）
+        五步流程预览
         
         Args:
             text: 输入文本
             
         Returns:
-            Dict: 预览结果，包含六步流程的完整信息
+            Dict: 预览结果，包含五步流程的完整信息
         """
         if not text or not text.strip():
             return {
@@ -248,22 +263,15 @@ class IntelligentExtractionAPI:
             start_time = time.time()
             step_times = {}
             
-            # 步骤0：文本预处理（新增）
-            step0_start = time.time()
-            preprocessing_result = None
-            if self.device_recognizer.preprocessor:
-                # 调用预处理器获取详细信息
-                preprocessing_result = self.device_recognizer.preprocessor.preprocess(text, mode='matching')
-            step_times['step0_time_ms'] = (time.time() - step0_start) * 1000
-            
             # 第一步：设备类型识别
             step1_start = time.time()
             device_type = self.device_recognizer.recognize(text)
             step_times['step1_time_ms'] = (time.time() - step1_start) * 1000
             
-            # 第二步：技术参数提取
+            # 第二步：参数候选提取（新增）
             step2_start = time.time()
-            parameters = self.parameter_extractor.extract(text)
+            parameter_candidates = self.candidate_extractor.extract_all_candidates(text)
+            parameters = self.parameter_extractor.extract(text)  # 保留原有逻辑，用于兼容
             step_times['step2_time_ms'] = (time.time() - step2_start) * 1000
             
             # 第三步：辅助信息提取
@@ -276,10 +284,11 @@ class IntelligentExtractionAPI:
             extraction = ExtractionResult(
                 device_type=device_type,
                 parameters=parameters,
+                parameter_candidates=parameter_candidates,
                 auxiliary=auxiliary,
                 raw_text=text
             )
-            match_result = self.matcher.match(extraction, top_k=5)
+            match_result = self.matcher.match(extraction, top_k=15)
             step_times['step4_time_ms'] = (time.time() - step4_start) * 1000
             
             # 第五步：UI预览
@@ -301,6 +310,7 @@ class IntelligentExtractionAPI:
                     'mode': device_type.mode
                 },
                 'step2_parameters': extraction.to_dict()['parameters'],
+                'parameter_candidates': [c.to_dict() for c in parameter_candidates],
                 'step3_auxiliary': extraction.to_dict()['auxiliary'],
                 'step4_matching': {
                     'status': 'success' if match_result.candidates else 'no_match',
@@ -320,15 +330,6 @@ class IntelligentExtractionAPI:
                     }
                 }
             }
-            
-            # 添加步骤0：文本预处理（如果有）
-            if preprocessing_result:
-                result_data['step0_preprocessing'] = preprocessing_result.to_dict()
-                # 更新处理日志，在最前面添加预处理步骤
-                result_data['debug_info']['processing_log'].insert(
-                    0, 
-                    f"文本预处理完成 (耗时: {step_times['step0_time_ms']:.2f}ms)"
-                )
             
             return {
                 'success': True,
