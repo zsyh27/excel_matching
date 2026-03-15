@@ -388,11 +388,11 @@ class IntelligentMatcher:
         # 设备类型得分
         device_type_score = self._score_device_type(extraction, device)
         
-        # 关键词得分
-        keyword_score = self._score_keyword_match(extraction, device)
+        # 关键词得分（返回得分和匹配的参数名）
+        keyword_score, keyword_matched_params = self._score_keyword_match(extraction, device)
         
         # 参数候选匹配得分（新增）
-        param_match_score, matched_candidates, matched_param_names = self._match_candidates_to_device(
+        param_match_score, matched_candidates, param_matched_names = self._match_candidates_to_device(
             extraction.parameter_candidates, device
         )
         
@@ -414,6 +414,12 @@ class IntelligentMatcher:
         # 提取设备的所有参数
         all_params = self._extract_all_params(device)
         
+        # 合并所有匹配的参数名（去重）
+        all_matched_params = list(set(keyword_matched_params + param_matched_names))
+        
+        # 计算未匹配的参数（设备有但用户输入没有匹配的参数）
+        unmatched_params = [name for name in all_params.keys() if name not in all_matched_params]
+        
         # 提取价格
         unit_price = device.get('unit_price', 0) or 0
         
@@ -433,8 +439,8 @@ class IntelligentMatcher:
                 other_score=other_score * 5,
                 model_match_score=0.0
             ),
-            matched_params=matched_param_names,
-            unmatched_params=[],
+            matched_params=all_matched_params,
+            unmatched_params=unmatched_params,
             param_match_details=[],
             all_params=all_params
         )
@@ -463,24 +469,54 @@ class IntelligentMatcher:
         # 相近类型
         return 0.5
     
-    def _score_keyword_match(self, extraction: ExtractionResult, device: Dict) -> float:
-        """设备类型关键词评分（0-1）"""
+    def _score_keyword_match(self, extraction: ExtractionResult, device: Dict) -> tuple:
+        """设备类型关键词评分，返回(得分, 匹配的参数名列表)"""
         keywords = extraction.device_type.keywords
         if not keywords:
-            return 0.0
+            return 0.0, []
         
         key_params_str = device.get('key_params')
         if not key_params_str:
-            return 0.0
+            return 0.0, []
         
         import json
         try:
             key_params = json.loads(key_params_str) if isinstance(key_params_str, str) else key_params_str
         except:
-            return 0.0
+            return 0.0, []
         
-        # 使用关键词匹配方法
-        return self._score_keywords(keywords, key_params)
+        # 记录匹配的参数名
+        matched_param_names = []
+        synonym_map = self.config.get('synonym_map', {})
+        
+        for keyword in keywords:
+            keyword_lower = keyword.lower()
+            synonyms = self._get_synonyms(keyword, synonym_map)
+            
+            for param_name, param_value in key_params.items():
+                if isinstance(param_value, dict):
+                    value_str = param_value.get('value', '').lower()
+                else:
+                    value_str = str(param_value).lower() if param_value else ''
+                
+                # 使用正则表达式确保独立匹配
+                pattern = r'(?<![a-zA-Z])' + re.escape(keyword_lower) + r'(?![a-zA-Z])|(?<![a-zA-Z])' + re.escape(keyword_lower) + r'(?=\d)'
+                if re.search(pattern, value_str, re.IGNORECASE):
+                    if param_name not in matched_param_names:
+                        matched_param_names.append(param_name)
+                
+                # 同义词匹配
+                for synonym in synonyms:
+                    synonym_pattern = r'(?<![a-zA-Z])' + re.escape(synonym.lower()) + r'(?![a-zA-Z])|(?<![a-zA-Z])' + re.escape(synonym.lower()) + r'(?=\d)'
+                    if re.search(synonym_pattern, value_str, re.IGNORECASE):
+                        if param_name not in matched_param_names:
+                            matched_param_names.append(param_name)
+        
+        # 如果有匹配，返回满分和匹配的参数名
+        if matched_param_names:
+            return 1.0, matched_param_names
+        
+        return 0.0, []
     
     def _score_parameters(self, extraction: ExtractionResult, device: Dict) -> float:
         """参数评分（0-1）"""

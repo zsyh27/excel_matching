@@ -47,7 +47,6 @@ import NormalizationEditor from './ConfigManagement/NormalizationEditor.vue'
 import GlobalConfigEditor from './ConfigManagement/GlobalConfigEditor.vue'
 import BrandKeywordsEditor from './ConfigManagement/BrandKeywordsEditor.vue'
 import DeviceTypeEditor from './ConfigManagement/DeviceTypeEditor.vue'
-import FeatureWeightEditor from './ConfigManagement/FeatureWeightEditor.vue'
 import AdvancedConfigEditor from './ConfigManagement/AdvancedConfigEditor.vue'
 import DeviceRowRecognitionEditor from './ConfigManagement/DeviceRowRecognitionEditor.vue'
 import IntelligentCleaningEditor from './ConfigManagement/IntelligentCleaningEditor.vue'
@@ -63,7 +62,6 @@ export default {
     GlobalConfigEditor,
     BrandKeywordsEditor,
     DeviceTypeEditor,
-    FeatureWeightEditor,
     AdvancedConfigEditor,
     DeviceRowRecognitionEditor,
     IntelligentCleaningEditor,
@@ -93,7 +91,6 @@ export default {
       'GlobalConfigEditor': GlobalConfigEditor,
       'BrandKeywordsEditor': BrandKeywordsEditor,
       'DeviceTypeEditor': DeviceTypeEditor,
-      'FeatureWeightEditor': FeatureWeightEditor,
       'AdvancedConfigEditor': AdvancedConfigEditor,
       'DeviceRowRecognitionEditor': DeviceRowRecognitionEditor,
       'IntelligentCleaningEditor': IntelligentCleaningEditor,

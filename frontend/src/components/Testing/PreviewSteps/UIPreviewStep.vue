@@ -19,10 +19,19 @@
           placeholder="请选择设备"
           popper-class="device-select-popper"
         >
-          <el-option v-for="candidate in matching.candidates" :key="candidate.device_id" :value="candidate.device_id">
+          <el-option 
+            v-for="candidate in matching.candidates" 
+            :key="candidate.device_id" 
+            :value="candidate.device_id"
+            :label="`${candidate.device_name} - ${candidate.spec_model}`"
+          >
             <div class="device-option">
               <div class="device-option-main">
-                {{ candidate.device_name }} - {{ candidate.spec_model }}
+                <span class="device-name-text">{{ candidate.device_name }}</span>
+                <span class="device-model-text">{{ candidate.spec_model }}</span>
+                <span class="device-price-text" v-if="candidate.unit_price">
+                  ¥{{ candidate.unit_price?.toLocaleString() }}
+                </span>
                 <span class="score-text">({{ candidate.total_score?.toFixed(1) }}分)</span>
               </div>
               <div class="device-option-params" v-if="candidate.all_params && Object.keys(candidate.all_params).length > 0">
@@ -65,6 +74,12 @@
             <span class="info-label">设备类型</span>
             <span class="info-value">{{ selectedDevice.device_type || '未知' }}</span>
           </div>
+          <div class="info-item">
+            <span class="info-label">单价</span>
+            <span class="info-value price-value">
+              {{ selectedDevice.unit_price ? `¥${selectedDevice.unit_price.toLocaleString()}` : '未知' }}
+            </span>
+          </div>
         </div>
 
         <div class="match-summary">
@@ -90,25 +105,39 @@
 
         <div class="score-details-mini">
           <div class="mini-score-item">
-            <span class="mini-label">类型</span>
+            <span class="mini-label">设备类型</span>
             <div class="mini-bar">
-              <div class="mini-bar-fill" :style="{ width: (selectedDevice.score_details?.device_type_score || 0) / 50 * 100 + '%' }"></div>
+              <div class="mini-bar-fill blue" :style="{ width: (selectedDevice.score_details?.device_type_score || 0) / 30 * 100 + '%' }"></div>
             </div>
             <span class="mini-value">{{ selectedDevice.score_details?.device_type_score?.toFixed(1) || 0 }}</span>
           </div>
           <div class="mini-score-item">
-            <span class="mini-label">参数</span>
+            <span class="mini-label">类型关键词</span>
             <div class="mini-bar">
-              <div class="mini-bar-fill green" :style="{ width: (selectedDevice.score_details?.parameter_score || 0) / 30 * 100 + '%' }"></div>
+              <div class="mini-bar-fill purple" :style="{ width: (selectedDevice.score_details?.keyword_score || 0) / 30 * 100 + '%' }"></div>
+            </div>
+            <span class="mini-value">{{ selectedDevice.score_details?.keyword_score?.toFixed(1) || 0 }}</span>
+          </div>
+          <div class="mini-score-item">
+            <span class="mini-label">参数匹配</span>
+            <div class="mini-bar">
+              <div class="mini-bar-fill green" :style="{ width: (selectedDevice.score_details?.parameter_score || 0) / 20 * 100 + '%' }"></div>
             </div>
             <span class="mini-value">{{ selectedDevice.score_details?.parameter_score?.toFixed(1) || 0 }}</span>
           </div>
           <div class="mini-score-item">
-            <span class="mini-label">品牌</span>
+            <span class="mini-label">品牌匹配</span>
             <div class="mini-bar">
-              <div class="mini-bar-fill orange" :style="{ width: (selectedDevice.score_details?.brand_score || 0) / 10 * 100 + '%' }"></div>
+              <div class="mini-bar-fill orange" :style="{ width: (selectedDevice.score_details?.brand_score || 0) / 15 * 100 + '%' }"></div>
             </div>
             <span class="mini-value">{{ selectedDevice.score_details?.brand_score?.toFixed(1) || 0 }}</span>
+          </div>
+          <div class="mini-score-item">
+            <span class="mini-label">其他匹配</span>
+            <div class="mini-bar">
+              <div class="mini-bar-fill gray" :style="{ width: (selectedDevice.score_details?.other_score || 0) / 5 * 100 + '%' }"></div>
+            </div>
+            <span class="mini-value">{{ selectedDevice.score_details?.other_score?.toFixed(1) || 0 }}</span>
           </div>
         </div>
       </div>
@@ -221,11 +250,18 @@ const clearFilter = () => {
 
 .dropdown-container {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  z-index: 1;
 }
 
 .device-dropdown {
   width: 100%;
+}
+
+/* 确保下拉框不会被后续内容遮挡 */
+.device-dropdown :deep(.el-select__wrapper) {
+  position: relative;
+  z-index: 2;
 }
 
 .device-option {
@@ -237,12 +273,30 @@ const clearFilter = () => {
   font-size: 14px;
   color: #303133;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.device-name-text {
+  font-weight: 600;
+  color: #303133;
+}
+
+.device-model-text {
+  color: #606266;
+}
+
+.device-price-text {
+  color: #f56c6c;
+  font-weight: 600;
+  font-size: 13px;
 }
 
 .score-text {
   color: #909399;
   font-size: 12px;
-  margin-left: 4px;
 }
 
 .device-option-params {
@@ -274,7 +328,10 @@ const clearFilter = () => {
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
+  margin-top: 20px;
   border: 1px solid #d9ecff;
+  position: relative;
+  z-index: 0;
 }
 
 .info-header {
@@ -339,6 +396,12 @@ const clearFilter = () => {
   font-weight: 500;
 }
 
+.info-value.price-value {
+  color: #f56c6c;
+  font-weight: 600;
+  font-size: 14px;
+}
+
 .match-summary {
   display: flex;
   gap: 16px;
@@ -379,15 +442,15 @@ const clearFilter = () => {
 }
 
 .score-details-mini {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
   padding: 10px;
   background: white;
   border-radius: 6px;
 }
 
 .mini-score-item {
-  flex: 1;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -396,7 +459,8 @@ const clearFilter = () => {
 .mini-label {
   font-size: 11px;
   color: #909399;
-  width: 28px;
+  min-width: 56px;
+  white-space: nowrap;
 }
 
 .mini-bar {
@@ -413,12 +477,24 @@ const clearFilter = () => {
   border-radius: 3px;
 }
 
+.mini-bar-fill.blue {
+  background: linear-gradient(90deg, #409EFF, #66b1ff);
+}
+
+.mini-bar-fill.purple {
+  background: linear-gradient(90deg, #9b59b6, #be90d4);
+}
+
 .mini-bar-fill.green {
   background: linear-gradient(90deg, #67c23a, #85ce61);
 }
 
 .mini-bar-fill.orange {
   background: linear-gradient(90deg, #e6a23c, #f0c78a);
+}
+
+.mini-bar-fill.gray {
+  background: linear-gradient(90deg, #909399, #b4b4b4);
 }
 
 .mini-value {
@@ -495,5 +571,10 @@ const clearFilter = () => {
   background-color: #e1f3d8 !important;
   color: #67c23a !important;
   font-weight: 500 !important;
+}
+
+/* 确保下拉框在最上层 */
+.el-popper.device-select-popper {
+  z-index: 9999 !important;
 }
 </style>

@@ -100,21 +100,24 @@
               clearable
               @change="handleDeviceSelect(scope.row)"
               style="width: 100%"
+              popper-class="matching-device-select-popper"
             >
               <!-- 如果有候选设备，显示候选列表 -->
               <el-option
                 v-for="candidate in scope.row.candidates || []"
                 :key="candidate.device_id"
-                :label="candidate.matched_device_text"
+                :label="`${candidate.device_name} - ${candidate.spec_model}`"
                 :value="candidate.device_id"
               >
                 <div class="device-option">
                   <div class="device-option-main">
-                    {{ candidate.brand }} {{ candidate.device_name }}
-                    <el-tag v-if="candidate.match_score === scope.row.match_result?.match_score" size="small" type="success" style="margin-left: 8px">最佳</el-tag>
-                  </div>
-                  <div class="device-option-sub">
-                    {{ candidate.spec_model }} | ¥{{ candidate.unit_price.toFixed(2) }} | 得分: {{ candidate.match_score.toFixed(1) }}
+                    <span class="device-name-text">{{ candidate.device_name }}</span>
+                    <span class="device-model-text">{{ candidate.spec_model }}</span>
+                    <span class="device-price-text" v-if="candidate.unit_price">
+                      ¥{{ candidate.unit_price?.toLocaleString() }}
+                    </span>
+                    <span class="score-text">({{ candidate.match_score?.toFixed(1) }}分)</span>
+                    <el-tag v-if="candidate.match_score === scope.row.match_result?.match_score" size="small" type="success" style="margin-left: 4px">最佳</el-tag>
                   </div>
                   <!-- 显示全部参数，高亮匹配参数 -->
                   <div class="device-option-params" v-if="candidate.all_params && Object.keys(candidate.all_params).length > 0">
@@ -122,7 +125,6 @@
                       <span 
                         class="param-tag" 
                         :class="{ 'param-matched': candidate.matched_params?.includes(name) }"
-                        :title="candidate.matched_params?.includes(name) ? '已匹配' : ''"
                       >
                         {{ name }}: {{ value }}
                       </span>
@@ -136,12 +138,17 @@
                 <el-option
                   v-for="device in allDevices"
                   :key="device.device_id"
-                  :label="device.display_text"
+                  :label="`${device.device_name} - ${device.spec_model}`"
                   :value="device.device_id"
                 >
                   <div class="device-option">
-                    <div class="device-option-main">{{ device.brand }} {{ device.device_name }}</div>
-                    <div class="device-option-sub">{{ device.spec_model }} | ¥{{ device.unit_price.toFixed(2) }}</div>
+                    <div class="device-option-main">
+                      <span class="device-name-text">{{ device.device_name }}</span>
+                      <span class="device-model-text">{{ device.spec_model }}</span>
+                      <span class="device-price-text" v-if="device.unit_price">
+                        ¥{{ device.unit_price?.toLocaleString() }}
+                      </span>
+                    </div>
                   </div>
                 </el-option>
               </template>
@@ -586,21 +593,38 @@ const handleExportError = (error) => {
 
 /* 设备选择器样式 */
 .device-option {
-  padding: 5px 0;
+  padding: 8px 0;
+  max-width: 100%;
 }
 
 .device-option-main {
   font-size: 14px;
   color: #303133;
-  font-weight: 500;
+  margin-bottom: 4px;
   display: flex;
   align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.device-option-sub {
-  font-size: 12px;
+.device-name-text {
+  font-weight: 600;
+  color: #303133;
+}
+
+.device-model-text {
+  color: #606266;
+}
+
+.device-price-text {
+  color: #f56c6c;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.score-text {
   color: #909399;
-  margin-top: 2px;
+  font-size: 12px;
 }
 
 .device-option-params {
@@ -608,7 +632,7 @@ const handleExportError = (error) => {
   flex-wrap: wrap;
   gap: 4px;
   margin-top: 6px;
-  max-height: 60px;
+  max-height: 120px;
   overflow-y: auto;
 }
 
@@ -636,5 +660,36 @@ const handleExportError = (error) => {
 .no-detail-text {
   color: #c0c4cc;
   font-size: 14px;
+}
+</style>
+
+<style>
+/* 全局样式：设备选择下拉弹出层 */
+.matching-device-select-popper {
+  max-width: 600px !important;
+  z-index: 9999 !important;
+}
+
+.matching-device-select-popper .el-select-dropdown__item {
+  height: auto !important;
+  min-height: 34px;
+  padding: 8px 12px;
+  line-height: 1.4;
+}
+
+.matching-device-select-popper .el-select-dropdown__item.hover {
+  background-color: #f5f7fa;
+}
+
+/* 高亮匹配参数 */
+.matching-device-select-popper .param-tag.param-matched {
+  background-color: #e1f3d8 !important;
+  color: #67c23a !important;
+  font-weight: 500 !important;
+}
+
+/* 确保下拉框在最上层 */
+.el-popper.matching-device-select-popper {
+  z-index: 9999 !important;
 }
 </style>

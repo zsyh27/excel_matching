@@ -320,7 +320,7 @@ class IntelligentExtractionAPI:
                 'debug_info': {
                     'processing_log': [
                         f"设备类型识别完成 (耗时: {step_times['step1_time_ms']:.2f}ms)",
-                        f"参数提取完成 (耗时: {step_times['step2_time_ms']:.2f}ms)",
+                        f"参数候选提取完成 (耗时: {step_times['step2_time_ms']:.2f}ms, 提取到{len(parameter_candidates)}个候选)",
                         f"辅助信息提取完成 (耗时: {step_times['step3_time_ms']:.2f}ms)",
                         f"智能匹配完成 (耗时: {step_times['step4_time_ms']:.2f}ms)"
                     ],

@@ -128,7 +128,6 @@ import SynonymMapEditor from '../components/ConfigManagement/SynonymMapEditor.vu
 import NormalizationEditor from '../components/ConfigManagement/NormalizationEditor.vue'
 import GlobalConfigEditor from '../components/ConfigManagement/GlobalConfigEditor.vue'
 import BrandKeywordsEditor from '../components/ConfigManagement/BrandKeywordsEditor.vue'
-import FeatureWeightEditor from '../components/ConfigManagement/FeatureWeightEditor.vue'
 import DeviceRowRecognitionEditor from '../components/ConfigManagement/DeviceRowRecognitionEditor.vue'
 import DeviceParamsEditor from '../components/ConfigManagement/DeviceParamsEditor.vue'
 import MetadataRulesEditor from '../components/ConfigManagement/MetadataRulesEditor.vue'
@@ -147,7 +146,6 @@ export default {
     NormalizationEditor,
     GlobalConfigEditor,
     BrandKeywordsEditor,
-    FeatureWeightEditor,
     DeviceRowRecognitionEditor,
     DeviceParamsEditor,
     MetadataRulesEditor,
@@ -209,7 +207,6 @@ export default {
         // Pre-entry Configuration
         'brand-keywords': 'BrandKeywordsEditor',
         'device-params': 'DeviceParamsEditor',
-        'feature-weights': 'FeatureWeightEditor',
         
         // Intelligent Extraction Configuration
         'device-type-patterns': 'DeviceTypePatternsEditor',
@@ -281,7 +278,6 @@ export default {
     const menuIdToConfigKey = {
       'brand-keywords': 'brand_keywords',
       'device-params': 'device_params',
-      'feature-weights': 'feature_weight_config',
       'device-type-patterns': 'intelligent_extraction_device_type',
       'parameter-extraction': 'intelligent_extraction_parameter',
       'auxiliary-info': 'intelligent_extraction_auxiliary',
@@ -388,9 +384,6 @@ export default {
           return []
         }
         if (menuId === 'device-params') {
-          return {}
-        }
-        if (menuId === 'feature-weights') {
           return {}
         }
         if (menuId === 'device-row') {
@@ -759,7 +752,6 @@ export default {
 .editor-container :deep(.normalization-editor),
 .editor-container :deep(.global-config-editor),
 .editor-container :deep(.brand-keywords-editor),
-.editor-container :deep(.feature-weight-editor),
 .editor-container :deep(.device-row-recognition-editor),
 .editor-container :deep(.device-params-editor),
 .editor-container :deep(.metadata-rules-editor),

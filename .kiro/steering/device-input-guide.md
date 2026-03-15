@@ -4,6 +4,29 @@ inclusion: always
 
 # 设备录入与规则生成指南
 
+> ⚠️ **重要更新（2026-03-15）**
+> 
+> 本文档中关于"规则生成"的内容已过时。旧的规则系统已被新的智能提取匹配系统完全替代。
+> 
+> **已移除的组件**:
+> - ❌ RuleGenerator（规则生成器）
+> - ❌ DeviceFeatureExtractor（特征提取器）
+> - ❌ feature_weight_config（特征权重配置）
+> - ❌ rules 表（数据库）
+> 
+> **新系统**:
+> - ✅ IntelligentExtractionAPI（智能提取匹配 API）
+> - ✅ 五步流程：设备类型识别 → 参数提取 → 辅助信息提取 → 智能匹配 → UI展示
+> - ✅ 无需规则生成，设备录入后直接可用
+> 
+> **详细信息**: 请参考 `.kiro/steering/intelligent-extraction-system-guide.md`
+> 
+> **设备录入流程**（已更新）:
+> 1. 分析 Excel 数据
+> 2. 配置更新（如需要）
+> 3. 导入设备数据
+> 4. ~~生成匹配规则~~（已废弃，无需此步骤）
+
 ## 核心数据模型
 
 ### 设备关键字段

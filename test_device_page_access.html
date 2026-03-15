@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备管理页面测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>设备管理页面访问测试</h1>
+    
+    <div class="test-item info">
+        <h3>测试说明</h3>
+        <p>这个页面用于测试设备管理功能是否正常工作</p>
+    </div>
+
+    <div class="test-item">
+        <h3>1. 测试后端API连接</h3>
+        <button onclick="testBackendAPI()">测试API</button>
+        <div id="api-result"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>2. 测试设备列表获取</h3>
+        <button onclick="testDeviceList()">获取设备列表</button>
+        <div id="device-list-result"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>3. 访问设备管理页面</h3>
+        <button onclick="goToDevicePage()">打开设备管理页面</button>
+        <p>或直接访问: <a href="http://localhost:3000/database/devices" target="_blank">http://localhost:3000/database/devices</a></p>
+    </div>
+
+    <script>
+        async function testBackendAPI() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<p>测试中...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/health');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <p>✅ 后端API连接成功</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <p>❌ API返回失败</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ 连接失败: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testDeviceList() {
+            const resultDiv = document.getElementById('device-list-result');
+            resultDiv.innerHTML = '<p>获取中...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/devices?page=1&page_size=5');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const deviceCount = data.devices ? data.devices.length : 0;
+                    const deviceList = data.devices ? data.devices.map(d => 
+                        `${d.brand} ${d.device_name} (${d.device_id})`
+                    ).join('<br>') : '无设备';
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <p>✅ 成功获取 ${deviceCount} 个设备 (总数: ${data.total})</p>
+                            <p><strong>设备列表:</strong></p>
+                            <div>${deviceList}</div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <p>❌ 获取失败: ${data.message || '未知错误'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ 请求失败: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function goToDevicePage() {
+            window.open('http://localhost:3000/database/devices', '_blank');
+        }
+
+        // 页面加载时自动测试
+        window.onload = function() {
+            console.log('页面加载完成,可以开始测试');
+        };
+    </script>
+</body>
+</html>

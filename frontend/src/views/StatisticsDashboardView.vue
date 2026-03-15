@@ -2,7 +2,7 @@
   <div class="statistics-dashboard-view">
     <el-card class="header-card">
       <h2>统计仪表板</h2>
-      <p>查看系统运行数据、匹配日志和规则统计</p>
+      <p>查看系统运行数据和匹配统计</p>
     </el-card>
 
     <el-tabs v-model="activeTab" type="border-card" class="dashboard-tabs">
@@ -24,36 +24,23 @@
 
           <!-- 列表区域 -->
           <el-row :gutter="20">
-            <el-col :span="12">
+            <el-col :span="24">
               <RecentDevices
                 :devices="recentDevices"
                 :loading="loadingRecent"
                 @view="handleViewDevice"
               />
             </el-col>
-            <el-col :span="12">
-              <DevicesWithoutRules
-                :devices="devicesWithoutRules"
-                :loading="loadingWithoutRules"
-                @view="handleViewDevice"
-                @generated="handleRulesGenerated"
-              />
-            </el-col>
           </el-row>
         </div>
       </el-tab-pane>
 
-      <!-- Tab 2: 匹配日志（从规则管理迁移） -->
+      <!-- Tab 2: 匹配日志 -->
       <el-tab-pane label="匹配日志" name="logs">
         <MatchLogs />
       </el-tab-pane>
 
-      <!-- Tab 3: 规则统计（从规则管理迁移） -->
-      <el-tab-pane label="规则统计" name="rules">
-        <RuleStatistics />
-      </el-tab-pane>
-
-      <!-- Tab 4: 匹配统计 -->
+      <!-- Tab 3: 匹配统计 -->
       <el-tab-pane label="匹配统计" name="matching">
         <MatchingStatistics />
       </el-tab-pane>
@@ -77,17 +64,14 @@ import SummaryCards from '../components/Statistics/SummaryCards.vue'
 import BrandChart from '../components/Statistics/BrandChart.vue'
 import PriceChart from '../components/Statistics/PriceChart.vue'
 import RecentDevices from '../components/Statistics/RecentDevices.vue'
-import DevicesWithoutRules from '../components/Statistics/DevicesWithoutRules.vue'
 import DeviceDetail from '../components/DeviceManagement/DeviceDetail.vue'
 import MatchLogs from '../components/Statistics/MatchLogs.vue'
-import RuleStatistics from '../components/Statistics/RuleStatistics.vue'
 import MatchingStatistics from '../components/Statistics/MatchingStatistics.vue'
 import {
   getStatistics,
   getBrandDistribution,
   getPriceDistribution,
-  getRecentDevices,
-  getDevicesWithoutRules
+  getRecentDevices
 } from '../api/database'
 
 const router = useRouter()
@@ -99,13 +83,11 @@ const activeTab = ref('overview')
 // 数据状态
 const loading = ref(false)
 const loadingRecent = ref(false)
-const loadingWithoutRules = ref(false)
 
 const statistics = ref({})
 const brandData = ref([])
 const priceData = ref([])
 const recentDevices = ref([])
-const devicesWithoutRules = ref([])
 
 // 对话框状态
 const detailDialogVisible = ref(false)
@@ -181,33 +163,13 @@ const fetchRecentDevices = async () => {
   }
 }
 
-// 获取无规则设备
-const fetchDevicesWithoutRules = async () => {
-  loadingWithoutRules.value = true
-  try {
-    const response = await getDevicesWithoutRules()
-    
-    if (response.data.success) {
-      // 提取 devices 数组
-      devicesWithoutRules.value = response.data.data.devices || []
-    } else {
-      ElMessage.error(response.data.message || '获取无规则设备失败')
-    }
-  } catch (error) {
-    console.error('获取无规则设备失败:', error)
-  } finally {
-    loadingWithoutRules.value = false
-  }
-}
-
 // 加载所有数据
 const loadAllData = async () => {
   await Promise.all([
     fetchStatistics(),
     fetchBrandDistribution(),
     fetchPriceDistribution(),
-    fetchRecentDevices(),
-    fetchDevicesWithoutRules()
+    fetchRecentDevices()
   ])
 }
 
@@ -243,12 +205,6 @@ const handleEditDevice = () => {
 
 // 删除设备
 const handleDeleteDevice = () => {
-  // 刷新数据
-  loadAllData()
-}
-
-// 规则生成完成
-const handleRulesGenerated = () => {
   // 刷新数据
   loadAllData()
 }

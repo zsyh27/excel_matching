@@ -58,11 +58,6 @@ export const MENU_STRUCTURE = [
         id: 'device-params',
         name: '设备参数配置',
         component: 'DeviceParamsEditor'
-      },
-      {
-        id: 'feature-weights',
-        name: '特征权重',
-        component: 'FeatureWeightEditor'
       }
     ]
   },

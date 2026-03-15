@@ -54,16 +54,6 @@
             </el-descriptions-item>
           </el-descriptions>
         </el-tab-pane>
-
-        <!-- 特征标签页 -->
-        <el-tab-pane label="特征" name="rule">
-          <DeviceRuleSection
-            :device-id="deviceData.device_id"
-            :rule="deviceRule"
-            @regenerate="handleRegenerateRule"
-            @rule-updated="handleRuleUpdated"
-          />
-        </el-tab-pane>
       </el-tabs>
     </div>
     
@@ -78,8 +68,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getDeviceById, deleteDevice, regenerateDeviceRule } from '../../api/database'
-import DeviceRuleSection from './DeviceRuleSection.vue'
+import { getDeviceById, deleteDevice } from '../../api/database'
 
 const props = defineProps({
   modelValue: {
@@ -112,18 +101,6 @@ watch(visible, (val) => {
   emit('update:modelValue', val)
 })
 
-// 计算设备规则
-const deviceRule = computed(() => {
-  if (!deviceData.value || !deviceData.value.rule) return null
-  
-  return {
-    rule_id: deviceData.value.rule.rule_id,
-    features: deviceData.value.rule.features || [],
-    match_threshold: deviceData.value.rule.match_threshold || 5.0,
-    total_weight: deviceData.value.rule.total_weight || 0
-  }
-})
-
 // 获取设备详情
 const fetchDeviceDetail = async () => {
   loading.value = true
@@ -151,9 +128,8 @@ const handleEdit = () => {
 
 // 删除设备
 const handleDelete = () => {
-  const hasRule = deviceData.value.rule && deviceData.value.rule.features
   ElMessageBox.confirm(
-    `确定要删除设备 "${deviceData.value.device_name}" 吗？${hasRule ? '关联的规则也将被删除。' : ''}`,
+    `确定要删除设备 "${deviceData.value.device_name}" 吗？`,
     '删除确认',
     {
       confirmButtonText: '确定',
@@ -178,28 +154,6 @@ const handleDelete = () => {
   }).catch(() => {
     // 取消删除
   })
-}
-
-// 重新生成规则
-const handleRegenerateRule = async () => {
-  try {
-    const response = await regenerateDeviceRule(deviceData.value.device_id)
-    
-    if (response.data.success) {
-      ElMessage.success('规则重新生成成功')
-      fetchDeviceDetail()
-    } else {
-      ElMessage.error(response.data.message || '规则重新生成失败')
-    }
-  } catch (error) {
-    console.error('规则重新生成失败:', error)
-    ElMessage.error('规则重新生成失败，请稍后重试')
-  }
-}
-
-// 规则更新成功
-const handleRuleUpdated = () => {
-  fetchDeviceDetail()
 }
 
 // 获取参数值（处理简单值和结构化值）

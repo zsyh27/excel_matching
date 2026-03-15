@@ -13,7 +13,6 @@
         @copy="handleCopyDevice"
         @add="handleAddDevice"
         @batch-import="handleBatchImport"
-        @consistency-check="handleConsistencyCheck"
       />
     </el-card>
 
@@ -38,12 +37,6 @@
       v-model="importDialogVisible"
       @success="handleImportSuccess"
     />
-
-    <!-- 数据一致性检查对话框 -->
-    <ConsistencyCheck
-      v-model="checkDialogVisible"
-      @fixed="handleFixSuccess"
-    />
   </div>
 </template>
 
@@ -54,7 +47,6 @@ import DeviceList from '../components/DeviceManagement/DeviceList.vue'
 import DeviceForm from '../components/DeviceManagement/DeviceForm.vue'
 import DeviceDetail from '../components/DeviceManagement/DeviceDetail.vue'
 import BatchImport from '../components/DeviceManagement/BatchImport.vue'
-import ConsistencyCheck from '../components/DeviceManagement/ConsistencyCheck.vue'
 
 const router = useRouter()
 
@@ -65,7 +57,6 @@ const deviceListRef = ref(null)
 const formDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
 const importDialogVisible = ref(false)
-const checkDialogVisible = ref(false)
 
 // 当前操作的设备
 const currentDevice = ref(null)
@@ -137,18 +128,6 @@ const handleBatchImport = () => {
 
 // 导入成功
 const handleImportSuccess = () => {
-  if (deviceListRef.value) {
-    deviceListRef.value.refresh()
-  }
-}
-
-// 数据一致性检查
-const handleConsistencyCheck = () => {
-  checkDialogVisible.value = true
-}
-
-// 修复成功
-const handleFixSuccess = () => {
   if (deviceListRef.value) {
     deviceListRef.value.refresh()
   }

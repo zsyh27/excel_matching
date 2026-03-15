@@ -3,7 +3,6 @@
 // 设备信息录入前配置
 export { default as BrandKeywordsEditor } from './BrandKeywordsEditor.vue'
 export { default as DeviceParamsEditor } from './DeviceParamsEditor.vue'
-export { default as FeatureWeightEditor } from './FeatureWeightEditor.vue'
 
 // 智能提取配置
 export { default as DeviceTypePatternsEditor } from './DeviceTypePatternsEditor.vue'

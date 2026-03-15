@@ -6,7 +6,7 @@
         <el-col :span="8">
           <el-input
             v-model="searchKeyword"
-            placeholder="搜索设备ID、品牌、名称或型号"
+            placeholder="搜索设备ID、品牌、名称、型号或参数"
             clearable
             @clear="handleSearch"
             @keyup.enter="handleSearch"
@@ -54,18 +54,7 @@
             />
           </el-select>
         </el-col>
-        <el-col :span="4">
-          <el-select
-            v-model="filters.has_rule"
-            placeholder="规则状态"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option label="有规则" value="true" />
-            <el-option label="无规则" value="false" />
-          </el-select>
-        </el-col>
-        <el-col :span="5">
+        <el-col :span="7">
           <el-input
             v-model="filters.minPrice"
             placeholder="最低价格"
@@ -74,7 +63,7 @@
             @change="handleSearch"
           />
         </el-col>
-        <el-col :span="5">
+        <el-col :span="7">
           <el-input
             v-model="filters.maxPrice"
             placeholder="最高价格"
@@ -111,10 +100,6 @@
         <el-icon><Delete /></el-icon>
         批量删除 ({{ selectedDevices.length }})
       </el-button>
-      <el-button @click="handleConsistencyCheck">
-        <el-icon><CircleCheck /></el-icon>
-        数据一致性检查
-      </el-button>
     </div>
 
     <!-- 设备列表表格 -->
@@ -146,17 +131,16 @@
       </el-table-column>
       <el-table-column prop="device_name" label="设备名称" width="180" sortable />
       <el-table-column prop="spec_model" label="规格型号" width="150" sortable />
-      <el-table-column label="特征（按权重排序）" min-width="300">
+      <el-table-column label="关键参数" min-width="300">
         <template #default="{ row }">
-          <div v-if="row.rule_summary && row.rule_summary.has_rule && row.rule_summary.features" class="features-container">
+          <div v-if="row.key_params && Object.keys(row.key_params).length > 0" class="params-container">
             <el-tag
-              v-for="(feature, index) in row.rule_summary.features"
-              :key="index"
-              :type="getFeatureTagType(feature.weight)"
+              v-for="(value, key) in row.key_params"
+              :key="key"
               size="small"
-              class="feature-tag"
+              class="param-tag"
             >
-              {{ feature.feature }} ({{ feature.weight }})
+              {{ key }}: {{ typeof value === 'object' && value !== null ? (value.value || '-') : (value || '-') }}
             </el-tag>
           </div>
           <span v-else style="color: #909399">-</span>
@@ -167,34 +151,10 @@
           ¥{{ row.unit_price }}
         </template>
       </el-table-column>
-      <el-table-column label="规则状态" width="120" align="center">
+      <el-table-column label="操作" width="280" fixed="right">
         <template #default="{ row }">
-          <div v-if="row.rule_summary && row.rule_summary.has_rule" class="rule-summary">
-            <el-tag type="success" size="small">
-              {{ row.rule_summary.feature_count }} 特征
-            </el-tag>
-            <span class="threshold-text">
-              阈值: {{ row.rule_summary.match_threshold }}
-            </span>
-          </div>
-          <div v-else class="no-rule">
-            <el-tag type="info" size="small">无规则</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="320" fixed="right">
-        <template #default="{ row }">
-          <el-button size="small" @click="handleView(row)">查看</el-button>
           <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
           <el-button size="small" type="warning" @click="handleCopy(row)">复制</el-button>
-          <el-button 
-            v-if="!row.rule_summary || !row.rule_summary.has_rule"
-            size="small" 
-            type="success"
-            @click="handleGenerateRule(row)"
-          >
-            生成规则
-          </el-button>
           <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -217,12 +177,12 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Plus, Upload, Download, CircleCheck, Delete } from '@element-plus/icons-vue'
-import { getDevices, deleteDevice, batchDeleteDevices, batchGenerateRules } from '../../api/database'
+import { Search, Plus, Upload, Download, Delete } from '@element-plus/icons-vue'
+import { getDevices, deleteDevice, batchDeleteDevices } from '../../api/database'
 import api from '../../api'
 import * as XLSX from 'xlsx'
 
-const emit = defineEmits(['view', 'edit', 'copy', 'add', 'batch-import', 'consistency-check'])
+const emit = defineEmits(['view', 'edit', 'copy', 'add', 'batch-import'])
 
 // 数据状态
 const loading = ref(false)
@@ -231,7 +191,6 @@ const searchKeyword = ref('')
 const filters = reactive({
   brand: '',
   device_type: '',
-  has_rule: '',
   minPrice: '',
   maxPrice: ''
 })
@@ -300,7 +259,6 @@ const fetchDeviceList = async () => {
       name: searchKeyword.value,
       brand: filters.brand,
       device_type: filters.device_type,
-      has_rule: filters.has_rule,
       min_price: filters.minPrice,
       max_price: filters.maxPrice
     }
@@ -332,7 +290,6 @@ const handleReset = () => {
   searchKeyword.value = ''
   filters.brand = ''
   filters.device_type = ''
-  filters.has_rule = ''
   filters.minPrice = ''
   filters.maxPrice = ''
   pagination.page = 1
@@ -349,11 +306,6 @@ const handleSizeChange = (size) => {
 const handlePageChange = (page) => {
   pagination.page = page
   fetchDeviceList()
-}
-
-// 查看设备
-const handleView = (row) => {
-  emit('view', row)
 }
 
 // 编辑设备
@@ -374,7 +326,7 @@ const handleAdd = () => {
 // 删除设备
 const handleDelete = (row) => {
   ElMessageBox.confirm(
-    `确定要删除设备 "${row.device_name}" 吗？${row.has_rules ? '关联的规则也将被删除。' : ''}`,
+    `确定要删除设备 "${row.device_name}" 吗？`,
     '删除确认',
     {
       confirmButtonText: '确定',
@@ -412,7 +364,7 @@ const handleBatchDelete = () => {
   const moreText = deviceCount > 3 ? ` 等${deviceCount}个设备` : ''
   
   ElMessageBox.confirm(
-    `确定要删除 ${deviceCount} 个设备吗？（${deviceNames}${moreText}）关联的规则也将被删除。`,
+    `确定要删除 ${deviceCount} 个设备吗？（${deviceNames}${moreText}）`,
     '批量删除确认',
     {
       confirmButtonText: '确定',
@@ -517,39 +469,6 @@ const handleBatchExport = () => {
   }
 }
 
-// 数据一致性检查
-const handleConsistencyCheck = () => {
-  emit('consistency-check')
-}
-
-// 生成规则
-const handleGenerateRule = async (row) => {
-  try {
-    const response = await batchGenerateRules({
-      device_ids: [row.device_id],
-      force_regenerate: false
-    })
-    
-    if (response.data.success) {
-      ElMessage.success('规则生成成功')
-      fetchDeviceList()
-    } else {
-      ElMessage.error(response.data.message || '规则生成失败')
-    }
-  } catch (error) {
-    console.error('规则生成失败:', error)
-    ElMessage.error('规则生成失败，请稍后重试')
-  }
-}
-
-// 根据权重获取特征标签类型
-const getFeatureTagType = (weight) => {
-  if (weight >= 15) return 'danger'  // 高权重：红色
-  if (weight >= 10) return 'warning' // 中高权重：橙色
-  if (weight >= 5) return 'success'  // 中权重：绿色
-  return 'info'  // 低权重：灰色
-}
-
 // 刷新列表（供父组件调用）
 const refresh = () => {
   fetchDeviceList()
@@ -593,37 +512,14 @@ onMounted(() => {
   display: flex;
 }
 
-.rule-summary {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.rule-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.threshold-text {
-  font-size: 12px;
-  color: #606266;
-}
-
-.no-rule {
-  display: flex;
-  justify-content: center;
-}
-
-.features-container {
+.params-container {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   padding: 4px 0;
 }
 
-.feature-tag {
+.param-tag {
   margin: 0;
   font-size: 12px;
 }

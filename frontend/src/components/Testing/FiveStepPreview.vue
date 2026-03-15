@@ -77,6 +77,7 @@ const handleTestTextChange = () => {
           previewResult.value = {
             step1_device_type: data.step1_device_type || {},
             step2_parameters: data.step2_parameters || {},
+            parameter_candidates: data.parameter_candidates || [],  // Add parameter_candidates at root level
             step3_auxiliary: data.step3_auxiliary || {},
             step4_matching: data.step4_matching || { status: 'no_match', candidates: [] },
             step5_ui_preview: data.step5_ui_preview || {},

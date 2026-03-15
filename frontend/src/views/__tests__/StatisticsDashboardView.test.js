@@ -9,8 +9,7 @@ vi.mock('@/api/database', () => ({
   getStatistics: vi.fn(),
   getBrandDistribution: vi.fn(),
   getPriceDistribution: vi.fn(),
-  getRecentDevices: vi.fn(),
-  getDevicesWithoutRules: vi.fn()
+  getRecentDevices: vi.fn()
 }))
 
 // Mock Element Plus
@@ -63,14 +62,6 @@ describe('StatisticsDashboardView', () => {
     }
   ]
 
-  const mockDevicesWithoutRules = [
-    {
-      device_id: 'DEV002',
-      brand: '西门子',
-      device_name: '压力传感器'
-    }
-  ]
-
   let wrapper
 
   beforeEach(() => {
@@ -105,13 +96,6 @@ describe('StatisticsDashboardView', () => {
       }
     })
 
-    databaseApi.getDevicesWithoutRules.mockResolvedValue({
-      data: {
-        success: true,
-        data: { devices: mockDevicesWithoutRules }
-      }
-    })
-
     wrapper = mount(StatisticsDashboardView, {
       global: {
         stubs: {
@@ -124,10 +108,8 @@ describe('StatisticsDashboardView', () => {
           'BrandChart': true,
           'PriceChart': true,
           'RecentDevices': true,
-          'DevicesWithoutRules': true,
           'DeviceDetail': true,
           'MatchLogs': true,
-          'RuleStatistics': true,
           'MatchingStatistics': true
         }
       }
@@ -156,7 +138,6 @@ describe('StatisticsDashboardView', () => {
       expect(databaseApi.getBrandDistribution).toHaveBeenCalled()
       expect(databaseApi.getPriceDistribution).toHaveBeenCalled()
       expect(databaseApi.getRecentDevices).toHaveBeenCalled()
-      expect(databaseApi.getDevicesWithoutRules).toHaveBeenCalled()
     })
 
     it('应该正确加载统计数据', async () => {
@@ -181,12 +162,6 @@ describe('StatisticsDashboardView', () => {
       await wrapper.vm.fetchRecentDevices()
       
       expect(wrapper.vm.recentDevices).toEqual(mockRecentDevices)
-    })
-
-    it('应该正确加载无规则设备', async () => {
-      await wrapper.vm.fetchDevicesWithoutRules()
-      
-      expect(wrapper.vm.devicesWithoutRules).toEqual(mockDevicesWithoutRules)
     })
   })
 
@@ -215,13 +190,6 @@ describe('StatisticsDashboardView', () => {
       await wrapper.vm.$nextTick()
       
       expect(wrapper.vm.activeTab).toBe('logs')
-    })
-
-    it('应该支持切换到规则统计标签页', async () => {
-      wrapper.vm.activeTab = 'rules'
-      await wrapper.vm.$nextTick()
-      
-      expect(wrapper.vm.activeTab).toBe('rules')
     })
 
     it('应该支持切换到匹配统计标签页', async () => {
@@ -271,14 +239,6 @@ describe('StatisticsDashboardView', () => {
       
       expect(loadAllDataSpy).toHaveBeenCalled()
     })
-
-    it('应该在规则生成后刷新数据', async () => {
-      const loadAllDataSpy = vi.spyOn(wrapper.vm, 'loadAllData')
-      
-      await wrapper.vm.handleRulesGenerated()
-      
-      expect(loadAllDataSpy).toHaveBeenCalled()
-    })
   })
 
   describe('加载状态', () => {
@@ -296,14 +256,6 @@ describe('StatisticsDashboardView', () => {
       
       await loadPromise
       expect(wrapper.vm.loadingRecent).toBe(false)
-    })
-
-    it('应该在加载无规则设备时显示loading状态', async () => {
-      const loadPromise = wrapper.vm.fetchDevicesWithoutRules()
-      expect(wrapper.vm.loadingWithoutRules).toBe(true)
-      
-      await loadPromise
-      expect(wrapper.vm.loadingWithoutRules).toBe(false)
     })
   })
 })

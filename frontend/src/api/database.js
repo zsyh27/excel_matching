@@ -70,25 +70,6 @@ export const batchImportDevices = (formData) => {
   })
 }
 
-// ========== 数据一致性检查 API ==========
-
-/**
- * 执行数据一致性检查
- * @returns {Promise}
- */
-export const checkConsistency = () => {
-  return api.get('/database/consistency-check')
-}
-
-/**
- * 修复一致性问题
- * @param {Object} fixOptions - 修复选项
- * @returns {Promise}
- */
-export const fixConsistency = (fixOptions) => {
-  return api.post('/database/fix-consistency', fixOptions)
-}
-
 // ========== 统计信息 API ==========
 
 /**
@@ -122,42 +103,4 @@ export const getPriceDistribution = () => {
  */
 export const getRecentDevices = (limit = 10) => {
   return api.get('/database/statistics/recent', { params: { limit } })
-}
-
-/**
- * 获取无规则设备列表
- * @returns {Promise}
- */
-export const getDevicesWithoutRules = () => {
-  return api.get('/database/statistics/without-rules')
-}
-
-// ========== 规则管理 API ==========
-
-/**
- * 批量生成规则
- * @param {Object} options - 生成选项
- * @returns {Promise}
- */
-export const batchGenerateRules = (options) => {
-  return api.post('/rules/generate', options)
-}
-
-/**
- * 更新设备规则
- * @param {string} deviceId - 设备ID
- * @param {Object} ruleData - 规则数据
- * @returns {Promise}
- */
-export const updateDeviceRule = (deviceId, ruleData) => {
-  return api.put(`/devices/${deviceId}/rule`, ruleData)
-}
-
-/**
- * 重新生成设备规则
- * @param {string} deviceId - 设备ID
- * @returns {Promise}
- */
-export const regenerateDeviceRule = (deviceId) => {
-  return api.post(`/devices/${deviceId}/rule/regenerate`)
 }
