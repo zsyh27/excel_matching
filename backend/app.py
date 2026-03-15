@@ -25,6 +25,7 @@ from modules.excel_exporter import ExcelExporter
 from modules.data_loader import DataLoader
 from modules.device_row_classifier import DeviceRowClassifier, AnalysisContext, ProbabilityLevel
 from modules.cache_manager import cache, invalidate_device_cache, invalidate_statistics_cache
+from modules.match_logger import MatchLogger
 
 # 导入智能设备模块
 from modules.intelligent_device.configuration_manager import ConfigurationManager
@@ -107,6 +108,14 @@ try:
         device_loader=data_loader
     )
     
+    # 12. 初始化匹配日志记录器
+    match_logger = None
+    if hasattr(data_loader, 'loader') and data_loader.loader and hasattr(data_loader.loader, 'db_manager'):
+        match_logger = MatchLogger(data_loader.loader.db_manager)
+        logger.info("匹配日志记录器初始化完成")
+    else:
+        logger.warning("数据库模式未启用，匹配日志功能不可用")
+    
     logger.info("系统组件初始化完成")
     logger.info(f"已加载 {len(devices)} 个设备")
     logger.info("智能设备录入系统组件初始化完成")
@@ -123,6 +132,7 @@ except Exception as e:
     intelligent_config_manager = None
     intelligent_parser = None
     intelligent_extraction_api = None
+    match_logger = None
 
 
 def allowed_file(filename: str) -> bool:
@@ -574,6 +584,21 @@ def match_devices():
                         'match_score': best_candidate.get('match_score', 0.0),
                         'match_reason': f"智能匹配成功，总分 {best_candidate.get('match_score', 0.0):.1f}"
                     }
+                    
+                    # 记录匹配日志（成功）
+                    if match_logger:
+                        try:
+                            match_logger.log_match(
+                                input_description=original_description,
+                                extracted_features=best_candidate.get('matched_params', []),
+                                match_status='success',
+                                matched_device_id=best_candidate.get('device_id'),
+                                match_score=best_candidate.get('match_score', 0.0),
+                                match_threshold=50.0,  # 默认阈值
+                                match_reason=match_result_dict['match_reason']
+                            )
+                        except Exception as log_error:
+                            logger.warning(f"记录匹配日志失败: {log_error}")
                 else:
                     unmatched_count += 1
                     match_result_dict = {
@@ -584,6 +609,21 @@ def match_devices():
                         'match_score': 0.0,
                         'match_reason': '未找到匹配的设备'
                     }
+                    
+                    # 记录匹配日志（失败）
+                    if match_logger:
+                        try:
+                            match_logger.log_match(
+                                input_description=original_description,
+                                extracted_features=[],
+                                match_status='failed',
+                                matched_device_id=None,
+                                match_score=0.0,
+                                match_threshold=50.0,
+                                match_reason='未找到匹配的设备'
+                            )
+                        except Exception as log_error:
+                            logger.warning(f"记录匹配日志失败: {log_error}")
                 
                 if 'device_description' in row:
                     device_description = row['device_description']
@@ -2064,7 +2104,7 @@ def get_statistics_match_logs():
                 if start_date:
                     try:
                         start_dt = datetime.strptime(start_date, '%Y-%m-%d')
-                        query = query.filter(MatchLog.created_at >= start_dt)
+                        query = query.filter(MatchLog.timestamp >= start_dt)
                     except ValueError:
                         logger.warning(f"无效的开始日期格式: {start_date}")
                 
@@ -2073,7 +2113,7 @@ def get_statistics_match_logs():
                         end_dt = datetime.strptime(end_date, '%Y-%m-%d')
                         # 包含结束日期的全天
                         end_dt = end_dt.replace(hour=23, minute=59, second=59)
-                        query = query.filter(MatchLog.created_at <= end_dt)
+                        query = query.filter(MatchLog.timestamp <= end_dt)
                     except ValueError:
                         logger.warning(f"无效的结束日期格式: {end_date}")
                 
@@ -2087,7 +2127,7 @@ def get_statistics_match_logs():
                 total = query.count()
                 
                 # 分页和排序
-                logs = query.order_by(desc(MatchLog.created_at))\
+                logs = query.order_by(desc(MatchLog.timestamp))\
                            .offset((page - 1) * page_size)\
                            .limit(page_size)\
                            .all()
@@ -2095,13 +2135,27 @@ def get_statistics_match_logs():
                 # 转换为字典
                 logs_list = []
                 for log in logs:
+                    # 获取匹配设备的名称
+                    matched_device_name = None
+                    if log.matched_device_id:
+                        try:
+                            from modules.models import Device
+                            device = session.query(Device).filter(Device.device_id == log.matched_device_id).first()
+                            if device:
+                                matched_device_name = f"{device.brand} {device.device_name} - {device.spec_model}"
+                        except Exception as device_error:
+                            logger.warning(f"获取设备名称失败: {device_error}")
+                            matched_device_name = f"设备 {log.matched_device_id}"
+                    
                     logs_list.append({
                         'log_id': log.log_id,
+                        'timestamp': log.timestamp.isoformat() if log.timestamp else None,
                         'input_description': log.input_description,
                         'match_status': log.match_status,
                         'matched_device_id': log.matched_device_id,
+                        'matched_device_name': matched_device_name or '-',
                         'match_score': log.match_score,
-                        'created_at': log.created_at.isoformat() if log.created_at else None
+                        'extracted_features': log.extracted_features or []
                     })
                 
                 logger.info(f"查询匹配日志成功: total={total}, page={page}, page_size={page_size}")
@@ -2127,6 +2181,89 @@ def get_statistics_match_logs():
         logger.error(f"获取匹配日志失败: {e}")
         logger.error(traceback.format_exc())
         return create_error_response('GET_MATCH_LOGS_ERROR', '获取匹配日志失败', {'error_detail': str(e)})
+
+
+@app.route('/api/match-logs/<log_id>', methods=['GET'])
+def get_match_log_detail(log_id: str):
+    """
+    获取单个匹配日志详情接口
+    
+    验证需求: Requirements 4.3
+    
+    Args:
+        log_id: 匹配日志ID
+    
+    Response:
+        {
+            "success": true,
+            "log": {
+                "log_id": "uuid",
+                "timestamp": "2024-01-15T10:30:00",
+                "input_description": "设备描述",
+                "extracted_features": [...],
+                "match_status": "success",
+                "matched_device_id": "DEV001",
+                "matched_device_name": "霍尼韦尔 温度传感器 - HST-RA",
+                "match_score": 8.5,
+                "match_threshold": 5.0,
+                "match_reason": "匹配成功原因"
+            }
+        }
+    """
+    try:
+        # 检查是否使用数据库模式
+        if not hasattr(data_loader, 'loader') or not data_loader.loader or not hasattr(data_loader.loader, 'db_manager'):
+            return create_error_response('SERVICE_UNAVAILABLE', '当前不是数据库模式，无法查询匹配日志')
+        
+        try:
+            # 查询数据库
+            with data_loader.loader.db_manager.session_scope() as session:
+                from modules.models import MatchLog, Device
+                
+                # 查询日志
+                log = session.query(MatchLog).filter(MatchLog.log_id == log_id).first()
+                
+                if not log:
+                    return create_error_response('LOG_NOT_FOUND', f'匹配日志不存在: {log_id}', status_code=404)
+                
+                # 获取匹配设备的名称
+                matched_device_name = None
+                if log.matched_device_id:
+                    try:
+                        device = session.query(Device).filter(Device.device_id == log.matched_device_id).first()
+                        if device:
+                            matched_device_name = f"{device.brand} {device.device_name} - {device.spec_model}"
+                    except Exception as device_error:
+                        logger.warning(f"获取设备名称失败: {device_error}")
+                        matched_device_name = f"设备 {log.matched_device_id}"
+                
+                # 构建响应
+                log_detail = {
+                    'log_id': log.log_id,
+                    'timestamp': log.timestamp.isoformat() if log.timestamp else None,
+                    'input_description': log.input_description,
+                    'extracted_features': log.extracted_features or [],
+                    'match_status': log.match_status,
+                    'matched_device_id': log.matched_device_id,
+                    'matched_device_name': matched_device_name or '-',
+                    'match_score': log.match_score,
+                    'match_threshold': log.match_threshold,
+                    'match_reason': log.match_reason
+                }
+                
+                logger.info(f"获取匹配日志详情成功: log_id={log_id}")
+                return jsonify({
+                    'success': True,
+                    'log': log_detail
+                })
+        except Exception as db_error:
+            logger.error(f"查询匹配日志详情失败: {db_error}")
+            logger.error(traceback.format_exc())
+            return create_error_response('DATABASE_ERROR', '查询匹配日志详情失败', {'error_detail': str(db_error)})
+    except Exception as e:
+        logger.error(f"获取匹配日志详情失败: {e}")
+        logger.error(traceback.format_exc())
+        return create_error_response('GET_MATCH_LOG_DETAIL_ERROR', '获取匹配日志详情失败', {'error_detail': str(e)})
 
 
 @app.route('/api/statistics/rules', methods=['GET'])
@@ -2293,15 +2430,20 @@ def get_statistics_match_success_rate():
             # 查询数据库
             with data_loader.loader.db_manager.session_scope() as session:
                 from modules.models import MatchLog
-                from sqlalchemy import func, cast, Date
+                from sqlalchemy import func, case as sa_case
                 
-                query = session.query(MatchLog)
+                # 按日期分组统计（SQLite兼容方式：用strftime截取日期）
+                daily_stats = session.query(
+                    func.strftime('%Y-%m-%d', MatchLog.timestamp).label('date'),
+                    func.count(MatchLog.log_id).label('total'),
+                    func.sum(sa_case((MatchLog.match_status == 'success', 1), else_=0)).label('success')
+                )
                 
-                # 应用日期筛选
+                # 应用日期筛选（重新构建query）
                 if start_date:
                     try:
                         start_dt = datetime.strptime(start_date, '%Y-%m-%d')
-                        query = query.filter(MatchLog.created_at >= start_dt)
+                        daily_stats = daily_stats.filter(MatchLog.timestamp >= start_dt)
                     except ValueError:
                         logger.warning(f"无效的开始日期格式: {start_date}")
                 
@@ -2309,16 +2451,13 @@ def get_statistics_match_success_rate():
                     try:
                         end_dt = datetime.strptime(end_date, '%Y-%m-%d')
                         end_dt = end_dt.replace(hour=23, minute=59, second=59)
-                        query = query.filter(MatchLog.created_at <= end_dt)
+                        daily_stats = daily_stats.filter(MatchLog.timestamp <= end_dt)
                     except ValueError:
                         logger.warning(f"无效的结束日期格式: {end_date}")
                 
-                # 按日期分组统计
-                daily_stats = query.with_entities(
-                    cast(MatchLog.created_at, Date).label('date'),
-                    func.count(MatchLog.log_id).label('total'),
-                    func.sum(func.case([(MatchLog.match_status == 'success', 1)], else_=0)).label('success')
-                ).group_by(cast(MatchLog.created_at, Date)).all()
+                daily_stats = daily_stats.group_by(
+                    func.strftime('%Y-%m-%d', MatchLog.timestamp)
+                ).all()
                 
                 # 构建趋势数据
                 trend = []
@@ -2326,7 +2465,7 @@ def get_statistics_match_success_rate():
                 success_all = 0
                 
                 for stat in daily_stats:
-                    date_str = stat.date.strftime('%Y-%m-%d') if stat.date else ''
+                    date_str = stat.date if stat.date else ''
                     total = stat.total or 0
                     success = stat.success or 0
                     success_rate = success / total if total > 0 else 0
@@ -2428,12 +2567,20 @@ def update_config():
         
         success = data_loader.config_manager.update_config(data['updates'])
         if success:
-            global config, preprocessor, match_engine, device_row_classifier
+            global config, preprocessor, device_row_classifier, intelligent_extraction_api
             config = data_loader.load_config()
             preprocessor = TextPreprocessor(config)
             data_loader.preprocessor = preprocessor
-            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
             device_row_classifier = DeviceRowClassifier(config)
+            
+            # 重新初始化智能提取API
+            try:
+                from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
+                intelligent_extraction_api = IntelligentExtractionAPI(config, data_loader)
+                logger.info("智能提取API已重新加载")
+            except Exception as api_error:
+                logger.error(f"智能提取API重新加载失败: {api_error}")
+            
             return jsonify({'success': True, 'message': '配置更新成功'}), 200
         else:
             return create_error_response('UPDATE_CONFIG_ERROR', '配置更新失败')
@@ -2462,11 +2609,10 @@ def save_config():
         
         if success:
             # 重新加载配置和组件
-            global config, preprocessor, match_engine, device_row_classifier, intelligent_extraction_api
+            global config, preprocessor, device_row_classifier, intelligent_extraction_api
             config = data_loader.load_config()
             preprocessor = TextPreprocessor(config)
             data_loader.preprocessor = preprocessor
-            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
             device_row_classifier = DeviceRowClassifier(config)
             
             # 重新初始化智能提取API（重要！）
@@ -2525,27 +2671,51 @@ def test_config():
         test_text = data['test_text']
         test_config = data.get('config')  # 可选，如果不提供则使用当前配置
         
-        # 如果提供了测试配置，使用测试配置创建临时预处理器和匹配引擎
+        # 如果提供了测试配置，使用测试配置创建临时智能提取API
         if test_config:
             # 修正配置格式（处理嵌套结构）
             normalized_config = _normalize_config_structure(test_config)
             
             test_preprocessor = TextPreprocessor(normalized_config)
-            # 使用测试配置创建临时匹配引擎
-            test_match_engine = MatchEngine(rules=rules, devices=devices, config=normalized_config)
+            # 使用测试配置创建临时智能提取API
+            from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
+            test_extraction_api = IntelligentExtractionAPI(normalized_config, data_loader)
         else:
             test_preprocessor = preprocessor
-            test_match_engine = match_engine
+            test_extraction_api = intelligent_extraction_api
         
         # 预处理
         preprocess_result = test_preprocessor.preprocess(test_text)
         
-        # 匹配（不记录详情，因为这只是测试）
-        match_result, _ = test_match_engine.match(
-            preprocess_result.features, 
-            input_description=test_text,
-            record_detail=False
-        )
+        # 使用智能提取API进行匹配
+        match_response = test_extraction_api.match(test_text, top_k=5)
+        
+        if match_response.get('success') and match_response.get('data'):
+            match_data = match_response['data']
+            candidates = match_data.get('candidates', [])
+            
+            if candidates:
+                best_match = candidates[0]
+                match_result = {
+                    'match_status': 'success',
+                    'device_id': best_match.get('device_id'),
+                    'device_text': f"{best_match.get('brand', '')} {best_match.get('device_name', '')} - {best_match.get('spec_model', '')}".strip(),
+                    'score': best_match.get('total_score', 0.0)
+                }
+            else:
+                match_result = {
+                    'match_status': 'failed',
+                    'device_id': None,
+                    'device_text': None,
+                    'score': 0.0
+                }
+        else:
+            match_result = {
+                'match_status': 'failed',
+                'device_id': None,
+                'device_text': None,
+                'score': 0.0
+            }
         
         return jsonify({
             'success': True,
@@ -2555,11 +2725,7 @@ def test_config():
                 'normalized': preprocess_result.normalized,
                 'features': preprocess_result.features
             },
-            'match_result': {
-                'match_status': match_result.match_status,
-                'device_text': match_result.matched_device_text,
-                'score': match_result.match_score
-            } if match_result else None
+            'match_result': match_result
         }), 200
     except Exception as e:
         logger.error(f"测试配置失败: {e}")
@@ -2625,12 +2791,19 @@ def rollback_config():
         
         if success:
             # 重新加载配置和组件
-            global config, preprocessor, match_engine, device_row_classifier
+            global config, preprocessor, device_row_classifier, intelligent_extraction_api
             config = data_loader.load_config()
             preprocessor = TextPreprocessor(config)
             data_loader.preprocessor = preprocessor
-            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
             device_row_classifier = DeviceRowClassifier(config)
+            
+            # 重新初始化智能提取API
+            try:
+                from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
+                intelligent_extraction_api = IntelligentExtractionAPI(config, data_loader)
+                logger.info("智能提取API已重新加载")
+            except Exception as api_error:
+                logger.error(f"智能提取API重新加载失败: {api_error}")
             
             return jsonify({'success': True, 'message': message}), 200
         else:
@@ -2696,12 +2869,19 @@ def import_config():
         
         if success:
             # 重新加载配置和组件
-            global config, preprocessor, match_engine, device_row_classifier
+            global config, preprocessor, device_row_classifier, intelligent_extraction_api
             config = data_loader.load_config()
             preprocessor = TextPreprocessor(config)
             data_loader.preprocessor = preprocessor
-            match_engine = MatchEngine(rules=rules, devices=devices, config=config)
             device_row_classifier = DeviceRowClassifier(config)
+            
+            # 重新初始化智能提取API
+            try:
+                from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
+                intelligent_extraction_api = IntelligentExtractionAPI(config, data_loader)
+                logger.info("智能提取API已重新加载")
+            except Exception as api_error:
+                logger.error(f"智能提取API重新加载失败: {api_error}")
             
             return jsonify({'success': True, 'message': message}), 200
         else:
@@ -3256,26 +3436,20 @@ def fix_data_consistency():
 
 # ==================== 智能提取 API ====================
 
-# 初始化智能提取API
-intelligent_extraction_api = None
+# 底部的智能提取API初始化已在顶部完成，此处不再重复初始化
+# intelligent_extraction_api 在顶部系统初始化时已创建
 
 def init_intelligent_extraction_api():
-    """初始化智能提取API"""
+    """重新初始化智能提取API（供配置更新后调用）"""
     global intelligent_extraction_api
     try:
         from modules.intelligent_extraction.api_handler import IntelligentExtractionAPI
-        config = data_loader.load_config()
-        intelligent_extraction_api = IntelligentExtractionAPI(config, data_loader)
+        fresh_config = data_loader.load_config()
+        intelligent_extraction_api = IntelligentExtractionAPI(fresh_config, data_loader)
         logger.info("智能提取API初始化成功")
     except Exception as e:
         logger.error(f"智能提取API初始化失败: {e}")
         logger.error(traceback.format_exc())
-
-# 在应用启动时初始化
-try:
-    init_intelligent_extraction_api()
-except Exception as e:
-    logger.error(f"智能提取API初始化异常: {e}")
 
 
 @app.route('/api/intelligent-extraction/extract', methods=['POST'])
@@ -3395,7 +3569,8 @@ def intelligent_preview():
     
     Request:
         {
-            "text": "CO浓度探测器 量程0~250ppm"
+            "text": "CO浓度探测器 量程0~250ppm",
+            "record_log": true  // 可选，是否记录匹配日志
         }
     
     Response:
@@ -3408,7 +3583,8 @@ def intelligent_preview():
                 "step4_matching": {...},
                 "step5_ui_preview": {...},
                 "debug_info": {...}
-            }
+            },
+            "log_id": "LOG_xxx"  // 如果记录了日志
         }
     """
     try:
@@ -3432,7 +3608,82 @@ def intelligent_preview():
             }), 400
         
         text = data.get('text', '')
+        record_log = data.get('record_log', False)  # 默认不记录日志
+        
+        # 每次调用时重新加载配置中的设备类型识别部分，确保使用最新配置
+        try:
+            from modules.intelligent_extraction.device_type_recognizer import DeviceTypeRecognizer
+            fresh_config = data_loader.load_config()
+            ie_config = fresh_config.get('intelligent_extraction', {})
+            device_type_config = ie_config.get('device_type_recognition', {})
+            intelligent_extraction_api.device_recognizer = DeviceTypeRecognizer(device_type_config, full_config=fresh_config)
+        except Exception as reload_err:
+            logger.warning(f"重新加载设备类型识别器失败: {reload_err}")
+        
+        # 调用预览API
         result = intelligent_extraction_api.preview(text)
+        
+        # 如果需要记录日志且匹配成功
+        if record_log and result.get('success') and match_logger:
+            try:
+                result_data = result.get('data', {})
+                matching_data = result_data.get('step4_matching', {})
+                candidates = matching_data.get('candidates', [])
+                
+                # 提取特征（从步骤1-3）
+                extracted_features = []
+                
+                # 设备类型
+                device_type = result_data.get('step1_device_type', {})
+                if device_type.get('sub_type'):
+                    extracted_features.append(device_type['sub_type'])
+                
+                # 参数
+                parameters = result_data.get('step2_parameters', {})
+                for key, value in parameters.items():
+                    if value:
+                        extracted_features.append(f"{key}:{value}")
+                
+                # 辅助信息
+                auxiliary = result_data.get('step3_auxiliary', {})
+                for key, value in auxiliary.items():
+                    if value:
+                        extracted_features.append(f"{key}:{value}")
+                
+                # 构建匹配结果
+                if candidates and len(candidates) > 0:
+                    best_match = candidates[0]
+                    match_result = {
+                        'device_id': best_match.get('device_id'),
+                        'match_status': 'success',
+                        'match_score': best_match.get('total_score', 0.0),
+                        'match_threshold': 5.0,  # 默认阈值
+                        'match_reason': f"智能匹配 - 五步流程预览测试"
+                    }
+                else:
+                    match_result = {
+                        'device_id': None,
+                        'match_status': 'failed',
+                        'match_score': 0.0,
+                        'match_threshold': 5.0,
+                        'match_reason': '未找到匹配设备'
+                    }
+                
+                # 记录日志
+                log_id = match_logger.log_match(
+                    input_description=text,
+                    extracted_features=extracted_features,
+                    match_result=match_result
+                )
+                
+                if log_id:
+                    result['log_id'] = log_id
+                    logger.info(f"预览测试已记录日志: {log_id}")
+                    
+            except Exception as log_error:
+                logger.error(f"记录预览日志失败: {log_error}")
+                # 日志记录失败不影响预览结果
+        
         return jsonify(result)
     except Exception as e:
         logger.error(f"预览失败: {e}")
@@ -3489,6 +3740,16 @@ def recognize_device_type():
             }), 400
         
         text = data.get('text', '')
+        
+        # 每次调用时重新加载配置，确保使用最新的设备类型和前缀关键词
+        try:
+            from modules.intelligent_extraction.device_type_recognizer import DeviceTypeRecognizer
+            fresh_config = data_loader.load_config()
+            ie_config = fresh_config.get('intelligent_extraction', {})
+            device_type_config = ie_config.get('device_type_recognition', {})
+            intelligent_extraction_api.device_recognizer = DeviceTypeRecognizer(device_type_config, full_config=fresh_config)
+        except Exception as reload_err:
+            logger.warning(f"重新加载设备类型识别器失败: {reload_err}")
         
         # 调用设备类型识别器
         device_type_info = intelligent_extraction_api.device_recognizer.recognize(text)

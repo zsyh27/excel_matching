@@ -230,10 +230,7 @@ const loadLogs = async () => {
     const response = await api.get('/statistics/match-logs', { params })
     
     if (response.data.success) {
-      logs.value = response.data.logs.map(log => ({
-        ...log,
-        matched_device_name: log.matched_device_id ? `设备 ${log.matched_device_id}` : '-'
-      }))
+      logs.value = response.data.logs
       total.value = response.data.total
     } else {
       ElMessage.error(response.data.message || '加载日志失败')

@@ -39,17 +39,22 @@ class MatchLogger:
         self,
         input_description: str,
         extracted_features: List[str],
-        match_result: Dict
+        match_result: Dict = None,
+        # flat keyword args (used by app.py)
+        match_status: str = None,
+        matched_device_id: str = None,
+        match_score: float = None,
+        match_threshold: float = None,
+        match_reason: str = None
     ) -> str:
         """
         记录一次匹配操作
         
         验证需求: 10.9
         
-        Args:
-            input_description: 原始输入描述
-            extracted_features: 提取的特征列表
-            match_result: 匹配结果字典（包含 device_id, match_status, match_score 等）
+        支持两种调用方式:
+        1. log_match(desc, features, match_result_dict)
+        2. log_match(desc, features, match_status=..., matched_device_id=..., ...)
             
         Returns:
             log_id: 日志记录ID
@@ -57,17 +62,31 @@ class MatchLogger:
         try:
             log_id = f"LOG_{uuid.uuid4().hex[:12]}"
             
+            # 兼容两种调用方式
+            if match_result is not None:
+                _status = match_result.get('match_status', 'unknown')
+                _device_id = match_result.get('device_id')
+                _score = match_result.get('match_score', 0.0)
+                _threshold = match_result.get('match_threshold')
+                _reason = match_result.get('match_reason', '')
+            else:
+                _status = match_status or 'unknown'
+                _device_id = matched_device_id
+                _score = match_score if match_score is not None else 0.0
+                _threshold = match_threshold
+                _reason = match_reason or ''
+            
             # 创建日志记录
             match_log = MatchLog(
                 log_id=log_id,
                 timestamp=datetime.utcnow(),
                 input_description=input_description,
                 extracted_features=extracted_features,
-                match_status=match_result.get('match_status', 'unknown'),
-                matched_device_id=match_result.get('device_id'),
-                match_score=match_result.get('match_score', 0.0),
-                match_threshold=match_result.get('match_threshold'),
-                match_reason=match_result.get('match_reason', '')
+                match_status=_status,
+                matched_device_id=_device_id,
+                match_score=_score,
+                match_threshold=_threshold,
+                match_reason=_reason
             )
             
             # 保存到数据库

@@ -19,7 +19,10 @@
         <el-select
           v-model="form.types"
           multiple
-          placeholder="选择一个或多个设备类型"
+          filterable
+          allow-create
+          default-first-option
+          placeholder="选择或输入设备类型"
           style="width: 100%"
         >
           <el-option
@@ -30,7 +33,7 @@
           />
         </el-select>
         <div class="form-tip">
-          当设备描述中包含此前缀词时，将优先匹配这些设备类型
+          支持从列表选择或手动输入新的设备类型。当设备描述中包含此前缀词时，将优先匹配这些设备类型
         </div>
       </el-form-item>
     </el-form>

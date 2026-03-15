@@ -1,6 +1,6 @@
 <template>
   <el-row :gutter="20" class="summary-cards">
-    <el-col :span="6">
+    <el-col :span="8">
       <el-card shadow="hover" class="stat-card">
         <div class="card-content">
           <el-icon class="card-icon" color="#409EFF" :size="40">
@@ -14,21 +14,7 @@
       </el-card>
     </el-col>
 
-    <el-col :span="6">
-      <el-card shadow="hover" class="stat-card">
-        <div class="card-content">
-          <el-icon class="card-icon" color="#67C23A" :size="40">
-            <Document />
-          </el-icon>
-          <div class="card-info">
-            <div class="card-value">{{ statistics.total_rules || 0 }}</div>
-            <div class="card-label">规则总数</div>
-          </div>
-        </div>
-      </el-card>
-    </el-col>
-
-    <el-col :span="6">
+    <el-col :span="8">
       <el-card shadow="hover" class="stat-card">
         <div class="card-content">
           <el-icon class="card-icon" color="#E6A23C" :size="40">
@@ -42,31 +28,24 @@
       </el-card>
     </el-col>
 
-    <el-col :span="6">
+    <el-col :span="8">
       <el-card shadow="hover" class="stat-card">
         <div class="card-content">
-          <el-icon class="card-icon" :color="getCoverageColor()" :size="40">
-            <PieChart />
+          <el-icon class="card-icon" color="#67C23A" :size="40">
+            <Histogram />
           </el-icon>
           <div class="card-info">
-            <div class="card-value">{{ getCoverageRate() }}%</div>
-            <div class="card-label">规则覆盖率</div>
+            <div class="card-value">{{ statistics.total_device_types || 0 }}</div>
+            <div class="card-label">设备类型</div>
           </div>
         </div>
-        <el-progress
-          :percentage="parseFloat(getCoverageRate())"
-          :color="getCoverageColor()"
-          :show-text="false"
-          style="margin-top: 10px"
-        />
       </el-card>
     </el-col>
   </el-row>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Box, Document, Collection, PieChart } from '@element-plus/icons-vue'
+import { Box, Collection, Histogram } from '@element-plus/icons-vue'
 
 const props = defineProps({
   statistics: {
@@ -74,22 +53,6 @@ const props = defineProps({
     default: () => ({})
   }
 })
-
-// 计算覆盖率
-const getCoverageRate = () => {
-  const total = props.statistics.total_devices || 0
-  const rules = props.statistics.total_rules || 0
-  if (total === 0) return '0.0'
-  return ((rules / total) * 100).toFixed(1)
-}
-
-// 获取覆盖率颜色
-const getCoverageColor = () => {
-  const rate = parseFloat(getCoverageRate())
-  if (rate < 50) return '#F56C6C'
-  if (rate < 80) return '#E6A23C'
-  return '#67C23A'
-}
 </script>
 
 <style scoped>

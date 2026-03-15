@@ -10,26 +10,34 @@
         </div>
       </template>
 
-      <el-tag
-        v-for="(keyword, index) in config.brand.keywords"
-        :key="index"
-        closable
-        @close="removeBrandKeyword(index)"
-        style="margin-right: 10px; margin-bottom: 10px"
+      <el-alert
+        type="info"
+        :closable="false"
+        style="margin-bottom: 15px"
       >
-        {{ keyword }}
-      </el-tag>
-
-      <el-input
-        v-model="newBrandKeyword"
-        placeholder="输入品牌名称"
-        style="width: 200px; margin-top: 10px"
-        @keyup.enter="addBrandKeyword"
-      >
-        <template #append>
-          <el-button @click="addBrandKeyword">添加</el-button>
+        <template #title>
+          品牌关键词从"品牌关键词配置"页面统一管理
         </template>
-      </el-input>
+        <div style="margin-top: 8px">
+          当前使用的品牌关键词来自 
+          <el-link type="primary" @click="navigateToBrandKeywords">品牌关键词配置页面</el-link>
+          ，共 {{ brandKeywords.length }} 个品牌。
+        </div>
+      </el-alert>
+
+      <div style="max-height: 200px; overflow-y: auto; padding: 10px; background: #f5f5f5; border-radius: 4px">
+        <el-tag
+          v-for="(keyword, index) in brandKeywords"
+          :key="index"
+          style="margin-right: 10px; margin-bottom: 10px"
+          type="info"
+        >
+          {{ keyword }}
+        </el-tag>
+        <div v-if="brandKeywords.length === 0" style="color: #999; text-align: center; padding: 20px">
+          暂无品牌关键词，请前往品牌关键词配置页面添加
+        </div>
+      </div>
     </el-card>
 
     <el-card class="config-section">
@@ -88,18 +96,20 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import ConfigInfoCard from './ConfigInfoCard.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const editorName = 'AuxiliaryInfoEditor'
 const lastUpdated = ref(null)
 const saving = ref(false)
 
 const config = ref({
-  brand: { enabled: true, keywords: ['西门子', '施耐德', '霍尼韦尔', 'ABB'] },
+  brand: { enabled: true },
   medium: { enabled: true, keywords: ['水', '气', '油', '蒸汽'] },
   model: { enabled: true, pattern: '[A-Z]{2,}-[A-Z0-9]+' }
 })
 
-const newBrandKeyword = ref('')
+const brandKeywords = ref([])
 const newMediumKeyword = ref('')
 
 const loadConfig = async () => {
@@ -111,8 +121,13 @@ const loadConfig = async () => {
       const ieConfig = data.config.intelligent_extraction || {}
       const auxConfig = ieConfig.auxiliary_extraction || {}
       
+      // 品牌关键词从 brand_keywords 配置读取（只读）
+      brandKeywords.value = data.config.brand_keywords || []
+      
       config.value = {
-        brand: auxConfig.brand || { enabled: true, keywords: ['西门子', '施耐德', '霍尼韦尔', 'ABB'] },
+        brand: { 
+          enabled: auxConfig.brand?.enabled !== false  // 默认启用
+        },
         medium: auxConfig.medium || { enabled: true, keywords: ['水', '气', '油', '蒸汽'] },
         model: auxConfig.model || { enabled: true, pattern: '[A-Z]{2,}-[A-Z0-9]+' }
       }
@@ -141,8 +156,12 @@ const saveConfig = async () => {
       fullConfig.intelligent_extraction = {}
     }
     
+    // 注意：不保存 brand.keywords，因为它从 brand_keywords 读取
     fullConfig.intelligent_extraction.auxiliary_extraction = {
-      brand: config.value.brand,
+      brand: {
+        enabled: config.value.brand.enabled
+        // keywords 字段不保存，由 brand_keywords 配置统一管理
+      },
       medium: config.value.medium,
       model: config.value.model
     }
@@ -174,15 +193,9 @@ const saveConfig = async () => {
   }
 }
 
-const addBrandKeyword = () => {
-  if (newBrandKeyword.value && !config.value.brand.keywords.includes(newBrandKeyword.value)) {
-    config.value.brand.keywords.push(newBrandKeyword.value)
-    newBrandKeyword.value = ''
-  }
-}
-
-const removeBrandKeyword = (index) => {
-  config.value.brand.keywords.splice(index, 1)
+const navigateToBrandKeywords = () => {
+  // 导航到品牌关键词配置页面
+  router.push('/config-management?section=brand-keywords')
 }
 
 const addMediumKeyword = () => {

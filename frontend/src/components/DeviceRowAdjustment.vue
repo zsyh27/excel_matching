@@ -185,7 +185,6 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus'
 import { Search, Loading } from '@element-plus/icons-vue'
-import api from '../api/index.js'
 
 // 定义 props
 const props = defineProps({
@@ -390,20 +389,7 @@ const handleManualAdjust = async (row) => {
   }
 
   try {
-    // 调用API保存手动调整
-    const response = await api.post('/excel/manual-adjust', {
-      excel_id: props.excelId,
-      adjustments: [{
-        row_number: row.row_number,
-        action: row.manual_action
-      }]
-    })
-
-    if (!response.data.success) {
-      throw new Error(response.data.error || '调整失败')
-    }
-
-    // 更新本地状态
+    // 直接在本地更新状态，不依赖后端缓存
     if (row.manual_action === 'restore_auto') {
       row.is_manually_adjusted = false
       row.manual_decision = null
@@ -441,37 +427,15 @@ const batchMarkAsDevice = async () => {
     return
   }
 
-  try {
-    const adjustments = selectedRows.value.map(row => ({
-      row_number: row.row_number,
-      action: 'mark_as_device'
-    }))
+  // 直接在本地更新状态
+  selectedRows.value.forEach(row => {
+    row.is_manually_adjusted = true
+    row.manual_decision = true
+    row.manual_action = 'mark_as_device'
+  })
 
-    const response = await api.post('/excel/manual-adjust', {
-      excel_id: props.excelId,
-      adjustments
-    })
-
-    if (!response.data.success) {
-      throw new Error(response.data.error || '批量调整失败')
-    }
-
-    // 更新本地状态
-    selectedRows.value.forEach(row => {
-      row.is_manually_adjusted = true
-      row.manual_decision = true
-      row.manual_action = 'mark_as_device'
-    })
-
-    // 更新统计信息
-    updateStatistics()
-
-    ElMessage.success(`已标记 ${adjustments.length} 行为设备行`)
-
-  } catch (error) {
-    ElMessage.error(`批量调整失败: ${error.message}`)
-    console.error('批量标记失败:', error)
-  }
+  updateStatistics()
+  ElMessage.success(`已标记 ${selectedRows.value.length} 行为设备行`)
 }
 
 /**
@@ -483,37 +447,15 @@ const batchUnmarkAsDevice = async () => {
     return
   }
 
-  try {
-    const adjustments = selectedRows.value.map(row => ({
-      row_number: row.row_number,
-      action: 'unmark_as_device'
-    }))
+  // 直接在本地更新状态
+  selectedRows.value.forEach(row => {
+    row.is_manually_adjusted = true
+    row.manual_decision = false
+    row.manual_action = 'unmark_as_device'
+  })
 
-    const response = await api.post('/excel/manual-adjust', {
-      excel_id: props.excelId,
-      adjustments
-    })
-
-    if (!response.data.success) {
-      throw new Error(response.data.error || '批量调整失败')
-    }
-
-    // 更新本地状态
-    selectedRows.value.forEach(row => {
-      row.is_manually_adjusted = true
-      row.manual_decision = false
-      row.manual_action = 'unmark_as_device'
-    })
-
-    // 更新统计信息
-    updateStatistics()
-
-    ElMessage.success(`已取消 ${adjustments.length} 行的设备行标记`)
-
-  } catch (error) {
-    ElMessage.error(`批量调整失败: ${error.message}`)
-    console.error('批量取消失败:', error)
-  }
+  updateStatistics()
+  ElMessage.success(`已取消 ${selectedRows.value.length} 行的设备行标记`)
 }
 
 /**
@@ -584,16 +526,32 @@ const confirmAndProceed = async () => {
       }
     )
 
-    // 调用API获取最终设备行
-    const response = await api.get('/excel/final-device-rows', {
-      params: { excel_id: props.excelId }
-    })
+    // 直接用本地状态构建最终设备行列表，不依赖后端缓存
+    const deviceRows = allRows.value
+      .filter(row => {
+        if (row.is_manually_adjusted) {
+          return row.manual_decision === true
+        }
+        return row.probability_level === 'high'
+      })
+      .map(row => ({
+        row_number: row.row_number,
+        row_content: row.row_content,
+        source: row.is_manually_adjusted ? 'manual' : 'auto',
+        confidence: row.total_score || 0
+      }))
 
-    if (!response.data.success) {
-      throw new Error(response.data.error || '获取最终设备行失败')
+    const autoCount = deviceRows.filter(r => r.source === 'auto').length
+    const manualCount = deviceRows.filter(r => r.source === 'manual').length
+
+    const finalData = {
+      device_rows: deviceRows,
+      statistics: {
+        total_device_rows: deviceRows.length,
+        auto_identified: autoCount,
+        manually_adjusted: manualCount
+      }
     }
-
-    const finalData = response.data
 
     // 显示统计信息
     ElNotification({

@@ -110,8 +110,8 @@ class IntelligentMatcher:
         # 如果没有提取到型号，进行多阶段权重评分匹配
         candidates = self._multi_stage_match(extraction)
         
-        # 排序并取前k个
-        candidates = sorted(candidates, key=lambda x: x.total_score, reverse=True)[:top_k]
+        # 排序并取前k个（总分降序 → 匹配参数数量降序 → 价格升序）
+        candidates = sorted(candidates, key=lambda x: (-x.total_score, -len(x.matched_params), x.unit_price))[:top_k]
         
         return MatchResult(
             candidates=candidates,
@@ -206,8 +206,8 @@ class IntelligentMatcher:
             if candidate.total_score >= self.thresholds['strict']:
                 candidates.append(candidate)
         
-        # 排序并限制数量（分数相同时，按匹配项数量降序，再按设备ID排序）
-        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.device_id))
+        # 排序并限制数量（分数相同时，按匹配项数量降序，再按价格升序）
+        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.unit_price))
         return candidates[:15]
     
     def _relaxed_match(self, extraction: ExtractionResult) -> List[CandidateDevice]:
@@ -228,8 +228,8 @@ class IntelligentMatcher:
             if self.thresholds['relaxed'] <= candidate.total_score < self.thresholds['strict']:
                 candidates.append(candidate)
         
-        # 排序并限制数量
-        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.device_id))
+        # 排序并限制数量（分数相同时，按匹配项数量降序，再按价格升序）
+        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.unit_price))
         return candidates[:15]
     
     def _fuzzy_match(self, extraction: ExtractionResult) -> List[CandidateDevice]:
@@ -250,8 +250,8 @@ class IntelligentMatcher:
             if self.thresholds['fuzzy'] <= candidate.total_score < self.thresholds['relaxed']:
                 candidates.append(candidate)
         
-        # 排序并限制数量（分数相同时，按匹配项数量降序）
-        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.device_id))
+        # 排序并限制数量（分数相同时，按匹配项数量降序，再按价格升序）
+        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.unit_price))
         return candidates[:15]
     
     def _fallback_match(self, extraction: ExtractionResult) -> List[CandidateDevice]:
@@ -272,8 +272,8 @@ class IntelligentMatcher:
             if candidate.total_score >= self.thresholds['fallback']:
                 candidates.append(candidate)
         
-        # 按分数降序排序，分数相同时按匹配项数量降序
-        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.device_id))
+        # 按分数降序排序，分数相同时按匹配项数量降序，再按价格升序
+        candidates.sort(key=lambda x: (-x.total_score, -len(x.matched_params), x.unit_price))
         
         # 匉设备ID去重（只保留前10个）
         unique_candidates = []
@@ -1149,7 +1149,10 @@ class IntelligentMatcher:
                     source = item.get('source', '')
                     target = item.get('target', '')
                     if source.lower() == keyword.lower() and target:
-                        synonyms.append(target)
+                        if isinstance(target, list):
+                            synonyms.extend([t for t in target if isinstance(t, str)])
+                        elif isinstance(target, str):
+                            synonyms.append(target)
         # 处理字典格式的同义词映射
         elif isinstance(synonym_map, dict):
             for source, target in synonym_map.items():

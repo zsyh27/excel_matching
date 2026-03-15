@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试统计API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #409EFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #66b1ff;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            color: #67C23A;
+        }
+        .error {
+            color: #F56C6C;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #409EFF;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>统计API测试页面</h1>
+    
+    <div class="test-section">
+        <h2>1. 测试匹配日志API</h2>
+        <button onclick="testMatchLogsAPI()">测试 GET /api/statistics/match-logs</button>
+        <div id="matchLogsResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 测试匹配统计API</h2>
+        <button onclick="testMatchStatsAPI()">测试 GET /api/statistics/match-success-rate</button>
+        <div id="matchStatsResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 测试设备统计API</h2>
+        <button onclick="testDeviceStatsAPI()">测试 GET /api/statistics/device-stats</button>
+        <div id="deviceStatsResult" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        async function testMatchLogsAPI() {
+            const resultDiv = document.getElementById('matchLogsResult');
+            resultDiv.innerHTML = '正在请求...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/statistics/match-logs?page=1&page_size=10`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<span class="success">✅ 请求成功</span>\n\n`;
+                    resultDiv.innerHTML += `总日志数: ${data.total}\n`;
+                    resultDiv.innerHTML += `当前页日志数: ${data.logs.length}\n\n`;
+                    
+                    if (data.logs.length > 0) {
+                        let table = '<table><tr><th>时间</th><th>状态</th><th>输入描述</th><th>匹配设备</th><th>得分</th></tr>';
+                        data.logs.forEach(log => {
+                            table += `<tr>
+                                <td>${log.timestamp}</td>
+                                <td>${log.match_status}</td>
+                                <td>${log.input_description.substring(0, 50)}...</td>
+                                <td>${log.matched_device_name || '-'}</td>
+                                <td>${log.match_score ? log.match_score.toFixed(1) : '-'}</td>
+                            </tr>`;
+                        });
+                        table += '</table>';
+                        resultDiv.innerHTML += table;
+                    } else {
+                        resultDiv.innerHTML += '<span class="error">⚠️ 没有日志数据</span>';
+                    }
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 请求失败: ${data.message}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 请求错误: ${error.message}</span>`;
+            }
+        }
+
+        async function testMatchStatsAPI() {
+            const resultDiv = document.getElementById('matchStatsResult');
+            resultDiv.innerHTML = '正在请求...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/statistics/match-success-rate`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<span class="success">✅ 请求成功</span>\n\n`;
+                    resultDiv.innerHTML += JSON.stringify(data.data, null, 2);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 请求失败: ${data.message}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 请求错误: ${error.message}</span>`;
+            }
+        }
+
+        async function testDeviceStatsAPI() {
+            const resultDiv = document.getElementById('deviceStatsResult');
+            resultDiv.innerHTML = '正在请求...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/statistics/device-stats`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<span class="success">✅ 请求成功</span>\n\n`;
+                    resultDiv.innerHTML += JSON.stringify(data.data, null, 2);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ 请求失败: ${data.message}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ 请求错误: ${error.message}</span>`;
+            }
+        }
+
+        // 页面加载时自动测试
+        window.onload = function() {
+            console.log('页面加载完成，可以开始测试');
+        };
+    </script>
+</body>
+</html>

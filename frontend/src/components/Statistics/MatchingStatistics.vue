@@ -98,19 +98,14 @@ const loadTrendData = async () => {
     
     if (response.data.success) {
       const trend = response.data.trend || []
+      const overall = response.data.overall || {}
       
-      // 更新摘要数据
-      if (trend.length > 0) {
-        summary.total = trend.reduce((sum, item) => sum + (item.total || 0), 0)
-        summary.success_count = trend.reduce((sum, item) => sum + (item.success_count || 0), 0)
-        summary.avg_success_rate = summary.total > 0 
-          ? (summary.success_count / summary.total * 100) 
-          : 0
-      } else {
-        summary.total = 0
-        summary.success_count = 0
-        summary.avg_success_rate = 0
-      }
+      // 优先用 overall 数据，trend 为空时也能显示
+      summary.total = overall.total || trend.reduce((sum, item) => sum + (item.total || 0), 0)
+      summary.success_count = overall.success || trend.reduce((sum, item) => sum + (item.success || 0), 0)
+      summary.avg_success_rate = summary.total > 0
+        ? (summary.success_count / summary.total * 100)
+        : 0
       
       // 渲染图表
       await nextTick()
@@ -154,42 +149,35 @@ const renderTrendChart = (dailyStats) => {
         const stat = dailyStats[dataIndex]
         return `${param.name}<br/>
                 成功率: ${param.value}%<br/>
-                成功: ${stat.success_count || 0}次<br/>
+                成功: ${stat.success || 0}次<br/>
                 总计: ${stat.total || 0}次`
       }
     },
     grid: {
-      left: 60,
-      right: 40,
-      top: 50,
-      bottom: 80,
-      containLabel: false
+      left: 20,
+      right: 20,
+      top: 60,
+      bottom: 20,
+      containLabel: true
     },
     xAxis: {
       type: 'category',
       data: dates,
-      name: '日期',
-      nameLocation: 'middle',
-      nameGap: 55,
-      nameTextStyle: {
-        fontSize: 13
-      },
       axisLabel: {
-        rotate: 45,
-        fontSize: 11
-      }
+        rotate: dates.length > 7 ? 45 : 0,
+        fontSize: 12
+      },
+      boundaryGap: false
     },
     yAxis: {
       type: 'value',
       name: '成功率 (%)',
       nameLocation: 'middle',
-      nameGap: 45,
-      nameTextStyle: {
-        fontSize: 13
-      },
+      nameGap: 50,
       min: 0,
       max: 100,
       axisLabel: {
+        formatter: '{value}%',
         fontSize: 12
       }
     },
@@ -199,6 +187,8 @@ const renderTrendChart = (dailyStats) => {
         type: 'line',
         data: successRates,
         smooth: true,
+        symbol: 'circle',
+        symbolSize: 8,
         itemStyle: {
           color: '#67C23A'
         },
@@ -209,7 +199,8 @@ const renderTrendChart = (dailyStats) => {
           show: true,
           position: 'top',
           formatter: '{c}%',
-          fontSize: 11
+          fontSize: 12,
+          color: '#67C23A'
         }
       }
     ]

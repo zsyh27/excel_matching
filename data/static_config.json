@@ -6,50 +6,6 @@
     "施耐德",
     "通用品牌"
   ],
-  "parameter_patterns": [
-    {
-      "id": "range",
-      "name": "量程格式",
-      "pattern": "\\d+(?:\\.\\d+)?\\s*[-~到]\\s*\\d+(?:\\.\\d+)?\\s*[a-zA-Z/]+",
-      "description": "量程格式：数字~数字单位（如 0~1000ug/m3）",
-      "enabled": true
-    },
-    {
-      "id": "output",
-      "name": "输出信号格式",
-      "pattern": "\\d+\\s*[-~]\\s*\\d+\\s*(mA|V|VDC)",
-      "description": "输出信号格式：数字~数字单位（如 4~20mA）",
-      "enabled": true
-    },
-    {
-      "id": "accuracy",
-      "name": "精度格式",
-      "pattern": "±\\s*\\d+(?:\\.\\d+)?\\s*%?",
-      "description": "精度格式：±数字%（如 ±5%）",
-      "enabled": true
-    },
-    {
-      "id": "temperature",
-      "name": "温度格式",
-      "pattern": "-?\\d+(?:\\.\\d+)?\\s*[℃°C]",
-      "description": "温度格式：数字℃（如 25℃, -10℃）",
-      "enabled": true
-    },
-    {
-      "id": "resolution",
-      "name": "分辨率格式",
-      "pattern": "分辨率[：:]\\s*\\d+(?:\\.\\d+)?\\s*[a-zA-Z/]+",
-      "description": "分辨率格式：分辨率：数字单位（如 分辨率：1ug/m3）",
-      "enabled": true
-    },
-    {
-      "id": "communication",
-      "name": "通讯方式",
-      "pattern": "(RS485|485\\s*(?:传输方式|通讯)?|Modbus)",
-      "description": "通讯方式：RS485/485/Modbus",
-      "enabled": true
-    }
-  ],
   "default_feature_weights": {
     "brand": 0.3,
     "detailed_params": 0.2,
@@ -5492,13 +5448,6 @@
     "；",
     "\n"
   ],
-  "feature_weight_config": {
-    "brand_weight": 5,
-    "device_type_weight": 10,
-    "key_params_weight": 5,
-    "model_weight": 20,
-    "parameter_weight": 1
-  },
   "feature_weight_strategy": {
     "brand_weight": 10,
     "common_param_weight": 1,
@@ -5723,20 +5672,29 @@
         ]
       },
       "prefix_keywords": {
+        "PM": [
+          "空气质量传感器"
+        ],
+        "PM10": [
+          "空气质量传感器"
+        ],
+        "PM2.5": [
+          "空气质量传感器"
+        ],
         "co": [
           "空气质量传感器"
         ],
         "co2": [
           "空气质量传感器"
         ],
-        "PM": [
-          "空气质量传感器"
+        "温度": [
+          "温湿度传感器"
         ],
-        "PM2.5": [
-          "空气质量传感器"
+        "温湿度": [
+          "温湿度传感器"
         ],
-        "PM10": [
-          "空气质量传感器"
+        "湿度": [
+          "温湿度传感器"
         ]
       }
     },
@@ -5949,6 +5907,50 @@
     "介质"
   ],
   "normalization_map": [],
+  "parameter_patterns": [
+    {
+      "description": "量程格式：数字~数字单位（如 0~1000ug/m3）",
+      "enabled": true,
+      "id": "range",
+      "name": "量程格式",
+      "pattern": "\\d+(?:\\.\\d+)?\\s*[-~～到]\\s*\\d+(?:\\.\\d+)?\\s*[a-zA-Z/]+"
+    },
+    {
+      "description": "输出信号格式：数字~数字单位（如 4~20mA）",
+      "enabled": true,
+      "id": "output",
+      "name": "输出信号格式",
+      "pattern": "\\d+\\s*[-~]\\s*\\d+\\s*(?:mA|V|VDC)"
+    },
+    {
+      "description": "精度格式：±数字%（如 ±5%）",
+      "enabled": true,
+      "id": "accuracy",
+      "name": "精度格式",
+      "pattern": "±\\s*\\d+(?:\\.\\d+)?\\s*%?"
+    },
+    {
+      "description": "温度格式：数字℃（如 25℃, -10℃）",
+      "enabled": true,
+      "id": "temperature",
+      "name": "温度格式",
+      "pattern": "-?\\d+(?:\\.\\d+)?\\s*[℃°C]"
+    },
+    {
+      "description": "分辨率格式：分辨率：数字单位（如 分辨率：1ug/m3）",
+      "enabled": true,
+      "id": "resolution",
+      "name": "分辨率格式",
+      "pattern": "分辨率[：:]\\s*(\\d+(?:\\.\\d+)?\\s*[a-zA-Z/]+)"
+    },
+    {
+      "description": "通讯方式：RS485/485/Modbus",
+      "enabled": true,
+      "id": "communication",
+      "name": "通讯方式",
+      "pattern": "(RS485|485\\s*(?:传输方式|通讯)?|Modbus)"
+    }
+  ],
   "performance_config": {
     "match_timeout_seconds": 10,
     "max_rows_per_file": 10000,
